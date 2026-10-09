@@ -1,0 +1,10 @@
+---
+// 7-cell weekly schedule. Cells are "Mon|Push" strings (label "Rest" = rest day).
+interface Props { week: string[] }
+const { week } = Astro.props;
+---
+<div class="wk" role="list" aria-label="Sample training week">
+  {week.map((cell) => { const [d, l] = cell.split('|'); return (
+    <div role="listitem" class={`wk-day ${l === 'Rest' ? 'rest' : 'on'}`}><b>{d}</b><span>{l}</span></div>
+  ); })}
+</div>

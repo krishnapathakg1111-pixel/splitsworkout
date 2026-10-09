@@ -1,0 +1,59 @@
+---
+import WeekGrid from './WeekGrid.astro';
+import CTA from './CTA.astro';
+import { goalPlans } from '../data/goalPlans';
+import { getExercise } from '../data/exercises';
+import type { GoalPlan } from '../data/goalPlans';
+interface Props { g: GoalPlan }
+const { g } = Astro.props;
+const others = goalPlans.filter((x) => x.slug !== g.slug);
+const label = (s: string) => s.replace('for-', '').replace(/-/g, ' ');
+---
+<div class="page-header"><div class="page-header-inner">
+  <p style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin:0 0 8px;">{g.kicker}</p>
+  <h1 class="page-title">{g.h1}</h1>
+</div></div>
+<div class="seo-page">
+  <div class="seo-answer"><p><strong>Short answer:</strong> {g.quickAnswer}</p></div>
+  <h2>What the goal demands from a split</h2>
+  {g.intro.map((t) => <p>{t}</p>)}
+
+  <h2>What matters most</h2>
+  {g.priorities.map((p) => (<><h3>{p.h}</h3><p>{p.p}</p></>))}
+
+  <h2>Best split by training days</h2>
+  <div class="seo-scroll"><table class="seo-table">
+    <thead><tr><th>Days</th><th>Split</th><th>Why</th></tr></thead>
+    <tbody>{g.splitsByDays.map(([d, s, w]) => <tr><td>{d}</td><td>{s}</td><td>{w}</td></tr>)}</tbody>
+  </table></div>
+
+  <h2>Sample week: {g.sampleWeek.name}</h2>
+  <WeekGrid week={g.sampleWeek.week} />
+  <p>{g.sampleWeek.note}</p>
+  <p><a class="btn btn-secondary btn-sm" href={`/workout-planner?split=${g.sampleWeek.splitSlug}`}>Load this split in the planner →</a></p>
+
+  <h2>Exercises to build around</h2>
+  {g.exercises.map((x) => (
+    <>
+      <h3>{x.heading}</h3><p>{x.note}</p>
+      <div class="seo-chips">{x.slugs.map((s) => { const e = getExercise(s); return e ? <a class="seo-chip" href={`/exercises/${s}`}>{e.name}</a> : null; })}</div>
+    </>
+  ))}
+
+  <h2>Common mistakes</h2>
+  <ul>{g.mistakes.map((m) => <li>{m}</li>)}</ul>
+
+  <CTA variant="comparison" heading="Check your own fit" text="The finder is pre-set for this goal — change any answer to see how your recommendation shifts." />
+  <p style="margin-top:-18px;"><a class="btn btn-primary" href={`/workout-split-finder?${g.finder}`}>Open the Split Finder for this goal →</a></p>
+  {g.extraLinks && <ul>{g.extraLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>}
+
+  <h2>FAQ</h2>
+  <div class="seo-faq">{g.faqs.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
+
+  <h2>Splits for other goals</h2>
+  <div class="seo-chips">
+    {others.map((o) => <a class="seo-chip" href={`/workout-splits/${o.slug}`}>Split for {label(o.slug)}</a>)}
+    <a class="seo-chip" href="/workout-splits/best-workout-split">Best workout split overall</a>
+  </div>
+  <p class="seo-note">General guidance, not personal coaching or medical advice.</p>
+</div>

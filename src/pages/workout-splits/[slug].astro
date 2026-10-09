@@ -1,0 +1,37 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import DayPlanView from '../../components/DayPlanView.astro';
+import CompareView from '../../components/CompareView.astro';
+import GoalView from '../../components/GoalView.astro';
+import { dayPlans } from '../../data/dayPlans';
+import { comparisons } from '../../data/comparisons';
+import { goalPlans } from '../../data/goalPlans';
+import { articleLd } from '../../lib/seo';
+
+// One route, three content types — each driven by its own dataset with unique content.
+export function getStaticPaths() {
+  return [
+    ...dayPlans.map((d) => ({ params: { slug: d.slug }, props: { kind: 'day', item: d } })),
+    ...comparisons.map((c) => ({ params: { slug: c.slug }, props: { kind: 'compare', item: c } })),
+    ...goalPlans.map((g) => ({ params: { slug: g.slug }, props: { kind: 'goal', item: g } })),
+  ];
+}
+const { slug } = Astro.params;
+const { kind, item } = Astro.props as any;
+const path = `/workout-splits/${slug}`;
+const crumb = kind === 'day' ? `${item.days}-Day Workout Split` : kind === 'compare' ? `${item.aName} vs ${item.bName}` : item.h1.replace('Best Workout Split ', '').replace(/^for/i, 'For');
+---
+<Layout
+  title={item.metaTitle}
+  description={item.metaDescription}
+  canonical={path}
+  currentPage="splits"
+  ogType="article"
+  ogImage="/og/splits.png"
+  breadcrumbs={[{ name: 'Workout Splits', url: '/workout-splits' }, { name: crumb }]}
+  jsonLd={articleLd({ headline: item.h1, description: item.metaDescription, path, image: '/og/splits.png' })}
+>
+  {kind === 'day' && <DayPlanView plan={item} />}
+  {kind === 'compare' && <CompareView c={item} />}
+  {kind === 'goal' && <GoalView g={item} />}
+</Layout>

@@ -1,0 +1,164 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CTA from '../../components/CTA.astro';
+import { articleLd } from '../../lib/seo';
+import MuscleSVG from '../../components/MuscleSVG.astro';
+import { getMuscle } from '../../data/muscles';
+import { exercises } from '../../data/exercises';
+
+const muscle = getMuscle('chest')!;
+const muscleExercises = exercises.filter(e =>
+  e.primaryMuscle === muscle.commonName ||
+  e.tags.some(t => t.toLowerCase().includes('chest'))
+).slice(0, 12);
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": muscle.commonName + " Exercises — Anatomy & Training Guide",
+  "description": "The best " + muscle.commonName.toLowerCase() + " exercises with anatomy guide, volume recommendations, and complete training tips.",
+  "author": { "@type": "Organization", "name": "SplitsWorkout" }
+});
+---
+
+<Layout
+  title={muscle.commonName + " Exercises: Anatomy & Best Workouts | SplitsWorkout"}
+  description={"Complete " + muscle.commonName.toLowerCase() + " training guide: best exercises, anatomy, weekly volume recommendations, and form tips."}
+  canonical={"/muscles/" + muscle.slug}
+  currentPage="muscles"
+  ogType="article"
+  ogImage="/og/muscles.png"
+  breadcrumbs={[{ name: 'Muscle Guide', url: '/muscles' }, { name: muscle.commonName }]}
+  jsonLd={articleLd({ headline: muscle.commonName + ' Exercises — Anatomy & Training Guide', description: 'The best ' + muscle.commonName.toLowerCase() + ' exercises with an anatomy guide, weekly volume recommendations and training tips.', path: '/muscles/' + muscle.slug, image: '/og/muscles.png' })}
+>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <h1 class="page-title">{muscle.commonName} Exercises</h1>
+    <p class="page-desc">{muscle.description}</p>
+    <div class="page-meta">
+      <span class="tag tag-green">📍 {muscle.location}</span>
+      <span class="tag tag-gray">{muscle.weeklyVolume.min}–{muscle.weeklyVolume.max} sets/week</span>
+    </div>
+  </div>
+</div>
+
+<div class="content-wrap">
+  <article class="content-article">
+    <div class="prose">
+
+      <!-- Visual anatomy panel -->
+      <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-xl);padding:28px;margin:0 0 28px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;">
+        <div>
+          <h2 style="margin-top:0;border-bottom:none;padding-bottom:0;font-size:1.125rem;">Anatomy</h2>
+          <p style="font-size:0.875rem;line-height:1.75;color:var(--text-2);">{muscle.anatomy}</p>
+          <div style="margin-top:14px;">
+            <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:8px;">Function</div>
+            <p style="font-size:0.875rem;color:var(--text-2);">{muscle.function}</p>
+          </div>
+        </div>
+        <MuscleSVG primary={['chest']} size="lg" view="both" />
+      </div>
+
+      <!-- Volume recommendations -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0;">
+        <div class="sets-card">
+          <div class="sets-card-label">Min Sets/Week</div>
+          <div class="sets-card-value">{muscle.weeklyVolume.min}</div>
+        </div>
+        <div class="sets-card">
+          <div class="sets-card-label">Optimal Range</div>
+          <div class="sets-card-value" style="font-size:1rem;">{muscle.weeklyVolume.min}–{muscle.weeklyVolume.max}</div>
+        </div>
+        <div class="sets-card">
+          <div class="sets-card-label">Max Sets/Week</div>
+          <div class="sets-card-value">{muscle.weeklyVolume.max}</div>
+        </div>
+      </div>
+
+      <!-- Best exercises -->
+      <h2>Best {muscle.commonName} Exercises</h2>
+      {muscleExercises.length > 0 ? (
+        <div style="display:flex;flex-direction:column;gap:8px;margin:12px 0;">
+          {muscleExercises.map(ex => (
+            <a href={"/exercises/"+ex.slug} style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div>
+                <div style="font-family:'Poppins',sans-serif;font-weight:600;font-size:0.9rem;color:var(--text);">{ex.name}</div>
+                <div style="display:flex;gap:6px;margin-top:4px;">
+                  <span class={`tag diff-${ex.difficulty.toLowerCase()}`} style="font-size:0.65rem;">{ex.difficulty}</span>
+                  <span class="tag tag-gray" style="font-size:0.65rem;">{ex.type}</span>
+                  <span class="tag tag-gray" style="font-size:0.65rem;">{ex.sets} × {ex.reps}</span>
+                </div>
+              </div>
+              <span style="color:var(--accent);font-size:1.25rem;">→</span>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p>Browse the <a href="/exercises">exercise database</a> for {muscle.commonName.toLowerCase()} exercises.</p>
+      )}
+
+      <h2>Compound Exercises</h2>
+      <ul>
+        {muscle.compoundExercises.map(s => (
+          <li><a href={"/exercises/"+s}>{s.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase())}</a></li>
+        ))}
+      </ul>
+
+      <h2>Isolation Exercises</h2>
+      <ul>
+        {muscle.isolationExercises.map(s => (
+          <li><a href={"/exercises/"+s}>{s.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase())}</a></li>
+        ))}
+      </ul>
+
+      <h2>Training Tips</h2>
+      <ul>
+        {muscle.tips.map(tip => <li>{tip}</li>)}
+      </ul>
+
+      <h2>Where {muscle.commonName.toLowerCase()} fits in a workout split</h2>
+      <p>You can train {muscle.commonName.toLowerCase()} in a <a href="/workout-splits/push-pull-legs">push pull legs</a>, <a href="/workout-splits/upper-lower">upper/lower split</a> or the <a href="/workout-splits/bro-split">bro split</a>. Not sure which suits your schedule? Use the <a href="/workout-split-finder">Split Finder</a>, or see how weekly sets stack up in the <a href="/workout-planner">workout planner</a>.</p>
+      <CTA variant="muscle" cat="Chest" />
+
+      <h2>FAQ</h2>
+      {[
+        [`How often should I train ${muscle.commonName.toLowerCase()}?`, `Most people benefit from training ${muscle.commonName.toLowerCase()} 2 times per week. This provides enough frequency for muscle protein synthesis while allowing adequate recovery between sessions.`],
+        [`How many sets per week for ${muscle.commonName.toLowerCase()}?`, `${muscle.weeklyVolume.min}–${muscle.weeklyVolume.max} working sets per week is a reasonable range for most trainees. Start at the lower end and increase gradually as your recovery allows.`],
+        [`What is the best exercise for ${muscle.commonName.toLowerCase()}?`, `The best exercise depends on your equipment and goals. For overall development, ${muscle.topExercises[0] ? muscle.topExercises[0].replace(/-/g,' ') : 'a compound pressing or pulling movement'} is typically one of the most effective choices.`],
+      ].map(([q,a]) => (
+        <div class="faq-item">
+          <div class="faq-q"><span>{q}</span><span class="faq-icon">▾</span></div>
+          <div class="faq-a">{a}</div>
+        </div>
+      ))}
+
+    </div>
+  </article>
+
+  <aside class="content-sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-card-title">Muscle Info</div>
+      <div class="sidebar-stat"><span>Full Name</span><strong>{muscle.name}</strong></div>
+      <div class="sidebar-stat"><span>Location</span><strong style="font-size:0.78rem;">{muscle.location}</strong></div>
+      <div class="sidebar-stat"><span>Min Sets/Week</span><strong>{muscle.weeklyVolume.min}</strong></div>
+      <div class="sidebar-stat"><span>Max Sets/Week</span><strong>{muscle.weeklyVolume.max}</strong></div>
+    </div>
+
+    {muscle.relatedMuscles.length > 0 && (
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Related Muscles</div>
+        {muscle.relatedMuscles.map(m => (
+          <a href={"/muscles/"+m} class="sidebar-link">
+            <span>{m.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</span>
+            <span style="color:var(--accent);">→</span>
+          </a>
+        ))}
+      </div>
+    )}
+
+    <a href="/muscles" class="btn btn-secondary" style="width:100%;justify-content:center;">← All Muscles</a>
+  </aside>
+</div>
+
+</Layout>

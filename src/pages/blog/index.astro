@@ -1,0 +1,22 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const articles = [
+  { slug:'how-to-choose-a-workout-split', title:'How to Choose the Right Workout Split', desc:'A complete guide to choosing between PPL, bro split, upper/lower, and full body — based on your schedule, goals, and experience.', time:'7 min' },
+  { slug:'ppl-vs-bro-split', title:'PPL vs Bro Split — Which is Better?', desc:'An honest comparison of push pull legs and the bro split — frequency, volume, recovery, and which is right for you.', time:'5 min' },
+  { slug:'beginner-gym-guide', title:'Complete Beginner Gym Guide — What to Do First', desc:'Everything a first-time gym-goer needs to know: which split to start with, which exercises to learn, and how to track progress.', time:'8 min' },
+];
+---
+<Layout title="SplitsWorkout Blog — Workout Split Guides & Fitness Tips" description="Guides on workout splits, training frequency, nutrition, and gym advice." canonical="/blog" currentPage="blog">
+<div class="page-header"><h1 class="page-title">Blog</h1><p class="page-desc">Guides on splits, training, and getting results.</p></div>
+<div class="section" style="display:flex;flex-direction:column;gap:10px;">
+  {articles.map(a => (
+    <a href={`/blog/${a.slug}`} class="split-card" style="flex-direction:row;align-items:flex-start;gap:20px;">
+      <div>
+        <div style="font-size:0.72rem;color:var(--text-3);margin-bottom:6px;">⏱️ {a.time} read</div>
+        <div class="split-card-name">{a.title}</div>
+        <div class="split-card-desc" style="margin-top:6px;">{a.desc}</div>
+      </div>
+    </a>
+  ))}
+</div>
+</Layout>

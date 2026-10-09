@@ -1,0 +1,27 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CTA from '../../components/CTA.astro';
+import { guides, getGuide } from '../../data/guides';
+import { articleLd } from '../../lib/seo';
+export function getStaticPaths() { return guides.map((g) => ({ params: { slug: g.slug }, props: { g } })); }
+const { g } = Astro.props;
+const path = `/guides/${g.slug}`;
+---
+<Layout title={g.metaTitle} description={g.metaDescription} canonical={path} currentPage="guides" ogType="article" ogImage="/og/guides.png"
+  breadcrumbs={[{ name: 'Guides', url: '/guides' }, { name: g.title }]}
+  jsonLd={articleLd({ headline: g.title, description: g.metaDescription, path, image: '/og/guides.png' })}>
+<div class="page-header"><div class="page-header-inner">
+  <p style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin:0 0 8px;">{g.kicker} · {g.time} read</p>
+  <h1 class="page-title">{g.title}</h1>
+</div></div>
+<div class="seo-page">
+  <div class="seo-answer"><p><strong>Short answer:</strong> {g.quickAnswer}</p></div>
+  {g.sections.map((s) => (<><h2>{s.h}</h2>{s.p.map((t) => <p>{t}</p>)}{s.list && <ul>{s.list.map((i) => <li>{i}</li>)}</ul>}</>))}
+  <CTA variant="guide" />
+  <h2>FAQ</h2>
+  <div class="seo-faq">{g.faqs.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
+  <h2>Keep going</h2>
+  <div class="seo-chips">{g.links.map((l) => <a class="seo-chip" href={l.href}>{l.label}</a>)}</div>
+  <p class="seo-note">General guidance, not personal coaching or medical advice.</p>
+</div>
+</Layout>

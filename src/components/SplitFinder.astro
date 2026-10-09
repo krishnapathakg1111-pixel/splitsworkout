@@ -1,0 +1,112 @@
+---
+// Interactive Split Finder. Used on /workout-split-finder (tool page) and /workout-splits/best-workout-split.
+// Logic lives in src/lib/splitEngine.ts. Prefills from ?days=&goal=&exp= so day-based pages can deep-link.
+interface Props { compact?: boolean }
+const groups = [
+  { id: 'days', q: 'How many days a week can you train?', opts: [['2', '2 days'], ['3', '3 days'], ['4', '4 days'], ['5', '5 days'], ['6', '6 days'], ['7', '7 days']] },
+  { id: 'goal', q: 'What is your main goal?', opts: [['muscle', 'Build muscle'], ['strength', 'Get stronger'], ['fatloss', 'Lose fat'], ['general', 'General fitness']] },
+  { id: 'experience', q: 'How experienced are you?', opts: [['beginner', 'Beginner (< 1 yr)'], ['intermediate', 'Intermediate (1–3 yrs)'], ['advanced', 'Advanced (3+ yrs)']] },
+  { id: 'sessionLength', q: 'How long can each session be?', opts: [['short', 'Under 45 min'], ['medium', '45–75 min'], ['long', '75+ min']] },
+  { id: 'equipment', q: 'What equipment do you have?', opts: [['full', 'Full gym'], ['dumbbells', 'Dumbbells & basics'], ['bodyweight', 'Bodyweight only']] },
+  { id: 'preference', q: 'What do you prefer?', opts: [['frequency', 'Train muscles often'], ['focus', 'Dedicated muscle days'], ['flexible', 'Flexible schedule']] },
+  { id: 'recovery', q: 'How is your recovery?', opts: [['slow', 'I need extra rest'], ['normal', 'Average'], ['fast', 'I recover quickly']] },
+];
+---
+<section class="sf" id="split-finder" aria-label="Workout split finder">
+  <div class="sf-grid">
+    {groups.map((g) => (
+      <fieldset class="sf-group" data-group={g.id}>
+        <legend class="sf-q">{g.q}</legend>
+        <div class="sf-opts">
+          {g.opts.map(([v, label]) => (<button type="button" class="sf-opt" data-group={g.id} data-value={v} aria-pressed="false">{label}</button>))}
+        </div>
+      </fieldset>
+    ))}
+  </div>
+  <div class="sf-result" id="sf-result" aria-live="polite"></div>
+  <noscript><p class="sf-noscript">The finder needs JavaScript. Without it, browse the <a href="/workout-splits">workout splits hub</a> or read <a href="/workout-splits/best-workout-split">how to choose a split</a>.</p></noscript>
+</section>
+
+<style is:global>
+  .sf { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-2xl); padding:24px; }
+  .sf-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px 28px; margin-bottom:22px; }
+  .sf-group { border:none; padding:0; margin:0; min-width:0; }
+  .sf-q { font-family:'Poppins',sans-serif; font-weight:700; font-size:0.82rem; color:var(--text); margin-bottom:8px; padding:0; }
+  .sf-opts { display:flex; flex-wrap:wrap; gap:6px; }
+  .sf-opt { border:1.5px solid var(--border); background:var(--bg-2); color:var(--text-2); border-radius:100px; padding:6px 14px; font-size:0.78rem; font-weight:600; cursor:pointer; transition:all .12s; }
+  .sf-opt:hover { border-color:var(--accent); color:var(--accent); }
+  .sf-opt[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .sf-result { border-top:1px solid var(--border); padding-top:20px; }
+  .sf-top { background:var(--accent-bg); border:1.5px solid var(--accent-border); border-radius:var(--radius-xl); padding:20px 22px; margin-bottom:14px; }
+  .sf-tier { display:inline-block; font-size:0.66rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--accent-hover); margin-bottom:4px; }
+  .sf-name { font-family:'Poppins',sans-serif; font-weight:900; font-size:1.5rem; letter-spacing:-.02em; color:var(--text); margin:0 0 6px; }
+  .sf-sum { font-size:0.85rem; color:var(--text-2); margin:0 0 12px; line-height:1.65; }
+  .sf-why { margin:0 0 12px; padding-left:18px; font-size:0.82rem; color:var(--text-2); line-height:1.65; }
+  .sf-warn { margin:0 0 12px; padding:10px 14px; border-radius:var(--radius); background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.3); font-size:0.78rem; color:var(--text-2); line-height:1.6; }
+  .sf-week { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin:12px 0 16px; }
+  .sf-day { border:1px solid var(--border); border-radius:var(--radius); padding:8px 4px; text-align:center; background:var(--surface); }
+  .sf-day b { display:block; font-size:0.62rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-3); }
+  .sf-day span { font-size:0.7rem; font-weight:700; color:var(--text); line-height:1.3; display:block; margin-top:3px; }
+  .sf-day.rest span { color:var(--text-4); font-weight:500; }
+  .sf-day.on { border-color:var(--accent-border); background:var(--accent-bg); }
+  .sf-actions { display:flex; gap:10px; flex-wrap:wrap; }
+  .sf-alts { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px; }
+  .sf-alt { border:1px solid var(--border); border-radius:var(--radius-lg); padding:14px 16px; background:var(--bg-2); }
+  .sf-alt h3 { font-size:0.95rem; margin:0 0 4px; color:var(--text); }
+  .sf-alt p { margin:0 0 6px; font-size:0.78rem; color:var(--text-3); line-height:1.55; }
+  .sf-alt a { font-size:0.78rem; font-weight:700; color:var(--accent-hover); }
+  .sf-disclaimer { font-size:0.72rem; color:var(--text-3); margin-top:14px; line-height:1.6; }
+  .sf-noscript { font-size:0.85rem; color:var(--text-2); }
+  @media (max-width:640px){ .sf-week { grid-template-columns:repeat(4,1fr); } }
+</style>
+
+<script>
+  import { recommend, DEFAULT_INPUT, type FinderInput } from '../lib/splitEngine';
+  const state: Record<string, string | number> = { ...DEFAULT_INPUT };
+  const qs = new URLSearchParams(location.search);
+  const alias: Record<string, string> = { exp: 'experience', length: 'sessionLength' };
+  qs.forEach((v, k) => { const key = alias[k] ?? k; if (key in state) state[key] = key === 'days' ? Math.min(7, Math.max(2, parseInt(v) || 4)) : v; });
+
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
+  const result = document.getElementById('sf-result')!;
+
+  function syncButtons() {
+    document.querySelectorAll<HTMLButtonElement>('.sf-opt').forEach((b) => {
+      b.setAttribute('aria-pressed', String(String(state[b.dataset.group!]) === b.dataset.value));
+    });
+  }
+  function render() {
+    const recs = recommend(state as unknown as FinderInput);
+    if (!recs.length) { result.innerHTML = '<p>No split matches that combination — try a different number of days.</p>'; return; }
+    const [top, ...rest] = recs;
+    const week = top.week.map((cell) => {
+      const [d, l] = cell.split('|');
+      return `<div class="sf-day ${l === 'Rest' ? 'rest' : 'on'}"><b>${d}</b><span>${esc(l)}</span></div>`;
+    }).join('');
+    result.innerHTML = `
+      <div class="sf-top">
+        <span class="sf-tier">${top.tier}</span>
+        <h2 class="sf-name">${esc(top.name)}</h2>
+        <p class="sf-sum">${esc(top.summary)}</p>
+        <ul class="sf-why">${top.reasons.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>
+        ${top.cautions.map((c) => `<div class="sf-warn">⚠️ ${esc(c)}</div>`).join('')}
+        <div class="sf-week" role="list" aria-label="Suggested weekly schedule">${week}</div>
+        <div class="sf-actions">
+          <a class="btn btn-primary" href="${top.buildUrl}">Build This Split in the Planner →</a>
+          <a class="btn btn-secondary" href="${top.url}">Read the ${esc(top.name)} guide</a>
+        </div>
+      </div>
+      ${rest.length ? `<div class="sf-alts">${rest.map((r) => `
+        <div class="sf-alt"><span class="sf-tier">${r.tier}</span><h3>${esc(r.name)}</h3><p>${esc(r.reasons[0] ?? r.summary)}</p>
+        <a href="${r.buildUrl}">Build it in the planner →</a> · <a href="${r.url}">Read the guide</a></div>`).join('')}</div>` : ''}
+      <p class="sf-disclaimer">These are rules-based starting points, not personal coaching or medical advice. If you have an injury or health condition, check with a qualified professional. <a href="/methodology/workout-splits">How the recommendations work →</a></p>`;
+  }
+  document.querySelectorAll<HTMLButtonElement>('.sf-opt').forEach((b) =>
+    b.addEventListener('click', () => {
+      const g = b.dataset.group!;
+      state[g] = g === 'days' ? parseInt(b.dataset.value!) : b.dataset.value!;
+      syncButtons(); render();
+    })
+  );
+  syncButtons(); render();
+</script>

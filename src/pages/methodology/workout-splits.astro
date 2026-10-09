@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { articleLd } from '../../lib/seo';
+const desc = "How SplitsWorkout defines workout splits and how the Split Finder ranks them from your days, goal, experience, session length, equipment, preference and recovery.";
+---
+<Layout title="Workout Split Methodology: How We Recommend | SplitsWorkout" description={desc} canonical="/methodology/workout-splits" currentPage="about" ogType="article" ogImage="/og/default.png"
+  breadcrumbs={[{ name: 'Methodology', url: '/methodology' }, { name: 'Workout Splits' }]}
+  jsonLd={articleLd({ headline: "Workout Split Methodology", description: desc, path: "/methodology/workout-splits" })}>
+<div class="page-header"><div class="page-header-inner"><h1 class="page-title">Workout Split Methodology</h1><p class="page-desc">The rules behind the Split Finder, explained so you can judge them for yourself.</p></div></div>
+<div class="seo-page">
+
+  <h2>How we define a split</h2>
+  <p>Each split in SplitsWorkout records how many days it takes, what each day trains, how often each muscle is trained per week, a typical session length, a difficulty level and example exercises. The standard versions are push pull legs, upper/lower, full body, the bro (body-part) split and the Arnold split.</p>
+  <h2>How the Split Finder ranks splits</h2>
+  <p>The finder is rules-based: no AI model is involved and nothing is sent to a server. It scores each split against your seven answers:</p>
+  <ol>
+    <li><strong>Training days</strong> (largest weight). Every split has an ideal, workable or stretch range of days; splits that do not suit your days are excluded.</li>
+    <li><strong>Experience.</strong> Simpler, higher-frequency plans score better for beginners; high-volume plans score better for advanced lifters.</li>
+    <li><strong>Goal.</strong> Muscle gain, strength, fat loss and general fitness each favour different structures.</li>
+    <li><strong>Session length, preference and recovery</strong> adjust the ranking, for example favouring shorter sessions or dedicated muscle-group days.</li>
+    <li><strong>Equipment</strong> nudges the ranking and adds a note, since body-part days rely more on machines and cables.</li>
+  </ol>
+  <p>Every recommendation lists the reasons it scored well and any cautions. We show tiers (best fit, strong alternative, also workable) rather than percentage scores, because a percentage would suggest precision these rules do not have.</p>
+  <h2>Why we cap training at six days</h2>
+  <p>If you choose seven days, the finder schedules six training days and one rest day. Hard training every day leaves no recovery window, and recovery is where adaptation happens.</p>
+  <h2>Principles behind the advice</h2>
+  <p>Our advice follows widely accepted resistance-training principles: train each muscle regularly, keep total weekly volume sensible, progress gradually and recover adequately. Where evidence is mixed — for example, the best training frequency — we say so rather than pretending there is one right answer.</p>
+  <h2>Limits</h2>
+  <p>The finder cannot see your injuries, history, schedule changes or recovery. Treat results as a starting point to try for 8–12 weeks, not a prescription. Try it on the <a href="/workout-split-finder">Split Finder</a> or read the <a href="/workout-splits/best-workout-split">best workout split guide</a>.</p>
+</div>
+</Layout>

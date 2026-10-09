@@ -1,0 +1,22 @@
+{
+  "name": "splitsworkout",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "prebuild": "node scripts/validate-exercises.mjs",
+    "validate:exercises": "node scripts/validate-exercises.mjs",
+    "audit:seo": "node scripts/seo-audit.mjs",
+    "og": "python3 scripts/generate-og.py",
+    "test": "node scripts/test-split-engine.mjs && node scripts/test-swap-engine.mjs && node scripts/test-diagrams.mjs && node scripts/validate-exercises.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "tailwindcss": "^4.0.0"
+  }
+}

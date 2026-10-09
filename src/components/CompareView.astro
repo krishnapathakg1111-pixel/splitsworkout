@@ -1,0 +1,48 @@
+---
+import WeekGrid from './WeekGrid.astro';
+import CTA from './CTA.astro';
+import { comparisons } from '../data/comparisons';
+import type { Comparison } from '../data/comparisons';
+interface Props { c: Comparison }
+const { c } = Astro.props;
+const others = comparisons.filter((x) => x.slug !== c.slug);
+---
+<div class="page-header"><div class="page-header-inner">
+  <p style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin:0 0 8px;">{c.kicker}</p>
+  <h1 class="page-title">{c.h1}</h1>
+</div></div>
+<div class="seo-page">
+  <div class="seo-answer"><p><strong>Short answer:</strong> {c.quickAnswer}</p></div>
+  <h2>{c.aName} vs {c.bName} in brief</h2>
+  {c.intro.map((t) => <p>{t}</p>)}
+
+  <h2>{c.aName} vs {c.bName} at a glance</h2>
+  <div class="seo-scroll"><table class="seo-table">
+    <thead><tr><th></th><th><a href={`/workout-splits/${c.a}`}>{c.aName}</a></th><th><a href={`/workout-splits/${c.b}`}>{c.bName}</a></th></tr></thead>
+    <tbody>{c.table.map(([k, x, y]) => <tr><td>{k}</td><td>{x}</td><td>{y}</td></tr>)}</tbody>
+  </table></div>
+
+  <h2>Key differences explained</h2>
+  {c.differences.map((d) => (<><h3>{d.h}</h3><p>{d.p}</p></>))}
+
+  <h2>Which should you choose?</h2>
+  <div class="seo-scroll"><table class="seo-table">
+    <thead><tr><th>If…</th><th>Better fit</th><th>Why</th></tr></thead>
+    <tbody>{c.scenarios.map(([s, w, why]) => <tr><td>{s}</td><td>{w}</td><td>{why}</td></tr>)}</tbody>
+  </table></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 0;">
+    <a class="btn btn-secondary btn-sm" href={`/workout-planner?split=${c.a}`}>Load {c.aName} in the planner →</a>
+    <a class="btn btn-secondary btn-sm" href={`/workout-planner?split=${c.b}`}>Load {c.bName} in the planner →</a>
+  </div>
+
+  <CTA variant="comparison" heading="Still not sure? Use the Split Finder." text="Tell us your days, goal and experience and get a ranked recommendation — it takes under a minute." />
+
+  <h2>FAQ</h2>
+  <div class="seo-faq">{c.faqs.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
+
+  <h2>Read the full guides</h2>
+  <p>Get the full details on each option: the <a href={`/workout-splits/${c.a}`}>{c.aName} guide</a> and the <a href={`/workout-splits/${c.b}`}>{c.bName} guide</a>. You can also compare every option on the <a href="/workout-splits">workout splits hub</a> or see how to <a href="/workout-splits/best-workout-split">choose the best workout split</a>.</p>
+  <div class="seo-chips">
+    {others.map((o) => <a class="seo-chip" href={`/workout-splits/${o.slug}`}>{o.aName} vs {o.bName}</a>)}
+  </div>
+</div>

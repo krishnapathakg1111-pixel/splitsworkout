@@ -1,0 +1,106 @@
+---
+interface Props {
+  mood?: 'happy' | 'thumbsup' | 'reading' | 'workout' | 'idea' | 'wink' | 'explaining' | 'celebrating' | 'pointing' | 'main';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'hero';
+  class?: string;
+  showBubble?: boolean;
+  bubbleText?: string;
+  style?: string;
+}
+const { mood = 'happy', size = 'md', class: cls = '', showBubble = false, bubbleText = '', style: extraStyle = '' } = Astro.props;
+
+// Size map in px
+const sizes = { sm: 80, md: 120, lg: 180, xl: 240, hero: 340 };
+const w = sizes[size];
+
+// The main mascot (full body) is mascot-main.png
+// Expressions sheet: mascot-expressions-2.png (6 poses on 2-row grid)
+// We use CSS background-position to crop the right expression
+// Grid layout (approx): 3 cols, 2 rows
+// Row 1: thumbsup, reading(book), workout(dumbbell)
+// Row 2: idea(lightbulb+finger), happy(thumbsup+wink), pointing(finger)
+
+// For simplicity, use the main mascot for hero/main
+// Use the expression sprites for smaller sizes
+
+const useMain = mood === 'main' || size === 'hero' || size === 'xl';
+
+// Map mood to sprite position in the expressions sheet
+// expressions-2.png = 3x2 grid
+const spriteMap: Record<string, { row: number; col: number }> = {
+  thumbsup:   { row: 0, col: 0 },
+  reading:    { row: 0, col: 1 },
+  workout:    { row: 0, col: 2 },
+  idea:       { row: 1, col: 0 },
+  happy:      { row: 1, col: 1 },
+  pointing:   { row: 1, col: 2 },
+  wink:       { row: 1, col: 1 },       // same as happy
+  explaining: { row: 1, col: 0 },       // same as idea
+  celebrating:{ row: 1, col: 1 },
+  main:       { row: 0, col: 0 },
+};
+
+const pos = spriteMap[mood] || { row: 1, col: 1 };
+// Each cell is 1/3 wide, 1/2 tall of the sprite sheet
+const bgX = -(pos.col * 100 / 2); // percentage shift
+const bgY = -(pos.row * 100);
+---
+
+<div class={`mascot-container ${cls}`} style={`position:relative;display:inline-block;flex-shrink:0;${extraStyle}`}>
+  {showBubble && bubbleText && (
+    <div class="mascot-bubble">
+      {bubbleText}
+    </div>
+  )}
+
+  {useMain ? (
+    <img
+      src="/mascot-main.webp"
+      alt="Professor Splits mascot"
+      width={w}
+      style={`width:${w}px;height:auto;display:block;object-fit:contain;`}
+      loading="lazy"
+    />
+  ) : (
+    <div
+      style={`
+        width: ${w}px;
+        height: ${w}px;
+        background-image: url('/mascot-expressions-2.webp');
+        background-size: 300% 200%;
+        background-position: ${pos.col * 50}% ${pos.row * 100}%;
+        background-repeat: no-repeat;
+        display: block;
+        flex-shrink: 0;
+      `}
+      role="img"
+      aria-label={`Professor Splits — ${mood}`}
+    ></div>
+  )}
+</div>
+
+<style>
+  .mascot-container { position: relative; }
+  .mascot-bubble {
+    position: absolute;
+    top: -8px;
+    right: -12px;
+    background: white;
+    border: 2px solid #22C55E;
+    border-radius: 12px 12px 12px 0;
+    padding: 8px 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #111827;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    z-index: 10;
+    line-height: 1.5;
+  }
+  html.dark .mascot-bubble {
+    background: #1F2937;
+    color: #F9FAFB;
+    border-color: #22C55E;
+  }
+</style>

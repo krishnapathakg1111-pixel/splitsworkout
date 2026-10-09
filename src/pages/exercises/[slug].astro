@@ -1,0 +1,497 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import MuscleSVG from '../../components/MuscleSVG.astro';
+import ExerciseVisual from '../../components/ExerciseVisual.astro';
+import { exercises, getExercise } from '../../data/exercises';
+import { getMovementIllustration } from '../../data/exerciseMedia';
+import CTA from '../../components/CTA.astro';
+import { rankSwaps, coreEquipment, PRESETS } from '../../lib/swapEngine';
+import { articleLd, isIndexableExercise, muscleUrl, SPLIT_NAMES, duplicateOf, isStuntExercise } from '../../lib/seo';
+
+export function getStaticPaths() {
+  return exercises.map(ex => ({ params: { slug: ex.slug } }));
+}
+
+const { slug } = Astro.params;
+const ex = getExercise(slug)!;
+const illustration = getMovementIllustration(ex);
+
+// ── SEO ──
+const indexable = isIndexableExercise(ex.slug);            // unreviewed imports stay noindex (see src/data/unreviewed-exercises.json)
+const swaps = rankSwaps(ex, exercises, 14, '', (s) => !isIndexableExercise(s)).map((s) => ({ ...s, ex: exercises.find((e) => e.slug === s.slug)! }));
+const dupTarget = duplicateOf(ex.slug) ? exercises.find((e) => e.slug === duplicateOf(ex.slug)) : undefined;
+const isStunt = isStuntExercise(ex.slug);
+const muscleHref = muscleUrl(ex.primaryMuscle);
+const muscleLabel = muscleHref ? muscleHref.split('/').pop()!.replace(/^./, (c) => c.toUpperCase()) : '';
+let seoTitle = `${ex.name} — Muscles Worked, Form & Sets | SplitsWorkout`;
+if (seoTitle.length > 62) seoTitle = `${ex.name} — Muscles Worked & Form | SplitsWorkout`;
+if (seoTitle.length > 62) seoTitle = `${ex.name} Form & Muscles | SplitsWorkout`;
+if (seoTitle.length > 62) seoTitle = `${ex.name} | SplitsWorkout`;
+const firstSentence = ex.description.split(/(?<=[.!?])\s/)[0];
+let seoDesc = `${firstSentence} See the muscles worked, how to perform it, form cues and alternatives.`;
+if (seoDesc.length > 160) seoDesc = ex.description.slice(0, 157).replace(/\s+\S*$/, '') + '…';
+const crumbs = [{ name: 'Exercises', url: '/exercises' }, ...(muscleHref ? [{ name: muscleLabel, url: muscleHref }] : []), { name: ex.name }];
+
+const related = exercises
+  .filter(e => e.slug !== slug && (
+    e.primaryMuscle === ex.primaryMuscle ||
+    e.category === ex.category ||
+    ex.alternatives.includes(e.slug)
+  ))
+  .slice(0, 6);
+
+const altExercises = ex.alternatives
+  .map(a => exercises.find(e => e.slug === a))
+  .filter(Boolean)
+  .slice(0, 6);
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": `${ex.name} — Muscles Worked, Form & Sets`,
+  "description": ex.description.slice(0, 155),
+  "author": { "@type": "Organization", "name": "SplitsWorkout" }
+});
+
+const diffColors = { Beginner: '#22C55E', Intermediate: '#F59E0B', Advanced: '#EF4444' };
+const muscleColors: Record<string,string> = {
+  'Chest':'#EF4444','Upper Chest':'#F87171','Back':'#3B82F6','Lats':'#60A5FA',
+  'Upper Back':'#93C5FD','Traps':'#BFDBFE','Shoulders':'#F59E0B','Side Delts':'#FCD34D',
+  'Rear Delts':'#FDE68A','Front Delts':'#FEF3C7','Quads':'#10B981','Hamstrings':'#06B6D4',
+  'Glutes':'#EC4899','Calves':'#84CC16','Soleus':'#A3E635','Biceps':'#8B5CF6',
+  'Brachialis':'#A78BFA','Triceps':'#7C3AED','Forearms':'#6D28D9',
+  'Core':'#6B7280','Obliques':'#9CA3AF','Abs':'#6B7280','Full Body':'#22C55E',
+};
+const primaryColor = muscleColors[ex.primaryMuscle] || '#22C55E';
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDesc}
+  canonical={`/exercises/${ex.slug}`}
+  currentPage="exercises"
+  ogType="article"
+  ogImage="/og/exercises.png"
+  noindex={!indexable}
+  breadcrumbs={crumbs}
+  jsonLd={articleLd({ headline: `${ex.name} — Muscles Worked, Form & Sets`, description: seoDesc, path: `/exercises/${ex.slug}`, image: '/og/exercises.png' })}
+>
+
+<!-- HERO SECTION -->
+<section class="ex-hero">
+  <div class="ex-hero-inner">
+
+    <!-- Breadcrumb -->
+
+    <div class="ex-hero-grid">
+      <!-- LEFT: Info -->
+      <div class="ex-hero-left">
+        <h1 class="ex-hero-title">{ex.name}</h1>
+        <p class="ex-hero-desc">{ex.description}</p>
+
+        <!-- Badge row -->
+        <div class="ex-badges">
+          <span class={`ex-badge diff-${ex.difficulty.toLowerCase()}`}>{ex.difficulty}</span>
+          <span class="ex-badge" style={`background:${primaryColor}18;color:${primaryColor};border-color:${primaryColor}30;`}>
+            💪 {ex.primaryMuscle}
+          </span>
+          <span class="ex-badge ex-badge-gray">{ex.type}</span>
+          <span class="ex-badge ex-badge-gray">{ex.movement}</span>
+          {ex.unilateral && <span class="ex-badge ex-badge-purple">Unilateral</span>}
+        </div>
+
+        <!-- Quick stats strip -->
+        <div class="ex-stats-strip">
+          <div class="ex-stat">
+            <div class="ex-stat-val">{ex.sets}</div>
+            <div class="ex-stat-label">Sets</div>
+          </div>
+          <div class="ex-stat-div"></div>
+          <div class="ex-stat">
+            <div class="ex-stat-val">{ex.reps}</div>
+            <div class="ex-stat-label">Reps</div>
+          </div>
+          <div class="ex-stat-div"></div>
+          <div class="ex-stat">
+            <div class="ex-stat-val" style="font-size:0.9rem;">{ex.rest}</div>
+            <div class="ex-stat-label">Rest</div>
+          </div>
+          <div class="ex-stat-div"></div>
+          <div class="ex-stat">
+            <div class="ex-stat-val" style="font-size:0.85rem;color:var(--text);">{ex.type}</div>
+            <div class="ex-stat-label">Type</div>
+          </div>
+        </div>
+
+        <!-- Equipment chips -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;">
+          {ex.equipment.map(e => (
+            <span class="ex-badge ex-badge-gray" style="font-size:0.7rem;">🏋️ {e}</span>
+          ))}
+        </div>
+      </div>
+
+      <!-- RIGHT: Illustration -->
+      <div class="ex-hero-right">
+        <ExerciseVisual ex={ex} illustration={illustration} color={primaryColor} />
+        <a href={`/workout-planner?add=${ex.slug}`} class="btn btn-primary" style="width:100%;justify-content:center;margin-top:12px;">
+          Add This Exercise to Your Workout →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<div class="content-wrap" style="padding-top:32px;">
+  <article class="content-article">
+    <div class="prose">
+
+      <!-- MUSCLES WORKED -->
+      <section style="margin-bottom:32px;">
+        <h2>Muscles Worked</h2>
+        {muscleHref && <p style="font-size:0.85rem;color:var(--text-3);margin:-4px 0 12px;">Learn more in the <a href={muscleHref} style="color:var(--accent-hover);font-weight:600;">{muscleLabel} training guide →</a></p>}
+        <div class="muscles-grid">
+          <div class="muscles-info">
+            <div style="margin-bottom:12px;">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-3);margin-bottom:6px;">Primary</div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style={`width:12px;height:12px;border-radius:50%;background:${primaryColor};`}></div>
+                <span style={`font-weight:700;font-size:1rem;color:${primaryColor};`}>{ex.primaryMuscle}</span>
+              </div>
+            </div>
+            {ex.secondaryMuscles.length > 0 && (
+              <div>
+                <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-3);margin-bottom:8px;">Secondary</div>
+                {ex.secondaryMuscles.map(m => (
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                    <div style={`width:8px;height:8px;border-radius:50%;background:${muscleColors[m] || '#9CA3AF'};`}></div>
+                    <span style="font-size:0.875rem;color:var(--text-2);">{m}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <MuscleSVG
+              primary={ex.muscleMap.primary}
+              secondary={ex.muscleMap.secondary}
+              size="md"
+              view="both"
+            />
+            <div style="font-size:0.65rem;color:var(--text-4);">Highlighted muscles</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOW TO PERFORM -->
+      <section style="margin-bottom:28px;">
+        {dupTarget && (
+        <div class="seo-answer" style="margin:0 0 20px;"><p style="font-size:0.85rem;"><strong>Variation of {dupTarget.name}.</strong> This is a close variation of an exercise we cover in full — see the <a href={`/exercises/${dupTarget.slug}`}>{dupTarget.name} guide</a> for detailed form cues, mistakes and alternatives.</p></div>
+      )}
+      {isStunt && (
+        <div class="seo-answer" style="margin:0 0 20px;"><p style="font-size:0.85rem;"><strong>Specialist movement.</strong> This is a sport-specific or conditioning drill that we keep for reference. It is not part of our main exercise library or planner. Looking for standard strength exercises? <a href="/exercises">Browse the exercise library</a>.</p></div>
+      )}
+      <h2>How To Perform</h2>
+        <ol class="ex-steps">
+          {ex.instructions.map((step, i) => (
+            <li class="ex-step">
+              <span class="ex-step-num">{i + 1}</span>
+              <span class="ex-step-text">{step}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <!-- FORM CUES -->
+      <section style="margin-bottom:28px;">
+        <h2>Form Cues</h2>
+        <ul style="list-style:none;padding:0;margin:0;">
+          {ex.formCues.map(cue => (
+            <li class="cue-item">
+              <span class="cue-check">✓</span>
+              <span>{cue}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- COMMON MISTAKES -->
+      <section style="margin-bottom:28px;">
+        <h2>Common Mistakes</h2>
+        <ul style="list-style:none;padding:0;margin:0;">
+          {ex.commonMistakes.map(m => (
+            <li class="mistake-item">
+              <span class="mistake-x">✗</span>
+              <span>{m}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- Professor Splits Tip -->
+      <div class="prof-tip" style="margin-bottom:28px;">
+        <div style="width:56px;height:56px;background-image:url('/mascot-expressions-2.webp');background-size:300% 200%;background-position:0% 100%;background-repeat:no-repeat;flex-shrink:0;border-radius:8px;overflow:hidden;"></div>
+        <div>
+          <div class="prof-tip-title">💡 Professor Splits Says:</div>
+          <p class="prof-tip-text">Progressive overload is the engine of muscle growth. Track your weights and aim to add small increments weekly. For {ex.name}, this means gradually increasing load, volume (sets × reps), or decreasing rest periods over time.</p>
+        </div>
+      </div>
+
+      <!-- ALTERNATIVES -->
+      {altExercises.length > 0 && (
+        <section style="margin-bottom:28px;">
+          <h2>Exercise Alternatives</h2>
+          <p style="color:var(--text-3);font-size:0.875rem;margin-bottom:12px;">Can't do the {ex.name}? These alternatives target the same muscles:</p>
+          <div class="alt-exercise-grid">
+            {altExercises.map(alt => alt && (
+              <a href={`/exercises/${alt.slug}`} class="alt-exercise-card">
+                <div style="min-width:0;">
+                  <div style="font-weight:700;font-size:0.82rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{alt.name}</div>
+                  <div style="font-size:0.68rem;color:var(--text-3);">{alt.primaryMuscle} · {alt.difficulty}</div>
+                </div>
+                <span class="alt-arrow">→</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      
+      {swaps.length > 0 && (
+        <section id="swap" class="swap-box" style="margin:8px 0 28px;">
+          <h2>Swap {ex.name} for something else</h2>
+          <p style="color:var(--text-3);font-size:0.875rem;margin:0 0 10px;">Ranked by primary muscle, movement pattern and mechanics. Filter by the equipment you have:</p>
+          <div class="swap-chips" role="group" aria-label="Filter swaps by equipment">
+            <button type="button" class="swap-chip on" data-preset="">Any equipment</button>
+            {Object.entries(PRESETS).map(([id, p]) => <button type="button" class="swap-chip" data-preset={id}>{p.label}</button>)}
+          </div>
+          <ul class="swap-list">
+            {swaps.map((s) => (
+              <li data-eq={coreEquipment(s.ex).join('|')}>
+                <div style="min-width:0;flex:1;">
+                  <a href={`/exercises/${s.slug}`} class="swap-name">{s.name}</a>
+                  <div class="swap-meta">{coreEquipment(s.ex).join(', ') || 'Bodyweight'} · {s.ex.difficulty}{s.why[0] ? ` · ${s.why[0]}` : ''}</div>
+                </div>
+                <a href={`/workout-planner?add=${s.slug}`} class="swap-add">+ Add</a>
+              </li>
+            ))}
+          </ul>
+          <p class="swap-empty" hidden>No close swaps with that equipment — try another filter or browse the <a href="/exercises">exercise library</a>.</p>
+        </section>
+      )}
+
+      <CTA variant="exercise" slug={ex.slug} />
+
+      <!-- WHERE IT FITS -->
+      {ex.relatedSplits.length > 0 && (
+        <section style="margin-bottom:28px;">
+          <h2>Where This Exercise Fits</h2>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            {ex.relatedSplits.map(s => (
+              <a href={`/workout-splits/${s}`} class="btn btn-secondary btn-sm">{SPLIT_NAMES[s] ?? s}</a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- FAQ -->
+      <section>
+        <h2>FAQ</h2>
+        <div class="faq-item">
+          <div class="faq-q"><span>How many sets of {ex.name} should I do?</span><span class="faq-icon">▾</span></div>
+          <div class="faq-a">{ex.sets} sets of {ex.reps} reps is a solid starting point. Adjust based on your training frequency and overall weekly volume for {ex.primaryMuscle.toLowerCase()}. Beginners should start with the lower end; advanced trainees can push toward the upper range.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>What muscles does {ex.name} target?</span><span class="faq-icon">▾</span></div>
+          <div class="faq-a">{ex.name} primarily targets the {ex.primaryMuscle}. {ex.secondaryMuscles.length > 0 ? `Secondary muscles include ${ex.secondaryMuscles.join(', ')}.` : ''}</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>Is {ex.name} good for beginners?</span><span class="faq-icon">▾</span></div>
+          <div class="faq-a">{ex.difficulty === 'Beginner' ? `${ex.name} is beginner-friendly. Focus on technique with lighter loads before adding weight.` : ex.difficulty === 'Intermediate' ? `${ex.name} is rated intermediate. Beginners should build foundational strength first with simpler movements.` : `${ex.name} is an advanced exercise. Develop solid technique on simpler movements before attempting it.`}</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>How much rest between sets?</span><span class="faq-icon">▾</span></div>
+          <div class="faq-a">For {ex.name}, {ex.rest} of rest between sets is recommended. {ex.type === 'Compound' ? 'Compound exercises require more recovery — longer rests (2–3 min) allow better performance on the next set.' : 'Isolation exercises can typically use shorter rest periods (45–90 sec) to maintain the pump and time efficiency.'}</div>
+        </div>
+      </section>
+
+    </div>
+  </article>
+
+  <!-- SIDEBAR -->
+  <aside class="content-sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-card-title">Quick Stats</div>
+      <div class="sidebar-stat"><span>Primary Muscle</span><strong style={`color:${primaryColor};`}>{ex.primaryMuscle}</strong></div>
+      <div class="sidebar-stat"><span>Type</span><strong>{ex.type}</strong></div>
+      <div class="sidebar-stat"><span>Movement</span><strong>{ex.movement}</strong></div>
+      {ex.movementPattern && <div class="sidebar-stat"><span>Pattern</span><strong style="font-size:0.78rem;">{ex.movementPattern}</strong></div>}
+      <div class="sidebar-stat"><span>Difficulty</span><strong style={`color:${diffColors[ex.difficulty]};`}>{ex.difficulty}</strong></div>
+      <div class="sidebar-stat"><span>Sets</span><strong>{ex.sets}</strong></div>
+      <div class="sidebar-stat"><span>Reps</span><strong>{ex.reps}</strong></div>
+      <div class="sidebar-stat"><span>Rest</span><strong>{ex.rest}</strong></div>
+      {ex.unilateral && <div class="sidebar-stat"><span>Style</span><strong>Unilateral</strong></div>}
+    </div>
+
+    {related.length > 0 && (
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Related Exercises</div>
+        {related.slice(0,5).map(r => (
+          <a href={`/exercises/${r.slug}`} class="sidebar-link">
+            <div style="min-width:0;">
+              <div style="font-size:0.82rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{r.name}</div>
+              <div style="font-size:0.68rem;color:var(--text-3);">{r.primaryMuscle} · {r.difficulty}</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+
+    <div class="sidebar-card">
+      <div class="sidebar-card-title">Equipment</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        {ex.equipment.map(e => <span class="tag tag-gray">{e}</span>)}
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-card-title">Tags</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;">
+        {ex.tags.slice(0,8).map(t => <span class="tag tag-gray" style="font-size:0.65rem;">{t}</span>)}
+      </div>
+    </div>
+
+    <a href={`/workout-planner?add=${ex.slug}`} class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:8px;">
+      Add This Exercise to Your Workout →
+    </a>
+    <a href="/exercises" class="btn btn-secondary" style="width:100%;justify-content:center;">
+      ← All Exercises
+    </a>
+  </aside>
+</div>
+
+<style is:global>
+  /* Exercise Hero */
+  .ex-hero {
+    background: linear-gradient(160deg, var(--bg-2) 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 24px;
+  }
+  .ex-hero-inner { max-width: 1280px; margin: 0 auto; }
+  .ex-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: start;
+  }
+  .ex-hero-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    margin-bottom: 10px;
+  }
+  .ex-hero-desc { font-size: 0.9rem; color: var(--text-2); line-height: 1.75; margin-bottom: 16px; max-width: 520px; }
+  .ex-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .ex-badge {
+    display: inline-flex; align-items: center;
+    padding: 4px 10px; border-radius: 100px;
+    font-size: 0.72rem; font-weight: 700;
+    border: 1px solid transparent;
+  }
+  .ex-badge.diff-beginner { background: rgba(34,197,94,0.1); color: #16A34A; border-color: rgba(34,197,94,0.25); }
+  .ex-badge.diff-intermediate { background: rgba(245,158,11,0.1); color: #D97706; border-color: rgba(245,158,11,0.25); }
+  .ex-badge.diff-advanced { background: rgba(239,68,68,0.1); color: #DC2626; border-color: rgba(239,68,68,0.25); }
+  html.dark .ex-badge.diff-beginner { color: #86EFAC; }
+  html.dark .ex-badge.diff-intermediate { color: #FCD34D; }
+  html.dark .ex-badge.diff-advanced { color: #FCA5A5; }
+  .ex-badge-gray { background: var(--bg-3); color: var(--text-2); border-color: var(--border); }
+  .ex-badge-purple { background: rgba(124,58,237,0.1); color: #7C3AED; border-color: rgba(124,58,237,0.25); }
+
+  /* Stats strip */
+  .ex-stats-strip {
+    display: flex; align-items: center; gap: 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-xl); overflow: hidden;
+    width: fit-content;
+  }
+  .ex-stat { padding: 12px 20px; text-align: center; }
+  .ex-stat-val { font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--accent); letter-spacing: -0.02em; }
+  .ex-stat-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-4); margin-top: 2px; font-weight: 600; }
+  .ex-stat-div { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
+
+  /* Hero right */
+  .ex-hero-right { display: flex; flex-direction: column; align-items: center; gap: 0; }
+
+  /* Steps */
+  .ex-steps { list-style: none; padding: 0; margin: 0; }
+  .ex-step { display: flex; gap: 14px; margin-bottom: 12px; align-items: flex-start; }
+  .ex-step-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 800; flex-shrink: 0; margin-top: 1px;
+  }
+  .ex-step-text { font-size: 0.875rem; color: var(--text-2); line-height: 1.7; }
+
+  /* Muscles grid */
+  .muscles-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: start;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 20px 24px;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .ex-hero-grid { grid-template-columns: 1fr !important; }
+    .ex-hero-right { display: none; }
+    .muscles-grid { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 768px) {
+    .ex-stats-strip { flex-wrap: wrap; }
+  }
+</style>
+
+<style is:global>
+  .swap-box { background:var(--bg-2); border:1px solid var(--border); border-radius:var(--radius-xl); padding:18px 20px; }
+  .swap-box h2 { margin-top:0 !important; border-bottom:none !important; padding-bottom:0 !important; font-size:1.1rem !important; }
+  .swap-chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+  .swap-chip { border:1.5px solid var(--border); background:var(--surface); color:var(--text-2); border-radius:100px; padding:5px 12px; font-size:0.75rem; font-weight:700; cursor:pointer; }
+  .swap-chip:hover { border-color:var(--accent); color:var(--accent); }
+  .swap-chip.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .swap-list { list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+  .swap-list li { display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:10px 14px; }
+  .swap-name { font-weight:700; font-size:0.9rem; color:var(--text) !important; text-decoration:none !important; }
+  .swap-name:hover { color:var(--accent-hover) !important; }
+  .swap-meta { font-size:0.72rem; color:var(--text-3); margin-top:2px; }
+  .swap-add { font-size:0.75rem; font-weight:700; color:var(--accent-hover) !important; text-decoration:none !important; border:1px solid var(--accent-border); background:var(--accent-bg); border-radius:var(--radius); padding:5px 10px; white-space:nowrap; }
+</style>
+<script>
+  import { allowedBy, type PresetId } from '../../lib/swapEngine';
+  const box = document.getElementById('swap');
+  if (box) {
+    const items = [...box.querySelectorAll<HTMLLIElement>('.swap-list li')];
+    const empty = box.querySelector<HTMLElement>('.swap-empty')!;
+    const apply = (preset: string) => {
+      let shown = 0;
+      items.forEach((li) => {
+        const eq = (li.dataset.eq || '').split('|').filter(Boolean);
+        const ok = allowedBy(preset as PresetId, eq) && shown < 6;
+        li.hidden = !ok; if (ok) shown++;
+      });
+      empty.hidden = shown > 0;
+    };
+    box.querySelectorAll<HTMLButtonElement>('.swap-chip').forEach((b) => b.addEventListener('click', () => {
+      box.querySelectorAll('.swap-chip').forEach((x) => x.classList.remove('on')); b.classList.add('on'); apply(b.dataset.preset || '');
+    }));
+    apply('');
+  }
+</script>
+</Layout>

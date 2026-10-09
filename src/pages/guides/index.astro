@@ -1,0 +1,35 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CTA from '../../components/CTA.astro';
+import { guides } from '../../data/guides';
+const articles = [
+  ...guides.map((g) => ({ slug: g.slug, title: g.title, desc: g.metaDescription })),
+  { slug: 'how-to-choose-a-workout-split', title: 'How to Choose a Workout Split — Complete Guide', desc: 'A step-by-step guide to choosing a split by schedule, goal, experience and equipment.' },
+];
+const desc = 'Guides on choosing and running a workout split, with links to the tools that let you act on them: the Split Finder, workout planner and exercise library.';
+---
+<Layout title="Workout Split Guides & Training Articles | SplitsWorkout" description={desc}
+  canonical="/guides" currentPage="guides" ogImage="/og/guides.png"
+  breadcrumbs={[{ name: 'Guides' }]}>
+<div class="page-header"><div class="page-header-inner">
+  <h1 class="page-title">Workout Split Guides</h1>
+  <p class="page-desc">Practical guides to choosing and running a training split. Each one links to the tool that lets you put it into practice.</p>
+</div></div>
+<div class="seo-page">
+  <h2>Latest guides</h2>
+  {articles.map((a) => (
+    <a href={`/guides/${a.slug}`} class="seo-structure" style="display:block;text-decoration:none;">
+      <h3 style="margin:0 0 6px;">{a.title}</h3><p style="margin:0;">{a.desc}</p>
+    </a>
+  ))}
+  <h2>How our guides work</h2>
+  <p>Every guide is written to answer one question well and to end with a concrete next step. We avoid padding, we do not invent studies or experts, and where the evidence is mixed we say so. Guides link to the exact page or tool you need — a split guide, an exercise page, the planner or a calculator — so you can go from reading to doing in one click.</p>
+  <p>More guides are on the way, including head-to-head comparisons of the most popular splits and exercise how-tos. In the meantime, the split pages below cover the same ground with sample weeks and exercise lists.</p>
+  <h2>What makes a good split guide</h2>
+  <p>A useful guide tells you who a plan is for, who should avoid it, what a sample week looks like, how much recovery it needs and what to do when life gets in the way. That is the standard we hold every split page to, and it is why each one includes honest trade-offs rather than only a list of benefits.</p>
+  <h2>Start here</h2>
+  <p>New to workout splits? Begin with the <a href="/workout-splits">workout splits hub</a>, which compares every major split side by side, then see which one suits you with the <a href="/workout-split-finder">Split Finder</a>. If you already know how many days you can train, jump to the <a href="/workout-splits/3-day">3-day</a>, <a href="/workout-splits/4-day">4-day</a> or <a href="/workout-splits/5-day">5-day</a> split pages.</p>
+  <p>Ready to build? The <a href="/workout-planner">workout planner</a> lets you load a split, edit exercises and export your plan, and the <a href="/exercises">exercise library</a> explains every movement. For nutrition, try the <a href="/calculators/tdee">TDEE calculator</a>.</p>
+  <CTA variant="generic" />
+</div>
+</Layout>

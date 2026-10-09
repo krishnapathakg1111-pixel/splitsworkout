@@ -1,0 +1,176 @@
+---
+interface Props {
+  primary?: string[];
+  secondary?: string[];
+  interactive?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  view?: 'front' | 'back' | 'both';
+}
+const { primary = [], secondary = [], interactive = false, size = 'md', view = 'both' } = Astro.props;
+
+const sizeMap = { sm: 120, md: 160, lg: 220 };
+const h = sizeMap[size];
+const w = Math.round(h * 0.55);
+
+// Muscle color mapping
+const muscleColors: Record<string, string> = {
+  'chest': '#EF4444',
+  'back': '#3B82F6',
+  'lats': '#3B82F6',
+  'shoulders': '#F59E0B',
+  'front-delts': '#F59E0B',
+  'side-delts': '#FBBF24',
+  'rear-delts': '#D97706',
+  'biceps': '#8B5CF6',
+  'triceps': '#A78BFA',
+  'forearms': '#C4B5FD',
+  'abs': '#6B7280',
+  'obliques': '#9CA3AF',
+  'quads': '#10B981',
+  'hamstrings': '#06B6D4',
+  'glutes': '#EC4899',
+  'calves': '#84CC16',
+  'traps': '#60A5FA',
+  'core': '#6B7280',
+  'arms': '#8B5CF6',
+  'legs': '#10B981',
+};
+
+function getColor(muscleId: string): string {
+  const id = muscleId.toLowerCase();
+  for (const [key, color] of Object.entries(muscleColors)) {
+    if (id.includes(key)) return color;
+  }
+  return '#E5E7EB';
+}
+
+function getMuscleColor(muscleId: string): string {
+  const id = muscleId.toLowerCase();
+  if (primary.some(m => m.toLowerCase().includes(id) || id.includes(m.toLowerCase()))) {
+    return getColor(id);
+  }
+  if (secondary.some(m => m.toLowerCase().includes(id) || id.includes(m.toLowerCase()))) {
+    const c = getColor(id);
+    return c + '99'; // opacity
+  }
+  return '';
+}
+---
+
+<div class="muscle-svg-wrap" style={`display:flex;gap:${view==='both'?'12px':'0'};align-items:center;justify-content:center;`}>
+  {(view === 'front' || view === 'both') && (
+    <svg width={w} height={h} viewBox="0 0 110 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Front body muscle diagram">
+      <!-- Head -->
+      <ellipse cx="55" cy="18" rx="14" ry="16" fill="#F5D0A9"/>
+      <!-- Neck -->
+      <rect x="49" y="31" width="12" height="10" rx="4" fill="#F5D0A9"/>
+      <!-- Torso -->
+      <path d="M32 42 Q20 55 18 80 L18 120 Q18 128 28 130 L82 130 Q92 128 92 120 L92 80 Q90 55 78 42 Z" fill="#F5D0A9"/>
+      <!-- Chest muscles -->
+      <path id="front-chest-left" d="M34 50 Q34 70 46 72 L52 72 L52 46 Q44 44 34 50 Z" 
+        fill={getMuscleColor('chest') || '#DDD5C8'} 
+        class={interactive ? 'muscle-region' : ''} 
+        data-muscle="chest"/>
+      <path id="front-chest-right" d="M76 50 Q76 70 64 72 L58 72 L58 46 Q66 44 76 50 Z" 
+        fill={getMuscleColor('chest') || '#DDD5C8'}
+        class={interactive ? 'muscle-region' : ''}
+        data-muscle="chest"/>
+      <!-- Chest divider line -->
+      <line x1="55" y1="44" x2="55" y2="72" stroke="#C4A882" stroke-width="0.5" opacity="0.6"/>
+      <!-- Abs -->
+      <rect id="front-abs-1" x="48" y="74" width="6" height="9" rx="2" fill={getMuscleColor('abs') || '#C8C0B8'}/>
+      <rect id="front-abs-2" x="56" y="74" width="6" height="9" rx="2" fill={getMuscleColor('abs') || '#C8C0B8'}/>
+      <rect id="front-abs-3" x="48" y="85" width="6" height="9" rx="2" fill={getMuscleColor('abs') || '#C8C0B8'}/>
+      <rect id="front-abs-4" x="56" y="85" width="6" height="9" rx="2" fill={getMuscleColor('abs') || '#C8C0B8'}/>
+      <rect id="front-abs-5" x="48" y="96" width="6" height="9" rx="2" fill={getMuscleColor('abs') || '#C8C0B8'}/>
+      <rect id="front-abs-6" x="56" y="96" width="6" height="9" rx="2" fill={getMuscleColor('abs') || '#C8C0B8'}/>
+      <!-- Obliques -->
+      <path d="M35 78 Q28 95 30 115 L38 115 Q36 98 44 85 Z" fill={getMuscleColor('obliques') || '#D4CCBF'} opacity="0.8"/>
+      <path d="M75 78 Q82 95 80 115 L72 115 Q74 98 66 85 Z" fill={getMuscleColor('obliques') || '#D4CCBF'} opacity="0.8"/>
+      <!-- Front Delts -->
+      <ellipse cx="26" cy="47" rx="9" ry="11" fill={getMuscleColor('front-delts') || getMuscleColor('shoulders') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="shoulders"/>
+      <ellipse cx="84" cy="47" rx="9" ry="11" fill={getMuscleColor('front-delts') || getMuscleColor('shoulders') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="shoulders"/>
+      <!-- Left Arm -->
+      <path d="M18 42 Q8 48 6 68 L10 86 Q14 96 18 96 L22 96 Q22 90 20 80 L18 58 Z" fill="#F5D0A9"/>
+      <!-- Left Bicep -->
+      <ellipse cx="14" cy="65" rx="6" ry="14" fill={getMuscleColor('biceps') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="biceps"/>
+      <!-- Left Forearm -->
+      <path d="M10 86 Q8 100 10 116 L16 116 L18 100 L18 86 Z" fill="#F0C896"/>
+      <!-- Right Arm -->
+      <path d="M92 42 Q102 48 104 68 L100 86 Q96 96 92 96 L88 96 Q88 90 90 80 L92 58 Z" fill="#F5D0A9"/>
+      <!-- Right Bicep -->
+      <ellipse cx="96" cy="65" rx="6" ry="14" fill={getMuscleColor('biceps') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="biceps"/>
+      <!-- Right Forearm -->
+      <path d="M100 86 Q102 100 100 116 L94 116 L92 100 L92 86 Z" fill="#F0C896"/>
+      <!-- Hips/Pelvis -->
+      <path d="M28 130 Q28 140 55 142 Q82 140 82 130 Z" fill="#E8C89C"/>
+      <!-- Quads Left -->
+      <path d="M28 130 Q22 148 24 170 L36 170 Q38 154 40 138 L36 130 Z" fill={getMuscleColor('quads') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="quads"/>
+      <!-- Quads Right -->
+      <path d="M82 130 Q88 148 86 170 L74 170 Q72 154 70 138 L74 130 Z" fill={getMuscleColor('quads') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="quads"/>
+      <!-- Inner quads -->
+      <path d="M40 138 Q44 158 44 170 L56 170 Q58 158 60 138 Q56 132 50 131 Q44 132 40 138 Z" fill={getMuscleColor('quads') || '#C8C0B8'}/>
+      <!-- Knee area -->
+      <ellipse cx="30" cy="173" rx="7" ry="5" fill="#F5D0A9"/>
+      <ellipse cx="80" cy="173" rx="7" ry="5" fill="#F5D0A9"/>
+      <!-- Calves front -->
+      <path d="M24 178 Q22 194 26 200 L36 200 Q38 194 36 178 Z" fill={getMuscleColor('calves') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="calves"/>
+      <path d="M86 178 Q88 194 84 200 L74 200 Q72 194 74 178 Z" fill={getMuscleColor('calves') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="calves"/>
+    </svg>
+  )}
+
+  {(view === 'back' || view === 'both') && (
+    <svg width={w} height={h} viewBox="0 0 110 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Back body muscle diagram">
+      <!-- Head back -->
+      <ellipse cx="55" cy="18" rx="14" ry="16" fill="#E8C08A"/>
+      <!-- Neck -->
+      <rect x="49" y="31" width="12" height="10" rx="4" fill="#E8C08A"/>
+      <!-- Torso back -->
+      <path d="M32 42 Q20 55 18 80 L18 120 Q18 128 28 130 L82 130 Q92 128 92 120 L92 80 Q90 55 78 42 Z" fill="#EDCFA0"/>
+      <!-- Traps -->
+      <path d="M42 36 Q55 44 68 36 L72 42 Q55 54 38 42 Z" fill={getMuscleColor('traps') || '#D4CCBF'} class={interactive?'muscle-region':''} data-muscle="traps"/>
+      <!-- Lats -->
+      <path d="M22 60 Q18 80 22 105 L38 105 Q40 85 42 68 Q34 58 22 60 Z" fill={getMuscleColor('lats') || getMuscleColor('back') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="back"/>
+      <path d="M88 60 Q92 80 88 105 L72 105 Q70 85 68 68 Q76 58 88 60 Z" fill={getMuscleColor('lats') || getMuscleColor('back') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="back"/>
+      <!-- Rhomboids / Mid back -->
+      <path d="M42 55 Q55 60 68 55 L66 90 Q55 95 44 90 Z" fill={getMuscleColor('back') || '#CABCAC'}/>
+      <!-- Lower back -->
+      <path d="M44 95 Q55 100 66 95 L66 125 L44 125 Z" fill="#C8B8A0" opacity="0.6"/>
+      <!-- Rear Delts -->
+      <ellipse cx="24" cy="47" rx="10" ry="11" fill={getMuscleColor('rear-delts') || getMuscleColor('shoulders') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="shoulders"/>
+      <ellipse cx="86" cy="47" rx="10" ry="11" fill={getMuscleColor('rear-delts') || getMuscleColor('shoulders') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="shoulders"/>
+      <!-- Arms back -->
+      <path d="M18 42 Q8 48 6 68 L10 86 Q14 96 18 96 L22 96 Q22 90 20 80 L18 58 Z" fill="#EDCFA0"/>
+      <!-- Triceps -->
+      <ellipse cx="14" cy="66" rx="6" ry="14" fill={getMuscleColor('triceps') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="triceps"/>
+      <path d="M92 42 Q102 48 104 68 L100 86 Q96 96 92 96 L88 96 Q88 90 90 80 L92 58 Z" fill="#EDCFA0"/>
+      <ellipse cx="96" cy="66" rx="6" ry="14" fill={getMuscleColor('triceps') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="triceps"/>
+      <!-- Forearms back -->
+      <path d="M10 86 Q8 100 10 116 L16 116 L18 100 L18 86 Z" fill="#E0B880"/>
+      <path d="M100 86 Q102 100 100 116 L94 116 L92 100 L92 86 Z" fill="#E0B880"/>
+      <!-- Glutes -->
+      <path d="M28 128 Q28 145 40 150 Q50 153 55 152 Q60 153 70 150 Q82 145 82 128 Z" fill={getMuscleColor('glutes') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="glutes"/>
+      <!-- Glute crease -->
+      <line x1="55" y1="128" x2="55" y2="152" stroke="#C4A882" stroke-width="0.7" opacity="0.5"/>
+      <!-- Hamstrings -->
+      <path d="M28 152 Q22 165 24 182 L36 182 Q40 168 42 154 Z" fill={getMuscleColor('hamstrings') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="hamstrings"/>
+      <path d="M82 152 Q88 165 86 182 L74 182 Q70 168 68 154 Z" fill={getMuscleColor('hamstrings') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="hamstrings"/>
+      <!-- Inner hamstrings -->
+      <path d="M42 154 Q46 170 48 182 L62 182 Q64 170 68 154 Q62 150 55 150 Q48 150 42 154 Z" fill={getMuscleColor('hamstrings') || '#CABCAC'}/>
+      <!-- Calves back -->
+      <path d="M24 184 Q22 196 26 200 L36 200 Q38 196 36 184 Z" fill={getMuscleColor('calves') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="calves"/>
+      <path d="M86 184 Q88 196 84 200 L74 200 Q72 196 74 184 Z" fill={getMuscleColor('calves') || '#DDD5C8'} class={interactive?'muscle-region':''} data-muscle="calves"/>
+    </svg>
+  )}
+</div>
+
+{interactive && (
+  <script>
+    document.querySelectorAll('.muscle-region').forEach(el => {
+      el.addEventListener('click', () => {
+        const muscle = el.getAttribute('data-muscle');
+        if (muscle) window.location.href = `/muscles/${muscle}`;
+      });
+    });
+  </script>
+)}

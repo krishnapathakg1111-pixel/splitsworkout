@@ -1,0 +1,36 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { articleLd } from '../../lib/seo';
+const desc = "The exact formulas, activity multipliers, goal adjustments and unit conversions used by the SplitsWorkout TDEE, macros and BMI calculators, with their limitations.";
+---
+<Layout title="Calculator Methodology: TDEE, Macros & BMI | SplitsWorkout" description={desc} canonical="/methodology/calculators" currentPage="about" ogType="article" ogImage="/og/default.png"
+  breadcrumbs={[{ name: 'Methodology', url: '/methodology' }, { name: 'Calculators' }]}
+  jsonLd={articleLd({ headline: "Calculator Methodology", description: desc, path: "/methodology/calculators" })}>
+<div class="page-header"><div class="page-header-inner"><h1 class="page-title">Calculator Methodology</h1><p class="page-desc">The formulas behind each calculator, written out so you can check the maths.</p></div></div>
+<div class="seo-page">
+
+  <h2>TDEE and maintenance calories</h2>
+  <p>We estimate basal metabolic rate (BMR) with the Mifflin-St Jeor equation, then multiply by an activity factor to estimate total daily energy expenditure (TDEE).</p>
+  <div class="seo-scroll"><table class="seo-table"><tbody>
+    <tr><td>Men</td><td>BMR = 10 × weight (kg) + 6.25 × height (cm) − 5 × age + 5</td></tr>
+    <tr><td>Women</td><td>BMR = 10 × weight (kg) + 6.25 × height (cm) − 5 × age − 161</td></tr>
+    <tr><td>Activity factors</td><td>Sedentary 1.2 · Light 1.375 · Moderate 1.55 · Very active 1.725 · Extra active 1.9</td></tr>
+    <tr><td>TDEE page targets</td><td>Mild cut −200 · Aggressive cut −400 · Lean bulk +250 · Aggressive bulk +400 kcal/day</td></tr>
+  </tbody></table></div>
+  <h2>Macros</h2>
+  <p>The macros calculator starts from the same TDEE and applies a goal factor: × 1.12 to build muscle, × 1.00 to maintain and × 0.82 to lose fat. Protein is set at 2.0 g per kg of bodyweight (2.2 g/kg when losing fat) and fat at 1.0 g per kg. Carbohydrates fill the remaining calories at 4 kcal per gram. Protein and carbohydrates provide 4 kcal per gram and fat 9 kcal per gram.</p>
+  <h2>BMI</h2>
+  <p>BMI = weight (kg) ÷ height (m)². We use the standard adult categories: under 18.5 underweight, 18.5–24.9 normal, 25–29.9 overweight, 30 and above obese.</p>
+  <h2>Unit conversions</h2>
+  <p>Pounds are converted at about 2.205 lb per kilogram and feet-and-inches at 2.54 cm per inch. Switching units in a calculator converts your current values for you.</p>
+  <h2>Limitations</h2>
+  <ul>
+    <li>Equations estimate averages; individual energy expenditure varies by 10–15% or more.</li>
+    <li>Activity level is the biggest source of error — most people overestimate it.</li>
+    <li>The macros calculator displays at least 50 g of carbohydrate, which can nudge totals slightly above target at very low calories.</li>
+    <li>BMI does not distinguish muscle from fat and is unreliable for athletes, older adults and under-18s.</li>
+    <li>These tools are not medical advice. Use them as a starting point and adjust from real-world results.</li>
+  </ul>
+  <p>Try them: <a href="/calculators/tdee">TDEE calculator</a>, <a href="/calculators/macros">macros calculator</a>, <a href="/calculators/bmi">BMI calculator</a>.</p>
+</div>
+</Layout>

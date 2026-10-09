@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Mascot from '../components/Mascot.astro';
+import StatCards from '../components/StatCards.astro';
+import CTA from '../components/CTA.astro';
+import { articleLd } from '../lib/seo';
+const desc = 'SplitsWorkout is a free platform for choosing a workout split, learning exercises and muscles, building a plan and estimating calorie needs. Meet Professor Splits.';
+---
+<Layout title="About SplitsWorkout: Free Workout Split & Planning Tools" description={desc}
+  canonical="/about" currentPage="about" ogImage="/og/default.png"
+  breadcrumbs={[{ name: 'About' }]}
+  jsonLd={articleLd({ headline: 'About SplitsWorkout', description: desc, path: '/about' })}>
+<div class="page-header" style="background:linear-gradient(135deg,var(--accent-bg) 0%,var(--bg) 100%);">
+  <div class="page-header-inner">
+    <h1 class="page-title">About SplitsWorkout</h1>
+    <p class="page-desc">Other fitness sites explain workout splits. SplitsWorkout helps you choose one, build it, analyse it and take it with you.</p>
+  </div>
+</div>
+
+<div style="max-width:900px;margin:0 auto;padding:40px 24px 0;">
+  <div style="background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--radius-2xl);padding:28px;margin-bottom:32px;display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;">
+    <div style="text-align:center;"><Mascot mood="happy" size="lg" /><div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:0.9rem;color:var(--accent);margin-top:6px;">Professor Splits</div></div>
+    <div>
+      <h2 style="font-size:1.3rem;font-weight:800;margin:0 0 8px;">Meet Professor Splits</h2>
+      <p style="margin:0;color:var(--text-2);line-height:1.75;font-size:0.9rem;">Our mascot is the fitness professor who makes training simple and clear. He turns up around the site with tips, but the recommendations come from the documented rules on our <a href="/methodology">methodology pages</a>.</p>
+    </div>
+  </div>
+  <StatCards />
+</div>
+
+<div class="seo-page">
+  <h2>What SplitsWorkout does</h2>
+  <p>SplitsWorkout connects the pieces of planning a workout that are usually scattered across different sites. You can <a href="/workout-split-finder">find a workout split</a> that fits your schedule, goal and experience, <a href="/workout-planner">build it in the planner</a>, look up any exercise in the <a href="/exercises">exercise library</a>, learn how each muscle is trained in the <a href="/muscles">muscle guide</a>, and estimate your calories and macros with the <a href="/calculators">calculators</a>.</p>
+  <h2>How we approach content</h2>
+  <p>We try to give the most useful answer and the clearest next step. Where training science has a consensus we say so; where it does not — for example the ideal training frequency — we explain the trade-offs instead of pretending one answer fits everyone. We do not invent studies, experts or statistics.</p>
+  <h2>Who writes it</h2>
+  <p>Content is produced by the SplitsWorkout editorial team using software tools for data processing and drafting. We are not doctors, dietitians or registered coaches, and nothing here is medical advice. See how recommendations and calculators work on the <a href="/methodology">methodology pages</a>.</p>
+  <h2>Advertising and independence</h2>
+  <p>SplitsWorkout is free to use and may be supported by display advertising in the future. Advertising never changes our recommendations, and we do not accept payment to rank a split or an exercise.</p>
+  <h2>Corrections and feedback</h2>
+  <p>Spotted a mistake or want an exercise added? Please <a href="/contact">contact us</a>. Corrections are reviewed and the page updated.</p>
+  <CTA variant="generic" />
+</div>
+</Layout>

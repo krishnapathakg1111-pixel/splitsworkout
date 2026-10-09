@@ -1,0 +1,56 @@
+---
+interface Props {
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'full' | 'compact' | 'icon' | 'wordmark';
+  dark?: boolean;
+  class?: string;
+}
+const { size = 'md', variant = 'full', dark = false, class: cls = '' } = Astro.props;
+const heights = { sm: 28, md: 36, lg: 48 };
+const h = heights[size];
+---
+
+{variant === 'full' && (
+  <a href="/" class={`logo-wrap ${cls}`} aria-label="SplitsWorkout — Home">
+    <img
+      src="/logo.webp"
+      alt="SplitsWorkout Logo"
+      width={Math.round(h * 3)}
+      height={h}
+      style={`height:${h}px;width:auto;display:block;object-fit:contain;`}
+    />
+  </a>
+)}
+
+{variant === 'compact' && (
+  <a href="/" class={`logo-wrap ${cls}`} aria-label="SplitsWorkout — Home">
+    <img
+      src="/logo.webp"
+      alt="SplitsWorkout"
+      width={Math.round(h * 3)}
+      height={h}
+      style={`height:${h}px;width:auto;display:block;object-fit:contain;max-width:220px;`}
+    />
+  </a>
+)}
+
+{(variant === 'icon' || variant === 'wordmark') && (
+  <a href="/" class={`logo-wrap ${cls}`} aria-label="SplitsWorkout — Home">
+    <img
+      src="/logo.webp"
+      alt="SplitsWorkout"
+      width={Math.round(h * 3)}
+      height={h}
+      style={`height:${h}px;width:auto;display:block;`}
+    />
+  </a>
+)}
+
+<style>
+  .logo-wrap {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+</style>

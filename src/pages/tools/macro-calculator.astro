@@ -1,0 +1,114 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout
+  title="Macro Calculator — Protein, Carbs & Fat Targets | SplitsWorkout"
+  description="Free macro calculator. Get your ideal protein, carbohydrate, and fat targets for muscle building, fat loss, or maintenance based on your body stats and goals."
+  canonical="/tools/macro-calculator"
+  currentPage="tools"
+>
+<div class="page-header">
+  <div class="page-header-inner">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="breadcrumb-sep">›</span>
+      <span>Macro Calculator</span>
+    </nav>
+    <h1 class="page-title">Macro Calculator</h1>
+    <p class="page-desc">Calculate your ideal daily protein, carbohydrate, and fat targets based on your stats, goal, and activity level.</p>
+  </div>
+</div>
+<div style="max-width:640px;margin:0 auto;padding:40px 24px 64px;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-2xl);padding:32px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+      <div>
+        <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:6px;">Age</label>
+        <input type="number" id="age" value="25" class="search-input" style="height:44px;max-width:100%;" />
+      </div>
+      <div>
+        <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:6px;">Sex</label>
+        <select id="sex" class="search-input" style="height:44px;max-width:100%;"><option value="male">Male</option><option value="female">Female</option></select>
+      </div>
+      <div>
+        <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:6px;">Height (cm)</label>
+        <input type="number" id="height" value="175" class="search-input" style="height:44px;max-width:100%;" />
+      </div>
+      <div>
+        <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:6px;">Weight (kg)</label>
+        <input type="number" id="weight" value="75" class="search-input" style="height:44px;max-width:100%;" />
+      </div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:6px;">Activity Level</label>
+      <select id="activity" class="search-input" style="height:44px;width:100%;"><option value="1.2">Sedentary</option><option value="1.375">Light (1–3 days/week)</option><option value="1.55" selected>Moderate (3–5 days/week)</option><option value="1.725">Active (6–7 days/week)</option><option value="1.9">Very Active</option></select>
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:6px;">Goal</label>
+      <div style="display:flex;gap:8px;">
+        {['Build Muscle','Maintain','Lose Fat'].map(g => (
+          <button class={`filter-btn${g==='Maintain'?' active':''}`} data-goal={g} style="flex:1;">{g}</button>
+        ))}
+      </div>
+    </div>
+    <button id="calc-btn" class="btn btn-primary" style="width:100%;">Calculate My Macros →</button>
+    <div id="result" style="display:none;margin-top:20px;"></div>
+  </div>
+  <div style="margin-top:24px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-xl);padding:20px;">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:10px;">Macro Recommendations</h2>
+    <p style="font-size:0.8rem;color:var(--text-2);line-height:1.7;margin-bottom:8px;"><strong>Protein:</strong> 1.6–2.2g per kg of bodyweight is the general range for muscle building. Higher end if cutting calories.</p>
+    <p style="font-size:0.8rem;color:var(--text-2);line-height:1.7;margin-bottom:8px;"><strong>Fat:</strong> 0.8–1.2g per kg. Essential for hormone production. Never drop below 0.6g/kg.</p>
+    <p style="font-size:0.8rem;color:var(--text-2);line-height:1.7;"><strong>Carbohydrates:</strong> Fill the remaining calories. Fuel for training and performance.</p>
+  </div>
+</div>
+<script>
+let selectedGoal = 'Maintain';
+document.querySelectorAll('[data-goal]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-goal]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedGoal = btn.getAttribute('data-goal') || 'Maintain';
+  });
+});
+document.getElementById('calc-btn')?.addEventListener('click', () => {
+  const age = parseFloat((document.getElementById('age') as HTMLInputElement).value);
+  const sex = (document.getElementById('sex') as HTMLSelectElement).value;
+  const h = parseFloat((document.getElementById('height') as HTMLInputElement).value);
+  const w = parseFloat((document.getElementById('weight') as HTMLInputElement).value);
+  const act = parseFloat((document.getElementById('activity') as HTMLSelectElement).value);
+  if (!age||!h||!w) return;
+  const bmr = sex==='male' ? 10*w+6.25*h-5*age+5 : 10*w+6.25*h-5*age-161;
+  let tdee = Math.round(bmr*act);
+  const goalMods = {'Build Muscle':1.12,'Maintain':1,'Lose Fat':0.82};
+  const calories = Math.round(tdee*(goalMods[selectedGoal]||1));
+  const protein = Math.round(w * (selectedGoal==='Lose Fat' ? 2.2 : 2.0));
+  const fat = Math.round(w * 1.0);
+  const carbs = Math.round((calories - protein*4 - fat*9) / 4);
+  const r = document.getElementById('result');
+  if (!r) return;
+  r.style.display = 'block';
+  r.innerHTML = `
+    <div style="text-align:center;background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--radius-xl);padding:16px;margin-bottom:16px;">
+      <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent-hover);margin-bottom:4px;">Daily Target (${selectedGoal})</div>
+      <div style="font-family:'Poppins',sans-serif;font-size:2.5rem;font-weight:900;color:var(--accent);">${calories.toLocaleString()} <span style="font-size:1rem;">cal</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+      <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:var(--radius-lg);padding:16px;text-align:center;">
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#1D4ED8;margin-bottom:4px;">Protein</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:1.5rem;font-weight:800;color:#1D4ED8;">${protein}g</div>
+        <div style="font-size:0.7rem;color:#60A5FA;">${protein*4} kcal</div>
+      </div>
+      <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:var(--radius-lg);padding:16px;text-align:center;">
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#15803D;margin-bottom:4px;">Carbs</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:1.5rem;font-weight:800;color:#15803D;">${Math.max(carbs,50)}g</div>
+        <div style="font-size:0.7rem;color:#4ADE80;">${Math.max(carbs,50)*4} kcal</div>
+      </div>
+      <div style="background:#FFF7ED;border:1px solid #FDBA74;border-radius:var(--radius-lg);padding:16px;text-align:center;">
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#C2410C;margin-bottom:4px;">Fat</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:1.5rem;font-weight:800;color:#C2410C;">${fat}g</div>
+        <div style="font-size:0.7rem;color:#FB923C;">${fat*9} kcal</div>
+      </div>
+    </div>
+    <p style="font-size:0.72rem;color:var(--text-4);text-align:center;margin-top:10px;">These are starting estimates. Adjust based on your actual progress and hunger.</p>
+  `;
+});
+</script>
+</Layout>

@@ -1,0 +1,189 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CTA from '../../components/CTA.astro';
+import { articleLd, SPLIT_NAMES } from '../../lib/seo';
+import MuscleSVG from '../../components/MuscleSVG.astro';
+import { getSplit } from '../../data/splits';
+
+const split = getSplit('arnold-split')!;
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": split.name,
+  "description": split.description,
+  "author": { "@type": "Organization", "name": "SplitsWorkout" }
+});
+
+function isRest(focus: string): boolean { return focus.toLowerCase().includes('rest'); }
+---
+
+<Layout
+  title="Arnold Split Workout: 6-Day Routine & Guide | SplitsWorkout"
+  description="Arnold split guide: the 6-day chest & back, shoulders & arms, and legs routine — schedule, exercises, volume, and who is likely to recover from it."
+  canonical="/workout-splits/arnold-split"
+  currentPage="splits"
+  ogType="article"
+  ogImage="/og/splits.png"
+  breadcrumbs={[{ name: 'Workout Splits', url: '/workout-splits' }, { name: 'Arnold Split' }]}
+  jsonLd={articleLd({ headline: split.name, description: split.description, path: '/workout-splits/arnold-split', image: '/og/splits.png' })}
+>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <h1 class="page-title">{split.name}</h1>
+    <p class="page-desc">{split.longDescription}</p>
+    <div class="page-meta">
+      <span class={`tag diff-${split.difficulty.toLowerCase()}`}>{split.difficulty}</span>
+      <span class="tag tag-green">📅 {split.daysPerWeek} days/week</span>
+      <span class="tag tag-gray">⏱ {split.sessionDuration}</span>
+    </div>
+  </div>
+</div>
+
+<div class="content-wrap">
+  <article class="content-article">
+    <div class="prose">
+      <!-- Professor Splits reading mascot -->
+      <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-xl);padding:20px;margin-bottom:28px;display:flex;align-items:flex-start;gap:16px;">
+        <div style="width:80px;height:80px;background-image:url('/mascot-expressions-2.webp');background-size:300% 200%;background-position:33% 0%;background-repeat:no-repeat;flex-shrink:0;" role="img" aria-label="Professor Splits reading"></div>
+        <div>
+          <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.875rem;color:var(--accent);margin-bottom:4px;">📚 Professor Splits' Guide</div>
+          <p style="font-size:0.85rem;color:var(--text-2);line-height:1.7;margin:0;">The Arnold split packs a lot of work into each week. Treat the second pass of each muscle as the lighter one, and take a lighter week every few weeks so fatigue does not build up.</p>
+        </div>
+      </div>
+
+
+
+      <h2>Weekly Schedule</h2>
+      <div class="schedule-grid" style="grid-template-columns:repeat(7,1fr);">
+        {split.schedule.map(day => {
+          const rest = isRest(day.focus);
+          return (
+            <div class={rest ? 'schedule-day' : 'schedule-day training'}>
+              <div class="schedule-day-name">{day.day.slice(0,3).toUpperCase()}</div>
+              <div class="schedule-day-focus">{rest ? 'Rest' : day.focus.split('(')[0].trim()}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      <h2>Overview</h2>
+      <p>{split.overview}</p>
+      <p>{split.whoIsItFor}</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;">
+        <div style="background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:var(--radius-lg);padding:20px;">
+          <div style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--accent-hover);margin-bottom:12px;font-size:0.9rem;">✅ Pros</div>
+          <ul style="list-style:none;padding:0;margin:0;">
+            {split.pros.map(p => <li style="font-size:0.85rem;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--accent-border);">{p}</li>)}
+          </ul>
+        </div>
+        <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+          <div style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--text-2);margin-bottom:12px;font-size:0.9rem;">⚠️ Cons</div>
+          <ul style="list-style:none;padding:0;margin:0;">
+            {split.cons.map(c => <li style="font-size:0.85rem;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--border);">{c}</li>)}
+          </ul>
+        </div>
+      </div>
+
+      <h2>The Programme</h2>
+      {split.schedule.filter(d => d.exercises.length > 0).map(day => (
+        <div style="margin-bottom:24px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <div style="padding:6px 14px;border-radius:var(--radius);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.875rem;background:var(--accent-bg);color:var(--accent-hover);border:1px solid var(--accent-border);">{day.day}</div>
+            <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.05rem;color:var(--text);">{day.focus}</div>
+          </div>
+          <table class="exercise-table">
+            <thead><tr><th>Exercise</th><th>Sets</th><th>Reps</th><th>Rest</th></tr></thead>
+            <tbody>
+              {day.exercises.map(ex => (
+                <tr>
+                  <td class="ex-name"><a href={"/exercises/"+ex.slug}>{ex.name}</a>{ex.notes && <div style="font-size:0.72rem;color:var(--text-3);margin-top:2px;">{ex.notes}</div>}</td>
+                  <td><span class="badge-pill">{ex.sets}</span></td>
+                  <td><span class="badge-pill">{ex.reps}</span></td>
+                  <td>{ex.rest}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+
+      <h2>Muscle Coverage</h2>
+      <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;margin:16px 0;">
+        {split.muscleCoverage.map(m => {
+          const maxSets = Math.max(...split.muscleCoverage.map(x => x.setsPerWeek));
+          const pct = Math.round(m.setsPerWeek / maxSets * 100);
+          const colors = {'Chest':'#EF4444','Back':'#3B82F6','Shoulders':'#F59E0B','Biceps':'#8B5CF6','Triceps':'#A78BFA','Quads':'#10B981','Hamstrings':'#06B6D4','Glutes':'#EC4899','Calves':'#84CC16','Core':'#6B7280'};
+          const color = (colors as any)[m.muscle] || '#22C55E';
+          return (
+            <div class="coverage-row">
+              <div class="coverage-label">{m.muscle}</div>
+              <div class="coverage-bar-track">
+                <div class="coverage-bar-fill" style={`width:${pct}%;background:${color};`}></div>
+              </div>
+              <div class="coverage-sets">{m.setsPerWeek} sets</div>
+            </div>
+          );
+        })}
+      </div>
+
+      <h2>Training schedules that fit this split</h2>
+      <p>How you run this split depends on how many days you can train. These pages show sample weeks and alternatives for each schedule, and the <a href="/workout-split-finder">Split Finder</a> can check whether it suits your goal and experience.</p>
+      <div class="seo-chips"><a class="seo-chip" href="/workout-splits/6-day">6-day version</a><a class="seo-chip" href="/workout-splits/5-day">5-day version</a><a class="seo-chip" href="/workout-splits/3-day">3-day version</a><a class="seo-chip" href="/workout-splits/arnold-vs-ppl">Arnold vs PPL</a><a class="seo-chip" href="/workout-splits/best-workout-split">Compare all splits</a></div>
+      <p>Explore the muscles this split trains in the <a href="/muscles">muscle guide</a>, or browse the <a href="/exercises">exercise library</a> for alternatives to any lift above.</p>
+      <CTA variant="split" slug={split.slug} />
+
+      <h2>Frequently Asked Questions</h2>
+      {split.faqs.map(faq => (
+        <div class="faq-item">
+          <div class="faq-q"><span>{faq.question}</span><span class="faq-icon">▾</span></div>
+          <div class="faq-a">{faq.answer}</div>
+        </div>
+      ))}
+
+    </div>
+  </article>
+
+  <aside class="content-sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-card-title">Split Overview</div>
+      <div class="sidebar-stat"><span>Days/Week</span><strong>{split.daysPerWeek}</strong></div>
+      <div class="sidebar-stat"><span>Session Length</span><strong>{split.sessionDuration}</strong></div>
+      <div class="sidebar-stat"><span>Difficulty</span><strong>{split.difficulty}</strong></div>
+      <div class="sidebar-stat"><span>Equipment</span><strong>{split.equipment.join(', ')}</strong></div>
+    </div>
+
+    <div class="sidebar-card" style="text-align:center;">
+      <div class="sidebar-card-title">Muscles Trained</div>
+      <MuscleSVG primary={['chest','back']} secondary={['shoulders','arms','quads','hamstrings','glutes']} size="md" view="both" />
+    </div>
+
+    {(split.relatedSplits || []).length > 0 && (
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Related Splits</div>
+        {(split.relatedSplits || []).slice(0,4).map(s => (
+          <a href={"/workout-splits/"+s} class="sidebar-link">
+            <span>{SPLIT_NAMES[s] ?? (/^\d-day$/.test(s) ? s[0] + '-Day Workout Split' : s)}</span>
+            <span style="color:var(--accent);">→</span>
+          </a>
+        ))}
+      </div>
+    )}
+
+    <div style="background:linear-gradient(135deg,var(--accent),var(--accent-hover));border-radius:var(--radius-xl);padding:20px;text-align:center;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">📋</div>
+      <div style="font-family:'Poppins',sans-serif;font-weight:700;color:#fff;margin-bottom:6px;">Build This Workout</div>
+      <p style="font-size:0.8rem;color:rgba(255,255,255,0.85);margin-bottom:14px;">Customize this split in the workout builder.</p>
+      <a href={`/workout-planner?split=${split.slug}`} class="btn" style="background:#fff;color:var(--accent);border-color:#fff;width:100%;justify-content:center;font-weight:700;">Open Builder →</a>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-card-title">Free Tools</div>
+      <a href="/calculators/tdee" class="sidebar-link"><span>🔥 TDEE Calculator</span><span style="color:var(--accent);font-size:0.75rem;">Free</span></a>
+      <a href="/calculators/macros" class="sidebar-link"><span>🥩 Macro Calculator</span><span style="color:var(--accent);font-size:0.75rem;">Free</span></a>
+    </div>
+  </aside>
+</div>
+
+</Layout>

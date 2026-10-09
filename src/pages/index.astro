@@ -1,0 +1,560 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MuscleSVG from '../components/MuscleSVG.astro';
+import SplitFinder from '../components/SplitFinder.astro';
+import CTA from '../components/CTA.astro';
+import { exercises, getExercise } from '../data/exercises';
+import { splits } from '../data/splits';
+import { dayPlans } from '../data/dayPlans';
+import { visibleOnly } from '../lib/seo';
+const libCount = visibleOnly(exercises).length;
+
+const featured = ['barbell-bench-press', 'squat', 'lat-pulldown', 'overhead-press'].map((s) => getExercise(s)!).filter(Boolean);
+const muscleGroups = [
+  { name: 'Chest', slug: 'chest', color: '#EF4444' }, { name: 'Back', slug: 'back', color: '#3B82F6' },
+  { name: 'Shoulders', slug: 'shoulders', color: '#F59E0B' }, { name: 'Biceps', slug: 'biceps', color: '#8B5CF6' },
+  { name: 'Triceps', slug: 'triceps', color: '#A78BFA' }, { name: 'Quads', slug: 'quads', color: '#10B981' },
+  { name: 'Hamstrings', slug: 'hamstrings', color: '#06B6D4' }, { name: 'Glutes', slug: 'glutes', color: '#EC4899' },
+  { name: 'Abs', slug: 'abs', color: '#6B7280' }, { name: 'Calves', slug: 'calves', color: '#84CC16' },
+];
+const desc = 'Find a workout split that fits your goals, schedule, experience and equipment. Explore hundreds of exercises, build your routine and plan every training day for free.';
+---
+
+<Layout
+  title="Workout Splits, Planner & Exercise Library | SplitsWorkout"
+  description={desc}
+  canonical="/"
+  currentPage="home"
+  ogImage="/og/default.png"
+>
+
+<!-- HERO -->
+<section class="hero-section">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge"><span class="hero-badge-dot">Find · Learn · Build · Analyze · Train</span></div>
+
+      <h1 class="hero-h1">Find the Best Workout Split for You — <span class="hero-green">Then Build Your Perfect Workout</span></h1>
+
+      <p class="hero-sub">Find a workout split that fits your goals, schedule, experience and equipment. Explore hundreds of exercises, build your routine, analyse muscle coverage and plan every training day for free.</p>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+        <a href="#split-finder" class="btn btn-primary btn-lg">Find My Split</a>
+        <a href="/workout-planner" class="btn btn-secondary btn-lg">Build a Workout</a>
+      </div>
+
+      <div class="hero-search-wrap">
+        <form action="/exercises" method="get" role="search" style="display:contents;">
+          <div class="hero-search-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#9CA3AF;flex-shrink:0;" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" name="q" placeholder="Search exercises, e.g. lat pulldown" class="hero-search-input" aria-label="Search exercises" />
+            <button type="submit" class="hero-search-btn" aria-label="Search exercises">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="hero-trending">
+        <span style="font-size:0.75rem;font-weight:600;color:var(--text-3);">Popular:</span>
+        <a href="/workout-splits/push-pull-legs" class="trending-tag">Push Pull Legs</a>
+        <a href="/workout-splits/upper-lower" class="trending-tag">Upper Lower</a>
+        <a href="/workout-splits/full-body" class="trending-tag">Full Body</a>
+        <a href="/exercises/barbell-bench-press" class="trending-tag">Bench Press</a>
+        <a href="/exercises/squat" class="trending-tag">Squat</a>
+        <a href="/calculators/tdee" class="trending-tag">TDEE Calculator</a>
+      </div>
+
+      <div class="hero-nav-icons">
+        <a href="/exercises" class="hero-nav-icon"><span class="hero-nav-emoji" aria-hidden="true">🏋️</span><span class="hero-nav-label">{libCount}<br>Exercises</span></a>
+        <a href="/workout-splits" class="hero-nav-icon"><span class="hero-nav-emoji" aria-hidden="true">📋</span><span class="hero-nav-label">Workout<br>Splits</span></a>
+        <a href="/muscles" class="hero-nav-icon"><span class="hero-nav-emoji" aria-hidden="true">💪</span><span class="hero-nav-label">Muscle<br>Guide</span></a>
+        <a href="/workout-planner" class="hero-nav-icon"><span class="hero-nav-emoji" aria-hidden="true">🔨</span><span class="hero-nav-label">Workout<br>Planner</span></a>
+        <a href="/calculators" class="hero-nav-icon"><span class="hero-nav-emoji" aria-hidden="true">🧮</span><span class="hero-nav-label">Fitness<br>Calculators</span></a>
+        <a href="/guides" class="hero-nav-icon"><span class="hero-nav-emoji" aria-hidden="true">📖</span><span class="hero-nav-label">Split<br>Guides</span></a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-label hero-label-top" aria-hidden="true">
+        <svg width="100" height="36" viewBox="0 0 100 36" fill="none"><path d="M10 28 Q 30 10 80 12" stroke="#22C55E" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M78 8 L80 12 L76 14" stroke="#22C55E" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.875rem;color:#22C55E;position:absolute;top:2px;left:12px;">Smarter Workouts</span>
+      </div>
+      <div class="hero-mascot">
+        <img src="/mascot-main.webp" alt="Professor Splits, the SplitsWorkout owl mascot, holding a dumbbell and clipboard" class="hero-mascot-img" width="280" height="187" loading="eager" fetchpriority="high" />
+      </div>
+      <div class="hero-checklist">
+        {['Structured plans', 'Visual learning', 'Muscle coverage analysis', 'For all fitness levels'].map((item) => (
+          <div class="hero-check-item"><div class="hero-check-dot"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></div><span>{item}</span></div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 1. FIND YOUR BEST WORKOUT SPLIT -->
+<section id="split-finder-section" style="padding:56px 24px;background:var(--bg-2);border-bottom:1px solid var(--border);">
+  <div style="max-width:1000px;margin:0 auto;">
+    <div class="section-eyebrow">Split Finder</div>
+    <h2 class="section-title" style="margin-bottom:8px;">Find Your Best Workout Split</h2>
+    <p style="color:var(--text-2);max-width:620px;margin:0 0 24px;font-size:0.95rem;line-height:1.75;">Tell us your days, goal and experience and get a ranked recommendation with a sample week. Then send it straight to the workout planner. <a href="/workout-splits/best-workout-split" style="color:var(--accent-hover);font-weight:600;">How to choose a split →</a></p>
+    <div id="split-finder-anchor"><SplitFinder /></div>
+  </div>
+</section>
+
+<!-- 2. WHAT SPLIT IS RIGHT FOR YOU -->
+<section style="padding:56px 24px;background:var(--bg);border-bottom:1px solid var(--border);">
+  <div style="max-width:1000px;margin:0 auto;">
+    <h2 class="section-title">What Workout Split Is Right for You?</h2>
+    <p style="color:var(--text-2);max-width:680px;font-size:0.95rem;line-height:1.75;margin-bottom:20px;">The number of days you can really train decides most of it. Pick your schedule to see the best structures and a sample week.</p>
+    <div class="seo-scroll"><table class="seo-table">
+      <thead><tr><th>Days a week</th><th>Usually best</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>2 days</td><td>Full body A/B</td><td><a href="/workout-splits/2-day">2-day split →</a></td></tr>
+        <tr><td>3 days</td><td>Full body, or upper/lower/full body</td><td><a href="/workout-splits/3-day">3-day split →</a></td></tr>
+        <tr><td>4 days</td><td>Upper / lower</td><td><a href="/workout-splits/4-day">4-day split →</a></td></tr>
+        <tr><td>5 days</td><td>PPL + upper/lower hybrid, or body-part</td><td><a href="/workout-splits/5-day">5-day split →</a></td></tr>
+        <tr><td>6 days</td><td>Push pull legs, or Arnold</td><td><a href="/workout-splits/6-day">6-day split →</a></td></tr>
+        <tr><td>7 days</td><td>6 lifting days + 1 rest</td><td><a href="/workout-splits/7-day">7-day split →</a></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- 8. COMPARE WORKOUT SPLITS -->
+<section class="splits-bar-section" aria-label="Workout split types">
+  <div class="splits-bar">
+    {[
+      { label: 'Push Pull Legs', sub: 'Push, pull and leg days — 3 to 6 days', href: '/workout-splits/push-pull-legs', color: '#EF4444' },
+      { label: 'Upper Lower', sub: 'Upper and lower body — ideal for 4 days', href: '/workout-splits/upper-lower', color: '#3B82F6' },
+      { label: 'Full Body', sub: 'Whole body each session — 2 to 3 days', href: '/workout-splits/full-body', color: '#22C55E' },
+      { label: 'Bro Split', sub: 'One muscle group per day — 5 days', href: '/workout-splits/bro-split', color: '#F59E0B' },
+      { label: 'Arnold Split', sub: 'Chest & back, shoulders & arms, legs — 6 days', href: '/workout-splits/arnold-split', color: '#8B5CF6' },
+    ].map((s) => (
+      <a href={s.href} class="splits-bar-item" style={`border-top:3px solid ${s.color};`}>
+        <div style={`font-family:'Poppins',sans-serif;font-weight:800;font-size:1rem;color:${s.color};`}>{s.label} →</div>
+        <div style="font-size:0.72rem;color:var(--text-3);margin-top:3px;">{s.sub}</div>
+      </a>
+    ))}
+  </div>
+</section>
+
+<!-- 3-5. BUILD · LIBRARY · MUSCLES -->
+<section style="padding:56px 24px;background:var(--bg);">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div class="three-col-row">
+      <div class="muscle-guide-card">
+        <div class="section-eyebrow" style="color:#22C55E;">Understand every muscle</div>
+        <h2 class="card-title"><span style="color:#22C55E;">Muscle</span> Guide</h2>
+        <p style="font-size:0.85rem;color:var(--text-3);line-height:1.7;margin-bottom:16px;">See what each muscle does, the best exercises for it and which splits train it.</p>
+        <div style="margin:12px 0;display:flex;justify-content:center;"><MuscleSVG interactive={false} size="md" view="both" /></div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
+          {muscleGroups.map((m) => (
+            <a href={`/muscles/${m.slug}`} style="display:flex;align-items:center;gap:4px;font-size:0.72rem;font-weight:600;color:var(--text-2);text-decoration:none;padding:2px 8px;border-radius:100px;border:1px solid var(--border);">
+              <span style={`width:8px;height:8px;border-radius:50%;background:${m.color};flex-shrink:0;display:inline-block;`}></span>{m.name}
+            </a>
+          ))}
+        </div>
+        <a href="/muscles" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;">Explore the Muscle Guide →</a>
+      </div>
+
+      <div class="exercise-lib-card">
+        <div class="section-eyebrow" style="color:#22C55E;">{libCount} exercises</div>
+        <h2 class="card-title"><span style="color:#22C55E;">Exercise</span> Library</h2>
+        <p style="font-size:0.85rem;color:var(--text-3);line-height:1.7;margin-bottom:16px;">Step-by-step instructions, muscles worked, form cues and alternatives — including machine, cable and dumbbell options.</p>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;">
+          {featured.map((ex) => (<a href={`/exercises/${ex.slug}`} class="exercise-mini-card"><div class="exercise-mini-icon" aria-hidden="true">🏋️</div><span>{ex.name}</span></a>))}
+        </div>
+        <a href="/exercises" class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;">Browse the Exercise Library →</a>
+      </div>
+
+      <div class="builder-cta-card">
+        <div style="text-align:center;margin-bottom:8px;"><div role="img" aria-label="Professor Splits at his laptop" style="width:80px;height:80px;background-image:url('/mascot-expressions.webp');background-size:500% 200%;background-position:60% 100%;background-repeat:no-repeat;margin:0 auto;"></div></div>
+        <h2 class="card-title" style="color:white;">Build Your <span style="color:#22C55E;">Perfect Workout</span></h2>
+        <p style="font-size:0.82rem;color:#9CA3AF;line-height:1.7;margin-bottom:16px;">Pick a split, add exercises, edit sets and reps, and see your weekly muscle coverage update as you build.</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+          {['Plan', 'Analyse', 'Progress', 'Export'].map((item) => (
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.78rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span style="color:white;font-weight:500;">{item}</span></div>
+          ))}
+        </div>
+        <a href="/workout-planner" class="btn btn-primary" style="width:100%;justify-content:center;">Open the Workout Planner →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 + 7. COVERAGE · CALCULATORS -->
+<section style="padding:56px 24px;background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div style="max-width:1000px;margin:0 auto;" class="seo-two">
+    <div class="seo-card">
+      <h2 style="font-size:1.2rem;margin:0 0 8px;font-family:'Poppins',sans-serif;">Analyse Muscle Coverage</h2>
+      <p style="font-size:0.9rem;line-height:1.75;color:var(--text-2);">Every exercise in the planner adds sets to its primary muscle. The coverage chart totals your week so you can spot muscles you are neglecting — or overworking — before you commit to a plan.</p>
+      <a href="/workout-planner" class="btn btn-secondary btn-sm">See it in the planner →</a>
+    </div>
+    <div class="seo-card">
+      <h2 style="font-size:1.2rem;margin:0 0 8px;font-family:'Poppins',sans-serif;">Calculate Calories &amp; Macros</h2>
+      <p style="font-size:0.9rem;line-height:1.75;color:var(--text-2);">Estimate your maintenance calories, then divide them into protein, carbs and fat for your goal. Supports kg/lbs and cm/ft-in.</p>
+      <div class="seo-chips" style="margin-bottom:0;"><a class="seo-chip" href="/calculators/tdee">TDEE</a><a class="seo-chip" href="/calculators/macros">Macros</a><a class="seo-chip" href="/calculators/bmi">BMI</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 + 10. NOT SURE · START -->
+<section style="padding:56px 24px;background:var(--bg);">
+  <div style="max-width:900px;margin:0 auto;">
+    <div class="cta-section">
+      <div class="cta-section-inner">
+        <div>
+          <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#86EFAC;margin-bottom:10px;">Not sure where to start?</div>
+          <h2 class="cta-title">Find your split. Build your workout. Train smarter.</h2>
+          <p class="cta-desc">Start with the Split Finder, then take your recommendation into the planner. Free, no account needed.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
+            <a href="/workout-split-finder" class="btn btn-primary btn-lg">Find My Split →</a>
+            <a href="/workout-splits" class="btn btn-lg" style="background:rgba(255,255,255,0.1);color:white;border:2px solid rgba(255,255,255,0.25);">Compare All Splits</a>
+          </div>
+        </div>
+        <div class="cta-mascot" aria-hidden="true"><div style="width:120px;height:120px;background-image:url('/mascot-expressions-2.webp');background-size:300% 200%;background-position:50% 100%;background-repeat:no-repeat;"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+/* ═══ HERO ═══ */
+.hero-section {
+  background: linear-gradient(135deg, #F0FDF4 0%, #FFFDF7 40%, #F5F3FF 100%);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+}
+html.dark .hero-section {
+  background: linear-gradient(135deg, #0F1F14 0%, #111827 50%, #12101E 100%);
+}
+.hero-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px 24px 40px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  align-items: center;
+}
+.hero-left { }
+.hero-badge {
+  display: inline-block;
+  background: #DCFCE7;
+  border: 1px solid #BBF7D0;
+  border-radius: 100px;
+  padding: 5px 14px;
+  margin-bottom: 18px;
+}
+.hero-badge-dot {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #14532D;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+html.dark .hero-badge { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.25); }
+html.dark .hero-badge-dot { color: #86EFAC; }
+.hero-h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+.hero-green { color: #22C55E; }
+.hero-sub {
+  font-size: 0.95rem;
+  color: var(--text-2);
+  line-height: 1.75;
+  max-width: 500px;
+  margin-bottom: 24px;
+}
+.hero-search-wrap { margin-bottom: 16px; }
+.hero-search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  padding: 10px 10px 10px 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  max-width: 520px;
+}
+html.dark .hero-search-box { background: var(--bg-2); }
+.hero-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 0.875rem;
+  color: var(--text);
+  outline: none;
+  min-width: 0;
+}
+.hero-search-input::placeholder { color: var(--text-4); }
+.hero-search-btn {
+  background: var(--accent);
+  border: none;
+  border-radius: 100px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.hero-search-btn:hover { background: var(--accent-hover); }
+.hero-trending {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.trending-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-3);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 3px 10px;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.trending-tag:hover { color: var(--accent); border-color: var(--accent-border); background: var(--accent-bg); }
+.hero-nav-icons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.hero-nav-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: var(--text-2);
+  font-size: 0.65rem;
+  font-weight: 600;
+  transition: all 0.15s;
+  min-width: 64px;
+  text-align: center;
+}
+.hero-nav-icon:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+.hero-nav-emoji { font-size: 1.4rem; margin-bottom: 2px; }
+.hero-nav-label { line-height: 1.4; }
+
+/* RIGHT side */
+.hero-right {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 16px;
+}
+.hero-label {
+  position: absolute;
+  font-size: 0.875rem;
+}
+.hero-label-top { top: 0px; left: 10px; }
+.hero-label-right {
+  top: 40px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.hero-mascot { position: relative; z-index: 2; }
+.hero-mascot-img {
+  width: 280px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.12));
+}
+.hero-checklist {
+  position: absolute;
+  bottom: 0;
+  right: -10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow-lg);
+  z-index: 3;
+}
+html.dark .hero-checklist { background: var(--bg-2); }
+.hero-check-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.hero-check-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ═══ SPLITS BAR ═══ */
+.splits-bar-section {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.splits-bar {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+}
+.splits-bar-item {
+  flex: 1;
+  min-width: 140px;
+  padding: 18px 20px;
+  border-right: 1px solid var(--border);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.splits-bar-item:last-child { border-right: none; }
+.splits-bar-item:hover { background: var(--bg-2); }
+
+/* ═══ THREE COLUMN ROW ═══ */
+.three-col-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+.card-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 6px 0 12px;
+  letter-spacing: -0.02em;
+}
+.muscle-guide-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  padding: 24px;
+}
+.exercise-lib-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  padding: 24px;
+}
+.builder-cta-card {
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: var(--radius-2xl);
+  padding: 24px;
+}
+html.dark .builder-cta-card { background: #0A0F1A; border-color: #1F2937; }
+.exercise-mini-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.exercise-mini-card:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+.exercise-mini-icon { font-size: 1rem; flex-shrink: 0; }
+
+/* ═══ STATS BAR ═══ */
+.stats-bar {
+  display: flex;
+  gap: 0;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+.stat-bar-item {
+  text-align: center;
+  padding: 8px 24px;
+  border-right: 1px solid var(--border);
+  flex: 1;
+  min-width: 100px;
+}
+.stat-bar-item:last-child { border-right: none; }
+
+/* ═══ FINDER ═══ */
+.finder-layout { grid-template-columns: 1fr auto; }
+.bubble-dark { }
+html.dark .bubble-dark {
+  background: #1F2937 !important;
+  color: #F9FAFB !important;
+  border-color: #22C55E !important;
+}
+
+/* ═══ CTA ═══ */
+.cta-section {
+  background: linear-gradient(135deg, #111827 0%, #1F2937 100%);
+  border-radius: var(--radius-2xl);
+  padding: 40px;
+  text-align: left;
+}
+.cta-section-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.cta-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+}
+.cta-desc { font-size: 0.9rem; color: #9CA3AF; line-height: 1.7; max-width: 440px; }
+.cta-mascot { flex-shrink: 0; }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 24px; }
+  .hero-right { display: none; }
+  .hero-mascot-img { width: 200px; }
+  .three-col-row { grid-template-columns: 1fr; }
+  .cta-section-inner { flex-direction: column; }
+  .cta-mascot { display: none; }
+  .finder-layout { grid-template-columns: 1fr !important; }
+  .finder-mascot-col { display: none; }
+}
+@media (max-width: 700px) {
+  .splits-bar { flex-direction: column; }
+  .splits-bar-item { border-right: none; border-bottom: 1px solid var(--border); }
+}
+</style>

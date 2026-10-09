@@ -1,0 +1,171 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Mascot from '../components/Mascot.astro';
+import SplitGraphic from '../components/SplitGraphic.astro';
+import { splits } from '../data/splits';
+
+const byDays: Record<string, typeof splits> = {};
+splits.forEach(s => {
+  const key = s.daysPerWeek + ' days';
+  if (!byDays[key]) byDays[key] = [];
+  byDays[key].push(s);
+});
+
+const splitIcons = {
+  'ppl-workout': '⚡', 'bro-split': '💪', 'upper-lower-split': '⬆️',
+  'arnold-split': '🏆', 'full-body-workout': '🔄',
+};
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Workout Splits — Complete Guide",
+  "description": "The complete guide to every major workout split — PPL, Upper Lower, Bro Split, Arnold Split, Full Body and more.",
+  "url": "https://splitsworkout.com/workout-splits"
+});
+---
+
+<Layout
+  title="Workout Splits — PPL, Bro Split, Upper Lower & More | SplitsWorkout"
+  description="Every major workout split explained — PPL, Upper Lower, Bro Split, Arnold Split, Full Body, PHUL and more. Find the right training structure for your goals and schedule."
+  canonical="/workout-splits"
+  currentPage="splits"
+  schema={schema}
+>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="breadcrumb-sep">›</span>
+      <span>Workout Splits</span>
+    </nav>
+    <h1 class="page-title">Workout Splits</h1>
+    <p class="page-desc">Every major training structure explained — with full exercise lists, weekly schedules, and who each split is best for.</p>
+    <div class="page-meta">
+      <span class="tag tag-green">📋 {splits.length}+ Splits</span>
+      <span class="tag tag-gray">Complete Guides</span>
+      <span class="tag tag-purple">Beginner to Advanced</span>
+    </div>
+  </div>
+</div>
+
+<!-- Split Finder CTA -->
+<div style="background:var(--accent-bg);border-bottom:1px solid var(--accent-border);padding:20px 24px;">
+  <div style="max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="font-size:1.5rem;">🎯</div>
+      <div>
+        <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;color:var(--text);">Not sure which split to choose?</div>
+        <div style="font-size:0.8rem;color:var(--text-2);">Answer 3 quick questions and get a personalised recommendation.</div>
+      </div>
+    </div>
+    <a href="/#finder" class="btn btn-primary btn-sm">Find My Split →</a>
+  </div>
+</div>
+
+<div style="max-width:1280px;margin:0 auto;padding:48px 24px 64px;">
+
+  <!-- Split Type Graphics (brand guide) -->
+  <div style="margin-bottom:40px;padding:24px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-xl);">
+    <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.875rem;color:var(--text);margin-bottom:16px;">Browse by Training Type</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <SplitGraphic type="push" size="sm" />
+      <SplitGraphic type="pull" size="sm" />
+      <SplitGraphic type="legs" size="sm" />
+      <SplitGraphic type="upper" size="sm" />
+      <SplitGraphic type="lower" size="sm" />
+      <SplitGraphic type="fullbody" size="sm" />
+    </div>
+  </div>
+
+  <!-- Quick comparison table -->
+  <div style="margin-bottom:48px;">
+    <h2 style="font-family:'Poppins',sans-serif;font-size:1.25rem;font-weight:700;color:var(--text);margin-bottom:16px;">Quick Comparison</h2>
+    <div style="overflow-x:auto;">
+      <table class="exercise-table">
+        <thead>
+          <tr>
+            <th>Split</th>
+            <th>Days/Week</th>
+            <th>Best For</th>
+            <th>Level</th>
+            <th>Session Length</th>
+          </tr>
+        </thead>
+        <tbody>
+          {splits.map(s => (
+            <tr>
+              <td class="ex-name"><a href={`/${s.slug}`} style="color:var(--accent);">{s.shortName}</a></td>
+              <td>{s.daysPerWeek}</td>
+              <td>{s.goals.join(', ')}</td>
+              <td><span class={`tag diff-${s.difficulty.toLowerCase()}`} style="font-size:0.7rem;">{s.difficulty}</span></td>
+              <td style="white-space:nowrap;">{s.sessionDuration}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Splits by Days -->
+  {Object.entries(byDays).sort().map(([days, daySplits]) => (
+    <div style="margin-bottom:48px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:8px;background:var(--accent-bg);border:1px solid var(--accent-border);display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:800;font-size:0.9rem;color:var(--accent);">{days.split(' ')[0]}</div>
+        <h2 style="font-family:'Poppins',sans-serif;font-size:1.25rem;font-weight:700;color:var(--text);margin:0;">{days} per week</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+        {daySplits.map(split => (
+          <a href={`/${split.slug}`} class="split-card" style="text-decoration:none;">
+            <div class="split-card-header">
+              <div>
+                <div class="split-card-name">{split.shortName}</div>
+                <div class="split-card-desc">{split.description}</div>
+              </div>
+            </div>
+            <div class="split-card-meta">
+              <span class={`tag diff-${split.difficulty.toLowerCase()}`}>{split.difficulty}</span>
+              {split.goals.slice(0,1).map(g => <span class="tag tag-green">{g}</span>)}
+            </div>
+            <div class="split-card-days">
+              {['M','T','W','T','F','S','S'].map((d,i) => (
+                <div class={`split-card-day${i < split.daysPerWeek ? ' on' : ''}`}>{d}</div>
+              ))}
+            </div>
+            <div class="split-card-footer">
+              <div class="split-card-stats">
+                <div class="split-card-stat"><strong>{split.sessionDuration}</strong>per session</div>
+              </div>
+              <span style="font-size:0.8rem;color:var(--accent);font-weight:600;">View →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  ))}
+
+  <!-- Guides section -->
+  <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-xl);padding:32px;margin-top:16px;">
+    <h2 style="font-family:'Poppins',sans-serif;font-size:1.25rem;font-weight:700;color:var(--text);margin-bottom:20px;">📖 Split Guides</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;">
+      <a href="/blog/how-to-choose-a-workout-split" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-decoration:none;display:block;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:1.25rem;margin-bottom:8px;">🎯</div>
+        <div style="font-family:'Poppins',sans-serif;font-weight:600;font-size:0.9rem;color:var(--text);margin-bottom:4px;">How to Choose a Split</div>
+        <div style="font-size:0.8rem;color:var(--text-3);">Match a split to your schedule and goals</div>
+      </a>
+      <a href="/blog" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-decoration:none;display:block;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:1.25rem;margin-bottom:8px;">📊</div>
+        <div style="font-family:'Poppins',sans-serif;font-weight:600;font-size:0.9rem;color:var(--text);margin-bottom:4px;">PPL vs Upper Lower</div>
+        <div style="font-size:0.8rem;color:var(--text-3);">Compare the two most popular splits</div>
+      </a>
+      <a href="/blog" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-decoration:none;display:block;transition:all 0.15s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:1.25rem;margin-bottom:8px;">⭐</div>
+        <div style="font-family:'Poppins',sans-serif;font-weight:600;font-size:0.9rem;color:var(--text);margin-bottom:4px;">Beginner Split Guide</div>
+        <div style="font-size:0.8rem;color:var(--text-3);">The best starting point for new lifters</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+</Layout>

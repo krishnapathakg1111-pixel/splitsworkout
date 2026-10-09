@@ -1,0 +1,656 @@
+---
+interface Props {
+  movement: string;
+  name?: string;
+  size?: 'sm' | 'md' | 'lg';
+  class?: string;
+  tint?: string;
+}
+const { movement, name = '', size = 'md', class: cls = '', tint = '' } = Astro.props;
+const bg = tint ? `linear-gradient(135deg,${tint}26 0%,${tint}0d 100%)` : 'linear-gradient(135deg,#F0FDF4 0%,#DCFCE7 100%)';
+const sizes = { sm: 120, md: 220, lg: 320 };
+const w = sizes[size];
+const h = Math.round(w * 0.75);
+---
+
+<div class={`movement-svg-wrap ${cls}`} style={`width:${w}px;height:${h}px;border-radius:16px;overflow:hidden;background:${bg};display:flex;align-items:center;justify-content:center;position:relative;`} role="img" aria-label={`${name} exercise illustration`}>
+  
+  {/* HORIZONTAL PUSH — Bench Press family */}
+  {(movement === 'bench-press' || movement === 'horizontal-push' || movement === 'Horizontal Push') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Bench -->
+      <rect x="30" y="140" width="240" height="18" rx="6" fill="#16A34A" opacity="0.6"/>
+      <rect x="50" y="158" width="20" height="40" rx="4" fill="#15803D" opacity="0.5"/>
+      <rect x="230" y="158" width="20" height="40" rx="4" fill="#15803D" opacity="0.5"/>
+      <!-- Person lying -->
+      <ellipse cx="150" cy="128" rx="70" ry="14" fill="#854D0E" opacity="0.85"/>
+      <!-- Head -->
+      <circle cx="60" cy="126" r="22" fill="#FBBF24"/>
+      <circle cx="55" cy="120" r="6" fill="#1C1917"/>
+      <!-- Arms up -->
+      <rect x="100" y="70" width="14" height="60" rx="6" fill="#FBBF24" transform="rotate(-5 100 70)"/>
+      <rect x="185" y="70" width="14" height="60" rx="6" fill="#FBBF24" transform="rotate(5 185 70)"/>
+      <!-- Barbell -->
+      <rect x="40" y="62" width="220" height="12" rx="6" fill="#374151"/>
+      <!-- Plates -->
+      <rect x="32" y="48" width="22" height="40" rx="6" fill="#1F2937"/>
+      <rect x="246" y="48" width="22" height="40" rx="6" fill="#1F2937"/>
+      <!-- Weight coloring on chest -->
+      <ellipse cx="150" cy="118" rx="30" ry="10" fill="#EF4444" opacity="0.3"/>
+      <!-- Label -->
+      <text x="150" y="208" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">CHEST · HORIZONTAL PRESS</text>
+    </svg>
+  )}
+
+  {/* INCLINE PUSH */}
+  {(movement === 'incline-press' || movement === 'Incline Push') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Incline bench -->
+      <path d="M40 180 L200 120 L220 130 L60 190 Z" fill="#16A34A" opacity="0.6"/>
+      <rect x="50" y="185" width="20" height="30" rx="4" fill="#15803D" opacity="0.5"/>
+      <!-- Person -->
+      <ellipse cx="140" cy="115" rx="60" ry="12" fill="#854D0E" opacity="0.85" transform="rotate(-20 140 115)"/>
+      <circle cx="80" cy="138" r="20" fill="#FBBF24"/>
+      <!-- Arms up -->
+      <line x1="125" y1="100" x2="115" y2="55" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <line x1="180" y1="88" x2="190" y2="43" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <!-- Bar -->
+      <rect x="60" y="40" width="180" height="10" rx="5" fill="#374151"/>
+      <rect x="52" y="28" width="18" height="34" rx="5" fill="#1F2937"/>
+      <rect x="230" y="28" width="18" height="34" rx="5" fill="#1F2937"/>
+      <ellipse cx="150" cy="88" rx="25" ry="8" fill="#EF4444" opacity="0.25"/>
+      <text x="150" y="208" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">UPPER CHEST · INCLINE PRESS</text>
+    </svg>
+  )}
+
+  {/* VERTICAL PUSH — Overhead Press */}
+  {(movement === 'overhead-press' || movement === 'Vertical Push') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Standing figure -->
+      <circle cx="150" cy="40" r="22" fill="#FBBF24"/>
+      <!-- Torso -->
+      <path d="M125 62 Q115 100 118 140 L182 140 Q185 100 175 62 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Arms raised -->
+      <path d="M118 70 Q90 60 75 30" stroke="#FBBF24" stroke-width="16" stroke-linecap="round" fill="none"/>
+      <path d="M182 70 Q210 60 225 30" stroke="#FBBF24" stroke-width="16" stroke-linecap="round" fill="none"/>
+      <!-- Barbell overhead -->
+      <rect x="50" y="20" width="200" height="10" rx="5" fill="#374151"/>
+      <rect x="42" y="8" width="16" height="34" rx="5" fill="#1F2937"/>
+      <rect x="242" y="8" width="16" height="34" rx="5" fill="#1F2937"/>
+      <!-- Legs -->
+      <path d="M130 140 L120 190" stroke="#5C3A1E" stroke-width="16" stroke-linecap="round"/>
+      <path d="M170 140 L180 190" stroke="#5C3A1E" stroke-width="16" stroke-linecap="round"/>
+      <!-- Shoulder highlight -->
+      <circle cx="115" cy="68" r="14" fill="#F59E0B" opacity="0.35"/>
+      <circle cx="185" cy="68" r="14" fill="#F59E0B" opacity="0.35"/>
+      <!-- Feet -->
+      <ellipse cx="117" cy="193" rx="16" ry="7" fill="#22C55E" opacity="0.7"/>
+      <ellipse cx="183" cy="193" rx="16" ry="7" fill="#22C55E" opacity="0.7"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">SHOULDERS · OVERHEAD PRESS</text>
+    </svg>
+  )}
+
+  {/* PUSH-UP */}
+  {movement === 'push-up' && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Ground line -->
+      <line x1="20" y1="170" x2="280" y2="170" stroke="#BBF7D0" stroke-width="2"/>
+      <!-- Body plank position -->
+      <line x1="60" y1="120" x2="240" y2="150" stroke="#854D0E" stroke-width="22" stroke-linecap="round" opacity="0.85"/>
+      <!-- Head -->
+      <circle cx="55" cy="112" r="20" fill="#FBBF24"/>
+      <!-- Arms -->
+      <line x1="100" y1="125" x2="100" y2="168" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <line x1="175" y1="134" x2="175" y2="168" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <!-- Feet -->
+      <ellipse cx="232" cy="160" rx="14" ry="7" fill="#22C55E" opacity="0.8"/>
+      <!-- Chest highlight -->
+      <ellipse cx="125" cy="130" rx="22" ry="10" fill="#EF4444" opacity="0.25"/>
+      <text x="150" y="200" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">CHEST · PUSH-UP</text>
+    </svg>
+  )}
+
+  {/* PULL-UP / VERTICAL PULL */}
+  {(movement === 'pull-up' || movement === 'Vertical Pull') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Pull-up bar -->
+      <rect x="60" y="25" width="180" height="12" rx="6" fill="#374151"/>
+      <rect x="60" y="10" width="12" height="28" rx="4" fill="#4B5563"/>
+      <rect x="228" y="10" width="12" height="28" rx="4" fill="#4B5563"/>
+      <!-- Hands -->
+      <circle cx="100" cy="37" r="10" fill="#FBBF24"/>
+      <circle cx="200" cy="37" r="10" fill="#FBBF24"/>
+      <!-- Arms -->
+      <path d="M100 37 L115 65" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <path d="M200 37 L185 65" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <!-- Torso -->
+      <path d="M115 65 L118 130 L182 130 L185 65 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Head -->
+      <circle cx="150" cy="52" r="20" fill="#FBBF24"/>
+      <!-- Legs hanging -->
+      <path d="M130 130 L125 180" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M170 130 L175 180" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Lat highlight -->
+      <path d="M118 70 Q105 100 110 130 L120 130 L118 70Z" fill="#3B82F6" opacity="0.3"/>
+      <path d="M182 70 Q195 100 190 130 L180 130 L182 70Z" fill="#3B82F6" opacity="0.3"/>
+      <text x="150" y="208" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">LATS · VERTICAL PULL</text>
+    </svg>
+  )}
+
+  {/* ROW / HORIZONTAL PULL */}
+  {(movement === 'row' || movement === 'Horizontal Pull') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Cable/pulley -->
+      <rect x="240" y="80" width="30" height="60" rx="4" fill="#374151"/>
+      <circle cx="255" cy="110" r="10" fill="#6B7280"/>
+      <!-- Cable line -->
+      <line x1="255" y1="110" x2="120" y2="115" stroke="#9CA3AF" stroke-width="3"/>
+      <!-- Standing figure rowing -->
+      <circle cx="90" cy="60" r="22" fill="#FBBF24"/>
+      <path d="M80 82 Q65 110 68 145 Q68 145 112 145 Q115 110 120 82 Z" fill="#854D0E" opacity="0.85" transform="rotate(15 90 110)"/>
+      <!-- Arm pulling -->
+      <path d="M95 105 Q105 110 120 115" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <!-- Other arm back -->
+      <path d="M85 105 Q70 108 65 115" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <!-- Legs -->
+      <path d="M80 145 L75 195" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M105 145 L108 195" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Back highlight -->
+      <ellipse cx="92" cy="115" rx="20" ry="28" fill="#3B82F6" opacity="0.25"/>
+      <text x="150" y="208" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">BACK · HORIZONTAL PULL</text>
+    </svg>
+  )}
+
+  {/* DEADLIFT / HIP HINGE */}
+  {(movement === 'deadlift' || movement === 'Hip Hinge') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Bar on floor -->
+      <rect x="50" y="158" width="200" height="10" rx="5" fill="#374151"/>
+      <circle cx="62" cy="158" r="22" fill="#1F2937" opacity="0.75"/>
+      <circle cx="238" cy="158" r="22" fill="#1F2937" opacity="0.75"/>
+      <circle cx="62" cy="158" r="15" fill="#374151"/>
+      <circle cx="238" cy="158" r="15" fill="#374151"/>
+      <!-- Hinging figure -->
+      <circle cx="155" cy="60" r="22" fill="#FBBF24"/>
+      <!-- Torso angled forward -->
+      <path d="M145 80 Q120 110 110 155 L155 158 L185 140 L175 80 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Arms reaching down -->
+      <path d="M130 110 L100 157" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <path d="M168 105 L180 157" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <!-- Legs -->
+      <path d="M128 158 Q118 175 115 195" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M165 158 Q172 175 175 195" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Hamstring/glute highlight -->
+      <path d="M115 155 Q118 175 120 195 L130 195 Q125 175 128 158 Z" fill="#06B6D4" opacity="0.35"/>
+      <path d="M165 158 Q172 175 170 195 L180 195 Q180 175 175 158 Z" fill="#06B6D4" opacity="0.35"/>
+      <text x="150" y="208" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">HAMSTRINGS · HIP HINGE</text>
+    </svg>
+  )}
+
+  {/* SQUAT */}
+  {movement === 'squat' && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Bar on back -->
+      <rect x="50" y="68" width="200" height="10" rx="5" fill="#374151"/>
+      <rect x="42" y="55" width="16" height="36" rx="5" fill="#1F2937"/>
+      <rect x="242" y="55" width="16" height="36" rx="5" fill="#1F2937"/>
+      <!-- Squatting figure -->
+      <circle cx="150" cy="45" r="22" fill="#FBBF24"/>
+      <!-- Torso slightly forward -->
+      <path d="M133 67 Q118 90 120 120 L180 120 Q182 90 167 67 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Thighs at bottom (horizontal) -->
+      <path d="M120 120 Q95 130 80 125" stroke="#5C3A1E" stroke-width="16" stroke-linecap="round"/>
+      <path d="M180 120 Q205 130 220 125" stroke="#5C3A1E" stroke-width="16" stroke-linecap="round"/>
+      <!-- Calves vertical -->
+      <path d="M80 125 Q72 155 75 185" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M220 125 Q228 155 225 185" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Feet -->
+      <ellipse cx="75" cy="187" rx="16" ry="7" fill="#22C55E" opacity="0.8"/>
+      <ellipse cx="225" cy="187" rx="16" ry="7" fill="#22C55E" opacity="0.8"/>
+      <!-- Quad highlight -->
+      <path d="M120 120 Q100 130 85 125 Q80 155 83 185 L95 185 Q92 155 100 130 L118 120Z" fill="#10B981" opacity="0.3"/>
+      <path d="M180 120 Q200 130 215 125 Q220 155 217 185 L205 185 Q208 155 200 130 L182 120Z" fill="#10B981" opacity="0.3"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">QUADS · SQUAT</text>
+    </svg>
+  )}
+
+  {/* HIP THRUST */}
+  {(movement === 'hip-thrust' || movement === 'Hip Extension') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Bench behind -->
+      <rect x="200" y="100" width="80" height="22" rx="8" fill="#16A34A" opacity="0.6"/>
+      <rect x="220" y="122" width="16" height="50" rx="4" fill="#15803D" opacity="0.5"/>
+      <!-- Barbell on hips -->
+      <rect x="60" y="88" width="180" height="10" rx="5" fill="#374151"/>
+      <rect x="52" y="76" width="18" height="34" rx="5" fill="#1F2937"/>
+      <rect x="230" y="76" width="18" height="34" rx="5" fill="#1F2937"/>
+      <!-- Figure doing hip thrust -->
+      <!-- Back against bench -->
+      <path d="M198 100 Q170 95 145 92 Q120 90 105 85" stroke="#854D0E" stroke-width="22" stroke-linecap="round"/>
+      <!-- Head -->
+      <circle cx="95" cy="90" r="20" fill="#FBBF24"/>
+      <!-- Thighs -->
+      <path d="M148 96 L135 155" stroke="#5C3A1E" stroke-width="18" stroke-linecap="round"/>
+      <path d="M178 94 L188 155" stroke="#5C3A1E" stroke-width="18" stroke-linecap="round"/>
+      <!-- Feet on floor -->
+      <ellipse cx="130" cy="160" rx="20" ry="9" fill="#22C55E" opacity="0.8"/>
+      <ellipse cx="192" cy="160" rx="20" ry="9" fill="#22C55E" opacity="0.8"/>
+      <!-- Glute highlight at hips -->
+      <ellipse cx="160" cy="96" rx="30" ry="12" fill="#EC4899" opacity="0.35"/>
+      <text x="150" y="200" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">GLUTES · HIP THRUST</text>
+    </svg>
+  )}
+
+  {/* LUNGE */}
+  {movement === 'lunge' && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Figure lunging -->
+      <circle cx="130" cy="40" r="22" fill="#FBBF24"/>
+      <!-- Torso upright -->
+      <path d="M118 62 Q112 95 114 130 L148 130 Q148 95 142 62 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Front leg down -->
+      <path d="M125 130 Q110 155 90 180" stroke="#5C3A1E" stroke-width="16" stroke-linecap="round"/>
+      <path d="M90 180 Q82 182 75 180" stroke="#5C3A1E" stroke-width="10" stroke-linecap="round"/>
+      <!-- Back leg extended -->
+      <path d="M138 130 Q160 145 185 145" stroke="#5C3A1E" stroke-width="16" stroke-linecap="round"/>
+      <path d="M185 145 Q186 168 185 185" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Rear knee near floor -->
+      <ellipse cx="183" cy="187" rx="14" ry="7" fill="#22C55E" opacity="0.7"/>
+      <!-- Front foot -->
+      <ellipse cx="80" cy="183" rx="18" ry="8" fill="#22C55E" opacity="0.8"/>
+      <!-- Quad highlight -->
+      <path d="M125 130 Q108 155 88 180 L96 184 Q112 158 135 132Z" fill="#10B981" opacity="0.3"/>
+      <!-- Arms for balance -->
+      <path d="M118 80 Q105 85 95 78" stroke="#FBBF24" stroke-width="12" stroke-linecap="round"/>
+      <path d="M142 80 Q155 85 165 78" stroke="#FBBF24" stroke-width="12" stroke-linecap="round"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">QUADS · LUNGE</text>
+    </svg>
+  )}
+
+  {/* LEG EXTENSION / KNEE EXTENSION */}
+  {(movement === 'leg-extension' || movement === 'Knee Extension') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Machine seat -->
+      <rect x="30" y="100" width="120" height="50" rx="8" fill="#16A34A" opacity="0.4"/>
+      <rect x="30" y="148" width="20" height="50" rx="6" fill="#15803D" opacity="0.4"/>
+      <!-- Back pad -->
+      <rect x="150" y="60" width="20" height="90" rx="8" fill="#16A34A" opacity="0.5"/>
+      <!-- Ankle pad/weight -->
+      <rect x="200" y="148" width="50" height="14" rx="5" fill="#374151"/>
+      <!-- Seated person -->
+      <circle cx="105" cy="65" r="20" fill="#FBBF24"/>
+      <path d="M92 85 Q85 100 88 148 L145 148 Q145 100 118 85 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Leg extending forward -->
+      <path d="M120 148 Q150 148 205 148" stroke="#5C3A1E" stroke-width="18" stroke-linecap="round"/>
+      <!-- Arm on machine -->
+      <path d="M92 110 Q65 115 55 118" stroke="#FBBF24" stroke-width="12" stroke-linecap="round"/>
+      <!-- Quad highlight -->
+      <path d="M120 148 Q148 148 205 148 Q205 140 148 136 L118 140 Z" fill="#10B981" opacity="0.4"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">QUADS · LEG EXTENSION</text>
+    </svg>
+  )}
+
+  {/* LEG CURL / KNEE FLEXION */}
+  {(movement === 'leg-curl' || movement === 'Knee Flexion') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Machine -->
+      <rect x="30" y="90" width="240" height="30" rx="8" fill="#16A34A" opacity="0.4"/>
+      <rect x="50" y="118" width="20" height="50" rx="6" fill="#15803D" opacity="0.4"/>
+      <rect x="220" y="118" width="20" height="50" rx="6" fill="#15803D" opacity="0.4"/>
+      <!-- Ankle pad -->
+      <rect x="185" y="75" width="40" height="16" rx="5" fill="#374151"/>
+      <!-- Lying person, leg curled -->
+      <path d="M55" y1="105" x1="55" y2="105" />
+      <line x1="55" y1="100" x2="185" y2="100" stroke="#854D0E" stroke-width="22" stroke-linecap="round" opacity="0.85"/>
+      <!-- Head -->
+      <circle cx="50" cy="100" r="18" fill="#FBBF24"/>
+      <!-- Curled leg -->
+      <path d="M185 100 Q200 95 215 80" stroke="#5C3A1E" stroke-width="18" stroke-linecap="round"/>
+      <!-- Hamstring highlight -->
+      <path d="M185 100 Q198 96 214 82 L220 88 Q204 103 190 108 Z" fill="#06B6D4" opacity="0.4"/>
+      <text x="150" y="200" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">HAMSTRINGS · LEG CURL</text>
+    </svg>
+  )}
+
+  {/* LATERAL RAISE / SHOULDER ABDUCTION */}
+  {(movement === 'lateral-raise' || movement === 'Shoulder Abduction') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Figure standing -->
+      <circle cx="150" cy="42" r="22" fill="#FBBF24"/>
+      <path d="M136 64 Q128 100 130 150 L170 150 Q172 100 164 64 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Arms raised out to sides -->
+      <path d="M132 80 Q100 75 70 80" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <path d="M168 80 Q200 75 230 80" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <!-- Dumbbells -->
+      <rect x="52" y="74" width="22" height="12" rx="4" fill="#374151"/>
+      <rect x="226" y="74" width="22" height="12" rx="4" fill="#374151"/>
+      <!-- Legs -->
+      <path d="M138 150 L132 195" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M162 150 L168 195" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Side delt highlights -->
+      <circle cx="128" cy="78" r="16" fill="#F59E0B" opacity="0.4"/>
+      <circle cx="172" cy="78" r="16" fill="#F59E0B" opacity="0.4"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">SIDE DELTS · LATERAL RAISE</text>
+    </svg>
+  )}
+
+  {/* CURL / ELBOW FLEXION */}
+  {(movement === 'curl' || movement === 'Elbow Flexion') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Standing figure -->
+      <circle cx="150" cy="42" r="22" fill="#FBBF24"/>
+      <path d="M136 64 Q128 100 130 150 L170 150 Q172 100 164 64 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Right arm curling up -->
+      <path d="M130 90 Q108 95 98 88" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <!-- Left arm at side with dumbbell -->
+      <path d="M170 90 Q172 120 172 148" stroke="#FBBF24" stroke-width="14" stroke-linecap="round"/>
+      <rect x="162" y="145" width="24" height="10" rx="4" fill="#374151"/>
+      <!-- Dumbbell being curled -->
+      <rect x="80" y="80" width="24" height="10" rx="4" fill="#374151"/>
+      <!-- Legs -->
+      <path d="M138 150 L133 192" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M162 150 L167 192" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Feet -->
+      <ellipse cx="130" cy="194" rx="15" ry="6" fill="#22C55E" opacity="0.8"/>
+      <ellipse cx="170" cy="194" rx="15" ry="6" fill="#22C55E" opacity="0.8"/>
+      <!-- Bicep highlight -->
+      <ellipse cx="115" cy="88" rx="18" ry="10" fill="#8B5CF6" opacity="0.4"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">BICEPS · CURL</text>
+    </svg>
+  )}
+
+  {/* PUSHDOWN / ELBOW EXTENSION */}
+  {(movement === 'pushdown' || movement === 'Elbow Extension') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Cable machine top -->
+      <rect x="210" y="20" width="60" height="40" rx="8" fill="#374151"/>
+      <circle cx="240" cy="60" r="8" fill="#6B7280"/>
+      <!-- Cable -->
+      <line x1="240" y1="60" x2="175" y2="80" stroke="#9CA3AF" stroke-width="3"/>
+      <!-- Standing figure -->
+      <circle cx="145" cy="45" r="22" fill="#FBBF24"/>
+      <path d="M132 67 Q124 100 126 155 L165 155 Q167 100 158 67 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Arms pushing down — elbows at sides -->
+      <path d="M132 85 Q128 100 128 120 L148 120" stroke="#FBBF24" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M158 85 Q162 100 162 120 L148 120" stroke="#FBBF24" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <!-- Bar/rope at hands -->
+      <rect x="128" y="118" width="40" height="8" rx="4" fill="#374151"/>
+      <!-- Legs -->
+      <path d="M134 155 L130 195" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M158 155 L162 195" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Tricep highlight -->
+      <path d="M132 85 Q128 100 130 120 Q140 120 145 120 Q140 100 140 85 Z" fill="#7C3AED" opacity="0.35"/>
+      <path d="M158 85 Q162 100 160 120 Q155 120 148 120 Q152 100 150 85 Z" fill="#7C3AED" opacity="0.35"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">TRICEPS · PUSHDOWN</text>
+    </svg>
+  )}
+
+  {/* OVERHEAD TRICEP EXTENSION */}
+  {movement === 'overhead-extension' && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <circle cx="150" cy="38" r="22" fill="#FBBF24"/>
+      <path d="M136 60 Q128 95 130 150 L170 150 Q172 95 164 60 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Arms overhead, elbows bent -->
+      <path d="M135 72 Q120 60 115 40 Q118 28 128 25 L132 38" stroke="#FBBF24" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <path d="M165 72 Q180 60 185 40 Q182 28 172 25 L168 38" stroke="#FBBF24" stroke-width="13" stroke-linecap="round" fill="none"/>
+      <!-- Dumbbell overhead -->
+      <rect x="128" y="20" width="44" height="12" rx="5" fill="#374151"/>
+      <!-- Legs -->
+      <path d="M138 150 L133 192" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M162 150 L167 192" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Tricep long head highlight -->
+      <path d="M136 60 Q120 62 118 40 L128 26 L132 40 Q130 60 136 70 Z" fill="#7C3AED" opacity="0.3"/>
+      <path d="M164 60 Q180 62 182 40 L172 26 L168 40 Q170 60 164 70 Z" fill="#7C3AED" opacity="0.3"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">TRICEPS · OVERHEAD EXT.</text>
+    </svg>
+  )}
+
+  {/* CALF RAISE */}
+  {(movement === 'calf-raise' || movement === 'Calf Plantarflexion') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Platform/step -->
+      <rect x="100" y="172" width="100" height="16" rx="5" fill="#16A34A" opacity="0.6"/>
+      <!-- Machine bar -->
+      <rect x="60" y="100" width="180" height="10" rx="5" fill="#374151"/>
+      <!-- Standing on toes figure -->
+      <circle cx="150" cy="42" r="22" fill="#FBBF24"/>
+      <path d="M136 64 Q128 100 130 150 L170 150 Q172 100 164 64 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Legs straight -->
+      <path d="M138 150 L136 170" stroke="#5C3A1E" stroke-width="16" stroke-linecap="round"/>
+      <path d="M162 150 L164 170" stroke="#5C3A1E" stroke-width="16" stroke-linecap="round"/>
+      <!-- Calves highlighted -->
+      <path d="M136 158 Q130 165 133 172 L140 172 Q140 165 140 158 Z" fill="#84CC16" opacity="0.5"/>
+      <path d="M164 158 Q170 165 167 172 L160 172 Q160 165 160 158 Z" fill="#84CC16" opacity="0.5"/>
+      <!-- On tiptoe -->
+      <ellipse cx="137" cy="172" rx="10" ry="5" fill="#22C55E" opacity="0.9"/>
+      <ellipse cx="163" cy="172" rx="10" ry="5" fill="#22C55E" opacity="0.9"/>
+      <text x="150" y="208" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">CALVES · CALF RAISE</text>
+    </svg>
+  )}
+
+  {/* SHRUG */}
+  {(movement === 'shrug' || movement === 'Scapular Elevation') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <circle cx="150" cy="42" r="22" fill="#FBBF24"/>
+      <!-- Shrug position — shoulders raised -->
+      <path d="M132 64 Q115 72 108 90 Q115 100 132 95 Q132 120 132 155 L168 155 Q168 120 168 95 Q185 100 192 90 Q185 72 168 64 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Barbell -->
+      <rect x="90" y="95" width="120" height="10" rx="5" fill="#374151"/>
+      <rect x="82" y="82" width="16" height="36" rx="5" fill="#1F2937"/>
+      <rect x="202" y="82" width="16" height="36" rx="5" fill="#1F2937"/>
+      <!-- Legs -->
+      <path d="M136 155 L130 196" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M164 155 L170 196" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Trap highlights -->
+      <path d="M132 64 Q118 70 110 90 Q120 100 132 95 Z" fill="#BFDBFE" opacity="0.5"/>
+      <path d="M168 64 Q182 70 190 90 Q180 100 168 95 Z" fill="#BFDBFE" opacity="0.5"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">TRAPS · SHRUG</text>
+    </svg>
+  )}
+
+  {/* PLANK / ANTI-EXTENSION */}
+  {(movement === 'plank' || movement === 'Anti-Extension') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Floor line -->
+      <line x1="20" y1="175" x2="280" y2="175" stroke="#BBF7D0" stroke-width="2"/>
+      <!-- Forearm plank position -->
+      <line x1="60" y1="130" x2="240" y2="152" stroke="#854D0E" stroke-width="24" stroke-linecap="round" opacity="0.85"/>
+      <!-- Head -->
+      <circle cx="55" cy="120" r="20" fill="#FBBF24"/>
+      <!-- Forearms on ground -->
+      <path d="M88" y1="135" />
+      <rect x="78" y="148" width="40" height="12" rx="5" fill="#FBBF24" transform="rotate(-8 78 148)"/>
+      <!-- Feet/toes -->
+      <ellipse cx="240" cy="162" rx="18" ry="9" fill="#22C55E" opacity="0.8"/>
+      <!-- Core highlight -->
+      <path d="M115 138 Q160 142 205 150 Q200 138 155 132 Q130 130 115 138 Z" fill="#6B7280" opacity="0.3"/>
+      <text x="150" y="205" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">CORE · PLANK</text>
+    </svg>
+  )}
+
+  {/* LEG RAISE / HIP FLEXION */}
+  {(movement === 'leg-raise' || movement === 'Hip Flexion') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Hanging bar -->
+      <rect x="100" y="20" width="100" height="12" rx="6" fill="#374151"/>
+      <!-- Arms hanging -->
+      <path d="M118 32 L118 60" stroke="#FBBF24" stroke-width="13" stroke-linecap="round"/>
+      <path d="M182 32 L182 60" stroke="#FBBF24" stroke-width="13" stroke-linecap="round"/>
+      <!-- Head and torso -->
+      <circle cx="150" cy="52" r="20" fill="#FBBF24"/>
+      <path d="M136 72 Q128 100 130 135 L170 135 Q172 100 164 72 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Legs raised to parallel -->
+      <path d="M138 135 Q120 130 95 128" stroke="#5C3A1E" stroke-width="16" stroke-linecap="round"/>
+      <path d="M162 135 Q180 130 205 128" stroke="#5C3A1E" stroke-width="16" stroke-linecap="round"/>
+      <!-- Lower leg hanging -->
+      <path d="M95 128 Q80 145 78 168" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M205 128 Q220 145 222 168" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Core/lower abs highlight -->
+      <ellipse cx="150" cy="130" rx="25" ry="10" fill="#6B7280" opacity="0.3"/>
+      <text x="150" y="208" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">CORE · HANGING LEG RAISE</text>
+    </svg>
+  )}
+
+  {/* WOODCHOP / ROTATION */}
+  {(movement === 'woodchop' || movement === 'Rotation') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Cable from top right -->
+      <rect x="230" y="20" width="40" height="30" rx="6" fill="#374151"/>
+      <circle cx="250" cy="50" r="8" fill="#6B7280"/>
+      <path d="M250 50 Q220 80 175 120" stroke="#9CA3AF" stroke-width="3"/>
+      <!-- Figure twisting -->
+      <circle cx="130" cy="52" r="22" fill="#FBBF24"/>
+      <path d="M118 74 Q105 110 108 155 L148 155 Q155 110 142 74 Z" fill="#854D0E" opacity="0.85" transform="rotate(-10 130 110)"/>
+      <!-- Arms swinging across -->
+      <path d="M125 90 Q150 100 175 118" stroke="#FBBF24" stroke-width="13" stroke-linecap="round"/>
+      <!-- Legs -->
+      <path d="M120 155 L112 196" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M148 155 L152 196" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Oblique highlight -->
+      <path d="M118 85 Q108 110 108 155 L118 155 Q118 110 125 85 Z" fill="#9CA3AF" opacity="0.4"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">OBLIQUES · WOODCHOP</text>
+    </svg>
+  )}
+
+  {/* PALLOF PRESS / ANTI-ROTATION */}
+  {(movement === 'pallof-press' || movement === 'Anti-Rotation') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Cable machine side -->
+      <rect x="220" y="60" width="50" height="80" rx="8" fill="#374151"/>
+      <circle cx="235" cy="100" r="10" fill="#6B7280"/>
+      <line x1="235" y1="100" x2="165" y2="105" stroke="#9CA3AF" stroke-width="3"/>
+      <!-- Standing figure pressing out -->
+      <circle cx="130" cy="48" r="22" fill="#FBBF24"/>
+      <path d="M118 70 Q110 105 112 155 L150 155 Q152 105 142 70 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Arms pressed forward -->
+      <path d="M130 100 Q148 102 165 105" stroke="#FBBF24" stroke-width="13" stroke-linecap="round"/>
+      <!-- Legs -->
+      <path d="M120 155 L115 195" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M142 155 L145 195" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Core highlight -->
+      <ellipse cx="130" cy="112" rx="18" ry="28" fill="#6B7280" opacity="0.25"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">CORE · ANTI-ROTATION</text>
+    </svg>
+  )}
+
+  {/* FARMER CARRY */}
+  {movement === 'farmer-carry' && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Walking figure -->
+      <circle cx="145" cy="42" r="22" fill="#FBBF24"/>
+      <path d="M132 64 Q124 100 126 148 L165 148 Q167 100 158 64 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Arms holding dumbbells/handles at sides -->
+      <path d="M126 90 L118 148" stroke="#FBBF24" stroke-width="13" stroke-linecap="round"/>
+      <path d="M158 90 L166 148" stroke="#FBBF24" stroke-width="13" stroke-linecap="round"/>
+      <!-- Left handle/weight -->
+      <rect x="100" y="145" width="22" height="32" rx="5" fill="#374151"/>
+      <rect x="96" y="140" width="30" height="10" rx="4" fill="#1F2937"/>
+      <!-- Right handle/weight -->
+      <rect x="178" y="145" width="22" height="32" rx="5" fill="#374151"/>
+      <rect x="174" y="140" width="30" height="10" rx="4" fill="#1F2937"/>
+      <!-- Walking legs -->
+      <path d="M132 148 Q120 165 112 192" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M160 148 Q170 165 175 192" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Forearm/trap highlight -->
+      <ellipse cx="118" cy="120" rx="8" ry="18" fill="#6D28D9" opacity="0.3"/>
+      <ellipse cx="166" cy="120" rx="8" ry="18" fill="#6D28D9" opacity="0.3"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">FOREARMS · CARRY</text>
+    </svg>
+  )}
+
+  {/* DIP */}
+  {movement === 'dip' && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Dip bars -->
+      <rect x="60" y="85" width="180" height="10" rx="5" fill="#374151"/>
+      <rect x="60" y="88" width="12" height="90" rx="4" fill="#4B5563"/>
+      <rect x="228" y="88" width="12" height="90" rx="4" fill="#4B5563"/>
+      <!-- Figure in dip position -->
+      <circle cx="150" cy="50" r="22" fill="#FBBF24"/>
+      <!-- Torso slightly leaned forward -->
+      <path d="M138 72 Q130 95 130 130 L170 130 Q170 95 162 72 Z" fill="#854D0E" opacity="0.85" transform="rotate(8 150 100)"/>
+      <!-- Arms supporting at bars -->
+      <path d="M134 85 L74 88" stroke="#FBBF24" stroke-width="13" stroke-linecap="round"/>
+      <path d="M166 85 L226 88" stroke="#FBBF24" stroke-width="13" stroke-linecap="round"/>
+      <!-- Legs hanging -->
+      <path d="M140 130 L136 185" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M160 130 L164 185" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Chest/tricep highlight -->
+      <ellipse cx="150" cy="108" rx="22" ry="14" fill="#EF4444" opacity="0.25"/>
+      <ellipse cx="72" cy="90" rx="8" ry="15" fill="#7C3AED" opacity="0.3"/>
+      <ellipse cx="228" cy="90" rx="8" ry="15" fill="#7C3AED" opacity="0.3"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">CHEST/TRICEPS · DIP</text>
+    </svg>
+  )}
+
+  {/* REAR DELT FLY */}
+  {(movement === 'rear-delt-fly' || movement === 'Shoulder Horizontal Abduction') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Bent over figure -->
+      <circle cx="150" cy="80" r="20" fill="#FBBF24"/>
+      <!-- Torso bent forward -->
+      <path d="M138 98 Q125 110 108 115 Q115 135 138 138 L162 138 Q185 135 192 115 Q175 110 162 98 Z" fill="#854D0E" opacity="0.85"/>
+      <!-- Arms flying out to sides -->
+      <path d="M130 112 Q100 100 70 95" stroke="#FBBF24" stroke-width="13" stroke-linecap="round"/>
+      <path d="M170 112 Q200 100 230 95" stroke="#FBBF24" stroke-width="13" stroke-linecap="round"/>
+      <!-- Dumbbells -->
+      <rect x="54" y="88" width="20" height="10" rx="4" fill="#374151"/>
+      <rect x="226" y="88" width="20" height="10" rx="4" fill="#374151"/>
+      <!-- Legs -->
+      <path d="M140 138 Q130 160 125 192" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <path d="M160 138 Q170 160 175 192" stroke="#5C3A1E" stroke-width="14" stroke-linecap="round"/>
+      <!-- Rear delt highlight -->
+      <circle cx="130" cy="108" r="14" fill="#FDE68A" opacity="0.5"/>
+      <circle cx="170" cy="108" r="14" fill="#FDE68A" opacity="0.5"/>
+      <text x="150" y="210" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">REAR DELTS · FLY</text>
+    </svg>
+  )}
+
+  {/* FLY / SHOULDER HORIZONTAL ADDUCTION */}
+  {(movement === 'fly' || movement === 'Shoulder Horizontal Adduction') && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Bench -->
+      <rect x="30" y="145" width="240" height="16" rx="6" fill="#16A34A" opacity="0.6"/>
+      <!-- Person lying -->
+      <line x1="55" y1="133" x2="245" y2="133" stroke="#854D0E" stroke-width="22" stroke-linecap="round" opacity="0.85"/>
+      <circle cx="50" cy="132" r="20" fill="#FBBF24"/>
+      <!-- Arms open wide in fly position -->
+      <path d="M115 128 Q90 105 65 100" stroke="#FBBF24" stroke-width="13" stroke-linecap="round"/>
+      <path d="M185 128 Q210 105 235 100" stroke="#FBBF24" stroke-width="13" stroke-linecap="round"/>
+      <!-- Dumbbells wide -->
+      <rect x="50" y="93" width="20" height="10" rx="4" fill="#374151"/>
+      <rect x="230" y="93" width="20" height="10" rx="4" fill="#374151"/>
+      <!-- Chest highlight - wide -->
+      <path d="M115 128 Q150 118 185 128 Q175 138 150 142 Q125 138 115 128 Z" fill="#EF4444" opacity="0.3"/>
+      <text x="150" y="205" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">CHEST · FLY</text>
+    </svg>
+  )}
+
+  {/* DEFAULT / GENERIC */}
+  {!['bench-press','Horizontal Push','incline-press','Incline Push','overhead-press','Vertical Push',
+     'push-up','pull-up','Vertical Pull','row','Horizontal Pull','deadlift','Hip Hinge',
+     'hip-thrust','Hip Extension','squat','lunge','leg-extension','Knee Extension',
+     'leg-curl','Knee Flexion','lateral-raise','Shoulder Abduction','curl','Elbow Flexion',
+     'pushdown','Elbow Extension','overhead-extension','calf-raise','Calf Plantarflexion',
+     'shrug','Scapular Elevation','plank','Anti-Extension','leg-raise','Hip Flexion',
+     'woodchop','Rotation','pallof-press','Anti-Rotation','farmer-carry','dip',
+     'rear-delt-fly','Shoulder Horizontal Abduction','fly','Shoulder Horizontal Adduction'].includes(movement) && (
+    <svg width={w*0.9} height={h*0.9} viewBox="0 0 300 220" fill="none">
+      <!-- Generic dumbbell icon -->
+      <rect x="90" y="98" width="120" height="24" rx="8" fill="#16A34A" opacity="0.7"/>
+      <rect x="50" y="76" width="52" height="68" rx="14" fill="#15803D" opacity="0.7"/>
+      <rect x="198" y="76" width="52" height="68" rx="14" fill="#15803D" opacity="0.7"/>
+      <rect x="90" y="85" width="20" height="50" rx="6" fill="#166534" opacity="0.6"/>
+      <rect x="190" y="85" width="20" height="50" rx="6" fill="#166534" opacity="0.6"/>
+      <!-- SW logo -->
+      <circle cx="150" cy="110" r="28" fill="white" opacity="0.15"/>
+      <text x="150" y="118" text-anchor="middle" font-family="Poppins, sans-serif" font-size="20" fill="white" font-weight="900">S</text>
+      <text x="150" y="200" text-anchor="middle" font-family="Poppins, sans-serif" font-size="11" fill="#15803D" font-weight="700">EXERCISE ILLUSTRATION</text>
+    </svg>
+  )}
+
+</div>
+
+<style is:global>
+  .movement-svg-wrap { flex-shrink: 0; }
+</style>

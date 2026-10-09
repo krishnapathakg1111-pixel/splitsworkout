@@ -1,0 +1,167 @@
+---
+interface Props {
+  type: 'push' | 'pull' | 'legs' | 'upper' | 'lower' | 'fullbody';
+  size?: 'sm' | 'md' | 'lg';
+}
+const { type, size = 'md' } = Astro.props;
+
+const configs = {
+  push: {
+    label: 'Push',
+    color: '#EF4444',
+    bg: '#FEF2F2',
+    border: '#FECACA',
+    muscles: ['Chest', 'Shoulders', 'Triceps'],
+    bodyFill: ['chest', 'front-delts', 'triceps'],
+  },
+  pull: {
+    label: 'Pull',
+    color: '#3B82F6',
+    bg: '#EFF6FF',
+    border: '#BFDBFE',
+    muscles: ['Back', 'Biceps', 'Rear Delts'],
+    bodyFill: ['back', 'biceps', 'rear-delts'],
+  },
+  legs: {
+    label: 'Legs',
+    color: '#10B981',
+    bg: '#ECFDF5',
+    border: '#A7F3D0',
+    muscles: ['Quads', 'Hamstrings', 'Glutes', 'Calves'],
+    bodyFill: ['quads', 'hamstrings', 'glutes', 'calves'],
+  },
+  upper: {
+    label: 'Upper Body',
+    color: '#F59E0B',
+    bg: '#FFFBEB',
+    border: '#FDE68A',
+    muscles: ['Chest', 'Back', 'Shoulders', 'Arms'],
+    bodyFill: ['chest', 'back', 'shoulders', 'arms'],
+  },
+  lower: {
+    label: 'Lower Body',
+    color: '#8B5CF6',
+    bg: '#F5F3FF',
+    border: '#DDD6FE',
+    muscles: ['Quads', 'Hamstrings', 'Glutes', 'Calves'],
+    bodyFill: ['quads', 'hamstrings', 'glutes'],
+  },
+  fullbody: {
+    label: 'Full Body',
+    color: '#22C55E',
+    bg: '#F0FDF4',
+    border: '#BBF7D0',
+    muscles: ['All Major Muscle Groups'],
+    bodyFill: ['chest', 'back', 'shoulders', 'quads', 'hamstrings', 'glutes'],
+  },
+};
+
+const cfg = configs[type];
+const sizes = { sm: 80, md: 110, lg: 150 };
+const w = sizes[size];
+---
+
+<div
+  class="split-graphic-card"
+  style={`background:${cfg.bg};border:1.5px solid ${cfg.border};border-radius:12px;padding:12px 10px;text-align:center;min-width:${w}px;`}
+>
+  <!-- Label -->
+  <div style={`font-family:'Poppins',sans-serif;font-weight:800;font-size:0.875rem;color:${cfg.color};margin-bottom:6px;letter-spacing:-0.01em;`}>
+    {cfg.label}
+  </div>
+
+  <!-- Mini body silhouette with highlights -->
+  <svg width="52" height="76" viewBox="0 0 52 76" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 8px;display:block;" aria-hidden="true">
+    <!-- Body outline -->
+    <!-- Head -->
+    <ellipse cx="26" cy="7" rx="7" ry="7" fill="#E5E7EB"/>
+    <!-- Neck -->
+    <rect x="23" y="13" width="6" height="4" fill="#E5E7EB"/>
+    <!-- Torso -->
+    <path d="M14 18 Q10 28 10 40 L10 52 Q10 55 16 56 L36 56 Q42 55 42 52 L42 40 Q42 28 38 18Z" fill="#E5E7EB"/>
+    <!-- Left arm -->
+    <path d="M14 20 Q6 26 5 36 L6 46 L10 46 L10 36 L12 22Z" fill="#E5E7EB"/>
+    <!-- Right arm -->
+    <path d="M38 20 Q46 26 47 36 L46 46 L42 46 L42 36 L40 22Z" fill="#E5E7EB"/>
+    <!-- Left leg -->
+    <path d="M14 56 Q12 64 13 72 L20 72 L21 62 L18 57Z" fill="#E5E7EB"/>
+    <!-- Right leg -->
+    <path d="M38 56 Q40 64 39 72 L32 72 L31 62 L34 57Z" fill="#E5E7EB"/>
+
+    <!-- Highlighted regions based on type -->
+    {type === 'push' && (
+      <>
+        <!-- Chest highlight -->
+        <path d="M16 22 Q16 34 22 35 L26 35 L26 20 Q21 18 16 22Z" fill={cfg.color} opacity="0.8"/>
+        <path d="M36 22 Q36 34 30 35 L26 35 L26 20 Q31 18 36 22Z" fill={cfg.color} opacity="0.8"/>
+        <!-- Shoulder highlights -->
+        <ellipse cx="11" cy="22" rx="5" ry="6" fill={cfg.color} opacity="0.6"/>
+        <ellipse cx="41" cy="22" rx="5" ry="6" fill={cfg.color} opacity="0.6"/>
+        <!-- Tricep highlights -->
+        <ellipse cx="6" cy="34" rx="4" ry="7" fill={cfg.color} opacity="0.5"/>
+        <ellipse cx="46" cy="34" rx="4" ry="7" fill={cfg.color} opacity="0.5"/>
+      </>
+    )}
+    {type === 'pull' && (
+      <>
+        <!-- Back / lat highlights (shown as side) -->
+        <path d="M10 22 Q10 40 14 50 L18 50 L18 26 Q14 22 10 22Z" fill={cfg.color} opacity="0.7"/>
+        <path d="M42 22 Q42 40 38 50 L34 50 L34 26 Q38 22 42 22Z" fill={cfg.color} opacity="0.7"/>
+        <!-- Bicep highlights -->
+        <ellipse cx="6" cy="32" rx="4" ry="7" fill={cfg.color} opacity="0.6"/>
+        <ellipse cx="46" cy="32" rx="4" ry="7" fill={cfg.color} opacity="0.6"/>
+        <!-- Rear delt -->
+        <ellipse cx="11" cy="20" rx="4" ry="5" fill={cfg.color} opacity="0.5"/>
+        <ellipse cx="41" cy="20" rx="4" ry="5" fill={cfg.color} opacity="0.5"/>
+      </>
+    )}
+    {(type === 'legs' || type === 'lower') && (
+      <>
+        <!-- Quad highlights -->
+        <path d="M14 56 Q12 64 13 72 L20 72 L21 60 L18 57Z" fill={cfg.color} opacity="0.85"/>
+        <path d="M38 56 Q40 64 39 72 L32 72 L31 60 L34 57Z" fill={cfg.color} opacity="0.85"/>
+        <!-- Inner quads -->
+        <path d="M21 57 Q22 64 23 72 L29 72 L30 64 L29 57Z" fill={cfg.color} opacity="0.7"/>
+        <!-- Glutes -->
+        <path d="M14 52 Q14 58 26 60 Q38 58 38 52Z" fill={cfg.color} opacity="0.6"/>
+        <!-- Hamstrings (show on back) -->
+        <path d="M15 57 Q13 65 14 72 L20 72 L20 60Z" fill={cfg.color} opacity="0.4"/>
+      </>
+    )}
+    {type === 'upper' && (
+      <>
+        <!-- Chest -->
+        <path d="M16 22 Q16 34 22 35 L26 35 L26 20Z" fill={cfg.color} opacity="0.7"/>
+        <path d="M36 22 Q36 34 30 35 L26 35 L26 20Z" fill={cfg.color} opacity="0.7"/>
+        <!-- Back/lats -->
+        <path d="M10 24 Q10 40 14 48 L18 48 L16 26Z" fill={cfg.color} opacity="0.5"/>
+        <path d="M42 24 Q42 40 38 48 L34 48 L36 26Z" fill={cfg.color} opacity="0.5"/>
+        <!-- Shoulders -->
+        <ellipse cx="11" cy="22" rx="5" ry="5" fill={cfg.color} opacity="0.75"/>
+        <ellipse cx="41" cy="22" rx="5" ry="5" fill={cfg.color} opacity="0.75"/>
+        <!-- Arms -->
+        <ellipse cx="6" cy="33" rx="4" ry="7" fill={cfg.color} opacity="0.6"/>
+        <ellipse cx="46" cy="33" rx="4" ry="7" fill={cfg.color} opacity="0.6"/>
+      </>
+    )}
+    {type === 'fullbody' && (
+      <>
+        <!-- Full body highlight — all regions -->
+        <path d="M14 18 Q10 28 10 40 L10 52 Q10 55 16 56 L36 56 Q42 55 42 52 L42 40 Q42 28 38 18Z" fill={cfg.color} opacity="0.4"/>
+        <ellipse cx="11" cy="22" rx="5" ry="6" fill={cfg.color} opacity="0.6"/>
+        <ellipse cx="41" cy="22" rx="5" ry="6" fill={cfg.color} opacity="0.6"/>
+        <path d="M10 24 Q6 30 6 40 L8 46 L12 46 L12 28Z" fill={cfg.color} opacity="0.5"/>
+        <path d="M42 24 Q46 30 46 40 L44 46 L40 46 L40 28Z" fill={cfg.color} opacity="0.5"/>
+        <path d="M14 56 Q12 64 13 72 L20 72 L21 58Z" fill={cfg.color} opacity="0.7"/>
+        <path d="M38 56 Q40 64 39 72 L32 72 L31 58Z" fill={cfg.color} opacity="0.7"/>
+      </>
+    )}
+  </svg>
+
+  <!-- Muscle list -->
+  <ul style="list-style:none;padding:0;margin:0;">
+    {cfg.muscles.map(m => (
+      <li style={`font-size:0.7rem;color:${cfg.color};font-weight:600;margin-bottom:1px;`}>• {m}</li>
+    ))}
+  </ul>
+</div>

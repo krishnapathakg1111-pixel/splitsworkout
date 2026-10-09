@@ -1,0 +1,280 @@
+---
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+import { SITE_URL, cleanPath, breadcrumbLd, organizationLd, websiteLd, type Crumb } from '../lib/seo';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  currentPage?: string;
+  schema?: string;                 // legacy: pre-serialised JSON-LD string
+  jsonLd?: object | object[];      // preferred: JSON-LD object(s)
+  breadcrumbs?: Crumb[];           // after "Home"; last item = current page
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical = Astro.url.pathname,
+  ogImage = '/og/default.png',
+  ogType = 'website',
+  currentPage = '',
+  schema = '',
+  jsonLd = [],
+  breadcrumbs = [],
+  noindex = false,
+} = Astro.props;
+
+const siteUrl = SITE_URL;
+const canonicalPath = cleanPath(canonical);
+const fullUrl = siteUrl + canonicalPath;
+const isHome = canonicalPath === '/';
+const ldBlocks: object[] = [
+  ...(isHome ? [organizationLd, websiteLd] : []),
+  ...(breadcrumbs.length ? [breadcrumbLd(breadcrumbs, canonicalPath)] : []),
+  ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd]),
+];
+
+const nav = [
+  { href: '/workout-splits', label: 'Workout Splits', key: 'splits' },
+  { href: '/exercises', label: 'Exercises', key: 'exercises' },
+  { href: '/muscles', label: 'Muscles', key: 'muscles' },
+  { href: '/workout-planner', label: 'Workout Planner', key: 'planner' },
+  { href: '/calculators', label: 'Calculators', key: 'calculators' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={fullUrl} />
+  <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'} />
+
+  <!-- OG -->
+  <meta property="og:type" content={ogType} />
+  <meta property="og:site_name" content="SplitsWorkout" />
+  <meta property="og:url" content={fullUrl} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={siteUrl + ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content={title} />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={siteUrl + ogImage} />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="theme-color" content="#FFFDF7" />
+  <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+
+  <!-- Fonts (Poppins + Inter per brand guide) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" /></noscript>
+
+  <!-- Structured data (only what is visible on the page) -->
+  {ldBlocks.map((b) => <script type="application/ld+json" set:html={JSON.stringify(b)} />)}
+  {schema && <script type="application/ld+json" set:html={schema} />}
+
+  <!-- Analytics placeholder -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script> -->
+  <!-- AdSense placeholder -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXXX" crossorigin="anonymous"></script> -->
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header" role="banner">
+  <div class="header-inner">
+    <Logo size="md" />
+
+    <nav class="main-nav" aria-label="Main navigation">
+      {nav.map(n => (
+        <a href={n.href} class={`nav-link${currentPage === n.key ? ' active' : ''}`}>
+          {n.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="header-right">
+      <button class="theme-btn" id="theme-btn" aria-label="Toggle light/dark mode" title="Toggle theme">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" id="theme-icon">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      </button>
+      <a href="/workout-split-finder" class="btn btn-primary btn-sm">Find My Split →</a>
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Nav -->
+<nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true">
+  {nav.map(n => (
+    <a href={n.href} class={`nav-link${currentPage === n.key ? ' active' : ''}`}>
+      {n.label}
+    </a>
+  ))}
+  <a href="/workout-split-finder" class="btn btn-primary" style="margin-top:8px">Find My Split →</a>
+</nav>
+
+<!-- Main -->
+<main id="main-content">
+  {breadcrumbs.length > 0 && (
+    <div class="crumb-bar">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        {breadcrumbs.map((c, i) => (
+          <>
+            <span class="breadcrumb-sep">›</span>
+            {c.url && i < breadcrumbs.length - 1 ? <a href={c.url}>{c.name}</a> : <span aria-current="page">{c.name}</span>}
+          </>
+        ))}
+      </nav>
+    </div>
+  )}
+  <slot />
+</main>
+
+<!-- Footer -->
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-main">
+    <!-- Footer brand will use Logo component already imported -->
+    <div>
+      <Logo dark />
+      <p class="footer-brand-desc">Free workout split guides, exercise database, and fitness tools for every goal, schedule, and equipment setup.</p>
+      </div>
+    <div class="footer-links-grid">
+      <div>
+        <div class="footer-col-title">Workout Splits</div>
+        <a href="/workout-splits" class="footer-link">All Workout Splits</a>
+        <a href="/workout-splits/best-workout-split" class="footer-link">Best Workout Split</a>
+        <a href="/workout-splits/push-pull-legs" class="footer-link">Push Pull Legs</a>
+        <a href="/workout-splits/upper-lower" class="footer-link">Upper Lower</a>
+        <a href="/workout-splits/full-body" class="footer-link">Full Body</a>
+        <a href="/workout-splits/4-day" class="footer-link">4-Day Split</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Tools</div>
+        <a href="/workout-split-finder" class="footer-link">Split Finder</a>
+        <a href="/workout-planner" class="footer-link">Workout Planner</a>
+        <a href="/exercises" class="footer-link">Exercise Library</a>
+        <a href="/muscles" class="footer-link">Muscle Guide</a>
+        <a href="/guides" class="footer-link">Guides</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Calculators</div>
+        <a href="/calculators/tdee" class="footer-link">TDEE Calculator</a>
+        <a href="/calculators/macros" class="footer-link">Macros Calculator</a>
+        <a href="/calculators/bmi" class="footer-link">BMI Calculator</a>
+      </div>
+      <div>
+        <div class="footer-col-title">About</div>
+        <a href="/about" class="footer-link">About</a>
+        <a href="/methodology" class="footer-link">Methodology</a>
+        <a href="/contact" class="footer-link">Contact</a>
+        <a href="/privacy-policy" class="footer-link">Privacy</a>
+        <a href="/terms" class="footer-link">Terms</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div style="font-size:0.7rem;font-weight:700;color:#6B7280;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;text-align:center;width:100%;">FIND · LEARN · BUILD · ANALYZE · TRAIN</div>
+      <span class="footer-copy">© {new Date().getFullYear()} SplitsWorkout.com — Free Workout Guides</span>
+    <div class="footer-bottom-links">
+      <a href="/privacy-policy" class="footer-bottom-link">Privacy</a>
+      <a href="/terms" class="footer-bottom-link">Terms</a>
+      <a href="/contact" class="footer-bottom-link">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+// ── Theme ──
+const html = document.documentElement;
+const saved = localStorage.getItem('sw-theme');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+if (saved === 'dark' || (!saved && prefersDark)) html.classList.add('dark');
+
+const themeBtn = document.getElementById('theme-btn');
+function updateThemeIcon() {
+  const isDark = html.classList.contains('dark');
+  const icon = document.getElementById('theme-icon');
+  if (icon) {
+    icon.innerHTML = isDark
+      ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor" stroke="none"/>'
+      : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+  }
+}
+updateThemeIcon();
+themeBtn?.addEventListener('click', () => {
+  html.classList.toggle('dark');
+  localStorage.setItem('sw-theme', html.classList.contains('dark') ? 'dark' : 'light');
+  updateThemeIcon();
+});
+
+// ── Mobile menu ──
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const mobileNav = document.getElementById('mobile-nav');
+mobileMenuBtn?.addEventListener('click', () => {
+  const isOpen = mobileNav?.classList.toggle('open');
+  mobileMenuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  mobileNav?.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+});
+
+// Close mobile nav on link click
+mobileNav?.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    mobileNav.classList.remove('open');
+    document.body.style.overflow = '';
+    mobileMenuBtn?.setAttribute('aria-expanded', 'false');
+  });
+});
+
+// ── FAQ accordion ──
+document.querySelectorAll('.faq-item').forEach(item => {
+  item.querySelector('.faq-q')?.addEventListener('click', () => {
+    item.classList.toggle('open');
+  });
+});
+
+// ── Toast system ──
+window.showToast = function(message, type = 'default', duration = 3000) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = `toast${type !== 'default' ? ' ' + type : ''}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('out');
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+};
+</script>
+
+</body>
+</html>

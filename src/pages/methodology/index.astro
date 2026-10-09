@@ -1,0 +1,29 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { articleLd } from '../../lib/seo';
+const desc = "How SplitsWorkout classifies exercises, builds workout splits, makes recommendations and calculates calories — and what we do not claim.";
+---
+<Layout title="Methodology: How SplitsWorkout Works | SplitsWorkout" description={desc} canonical="/methodology" currentPage="about" ogType="article" ogImage="/og/default.png"
+  breadcrumbs={[{ name: 'Methodology' }]}
+  jsonLd={articleLd({ headline: "How SplitsWorkout Works", description: desc, path: "/methodology" })}>
+<div class="page-header"><div class="page-header-inner"><h1 class="page-title">How SplitsWorkout Works</h1><p class="page-desc">Plain-English documentation of how our data, recommendations and calculators are built — including their limits.</p></div></div>
+<div class="seo-page">
+
+  <h2>What this site is — and is not</h2>
+  <p>SplitsWorkout is an educational tool for planning resistance training. It helps you choose a workout split, learn exercises and muscles, build a plan and estimate calorie needs. It is not medical advice, physiotherapy or personal coaching. If you have an injury, a health condition or are pregnant, speak to a qualified professional before changing your training or diet.</p>
+  <h2>One dataset behind everything</h2>
+  <p>The exercise library, the workout splits, the muscle guides, the workout planner and the recommendations all read from the same structured data. Each exercise records its primary and secondary muscles, equipment, difficulty, movement pattern and whether it is a compound or isolation lift. Each split records its weekly schedule and which exercises it uses. Because the planner, finder and pages share one source, they cannot disagree with each other.</p>
+  <h2>Read the details</h2>
+  <ul>
+    <li><a href="/methodology/exercises">How exercises are categorised and reviewed</a></li>
+    <li><a href="/methodology/workout-splits">How workout splits and the Split Finder work</a></li>
+    <li><a href="/methodology/calculators">How the TDEE, macros and BMI calculators work</a></li>
+  </ul>
+  <h2>How we keep content honest</h2>
+  <p>Three habits guard against the usual problems with fitness content. First, we publish the rules behind our tools so you can check them. Second, we separate finished pages from work in progress: exercises that have not yet been reviewed are kept out of search results until they are. Third, we avoid precision we cannot support, which is why recommendations are tiers with reasons rather than percentage scores.</p>
+  <h2>Corrections and updates</h2>
+  <p>Training advice changes and mistakes happen. If you spot an error in an exercise, split or calculator, tell us through the <a href="/contact">contact page</a> and we will review it. We only change a page date when the content has genuinely been updated.</p>
+  <h2>Who is behind the content?</h2>
+  <p>Content is produced by the SplitsWorkout editorial team using software tools for data processing and drafting. We do not publish named credentials we cannot back up, and we do not claim medical or clinical review. Read more on the <a href="/about">about page</a>.</p>
+</div>
+</Layout>

@@ -1,0 +1,280 @@
+// Content for /workout-splits/{2..7}-day. Each plan is written for its own schedule — the structures,
+// trade-offs, recovery advice and FAQs differ per page. Exercise slugs must exist in exercises.ts
+// (checked by scripts/validate-exercises.mjs). No studies are cited by name; claims are hedged.
+
+export interface Structure {
+  name: string; splitSlug?: string; week: string[]; best: string; tradeoff: string;
+}
+export interface DayPlan {
+  days: number; slug: string; metaTitle: string; metaDescription: string; h1: string; kicker: string;
+  quickAnswer: string; intro: string[];
+  structures: Structure[];
+  ratings: [string, string][];
+  pros: string[]; cons: string[];
+  recoveryTitle: string; recovery: string[];
+  whoFor: string[]; whoAvoid: string[];
+  exercises: { heading: string; slugs: string[]; note: string }[];
+  faqs: { q: string; a: string }[];
+  finder: string;       // query string for the finder deep-link
+}
+
+const rest = (d: string) => `${d}|Rest`;
+
+export const dayPlans: DayPlan[] = [
+{
+  days: 2, slug: '2-day',
+  metaTitle: '2-Day Workout Split: Full Body & Upper/Lower | SplitsWorkout',
+  metaDescription: 'Only two days to train? See how to structure a 2-day workout split, why full body usually beats upper/lower here, and when to add a third day.',
+  h1: '2-Day Workout Split: Make Two Training Days Count',
+  kicker: 'For busy schedules, beginners, and anyone returning to training',
+  quickAnswer: 'On two training days a week, train your whole body both days. A full body A/B split trains every muscle twice a week, which is more efficient than an upper/lower split that only hits each muscle once.',
+  intro: [
+    'Two days a week is the smallest schedule that still makes consistent progress practical. The challenge is not volume — it is making sure every major muscle group gets trained often enough that the work does not sit idle for a week at a time.',
+    'That is why the structure matters more here than on any other schedule. With so few sessions, anything that trains a muscle only once a week leaves you with a lot of unused recovery time. The plans below prioritise frequency and big, efficient lifts over isolation work.',
+  ],
+  structures: [
+    { name: 'Full Body A / B (recommended)', splitSlug: 'full-body',
+      week: ['Mon|Full Body A', rest('Tue'), rest('Wed'), 'Thu|Full Body B', rest('Fri'), rest('Sat'), rest('Sun')],
+      best: 'Almost everyone on two days. Each muscle is trained twice a week with 3–4 days between sessions.',
+      tradeoff: 'Sessions run long (about 60–80 minutes) because you cover everything. Keep the exercise count to 5–7.' },
+    { name: 'Upper / Lower', splitSlug: 'upper-lower',
+      week: ['Mon|Upper', rest('Tue'), rest('Wed'), 'Thu|Lower', rest('Fri'), rest('Sat'), rest('Sun')],
+      best: 'Lifters who dislike long sessions and are happy to train each muscle once a week.',
+      tradeoff: 'Each muscle gets only one weekly stimulus, so progress is usually slower than with full body.' },
+  ],
+  ratings: [['Beginner friendly', 'Excellent'], ['Muscle building', 'Good for beginners; limited ceiling'], ['Strength', 'Good if you focus on 3–4 main lifts'], ['Schedule flexibility', 'High — easy to keep up'], ['Recovery demand', 'Low'], ['Session length', '60–80 min (full body)'], ['Weekly frequency per muscle', '2× (full body) / 1× (upper-lower)']],
+  pros: ['Easiest schedule to stick to long term', 'Each muscle trained twice a week with full body', 'Plenty of recovery — fatigue is rarely a problem', 'Works around work, family and travel'],
+  cons: ['Little room for isolation or weak-point work', 'Sessions can feel long', 'Ceiling for advanced hypertrophy is lower than 4+ day plans', 'Missing a session costs you half your weekly training'],
+  recoveryTitle: 'Recovery on a 2-day schedule',
+  recovery: ['Spacing is the main lever: Monday and Thursday (or Tuesday and Friday) leaves three to four days between sessions, so you start each workout fully recovered.', 'Because recovery is rarely the limit, you can afford to train close to failure on your main sets. The practical constraint is time, not fatigue.'],
+  whoFor: ['New lifters learning the main movements', 'People with demanding jobs or family schedules', 'Returning lifters rebuilding a habit', 'Anyone who also plays a sport or does lots of cardio'],
+  whoAvoid: ['Lifters chasing maximum muscle size and willing to train more', 'Anyone who wants dedicated arm, shoulder and calf volume'],
+  exercises: [
+    { heading: 'Full Body A', slugs: ['squat', 'barbell-bench-press', 'lat-pulldown', 'romanian-deadlift', 'overhead-press', 'plank'], note: 'One squat, one horizontal press, one vertical pull, one hinge, one overhead press, one core exercise.' },
+    { heading: 'Full Body B', slugs: ['leg-press', 'incline-dumbbell-press', 'seated-cable-row', 'hip-thrust', 'lateral-raise', 'hammer-curl'], note: 'Swap each pattern for a different variation and add a little isolation work.' },
+  ],
+  faqs: [
+    { q: 'Can you build muscle training only two days a week?', a: 'Yes, especially if you are newer to training. Studies that match total weekly sets often find similar growth across different frequencies, so two well-planned full-body sessions can work. The limit is the total volume you can fit into two sessions.' },
+    { q: 'Is upper/lower or full body better on two days?', a: 'Full body, for most people, because it trains each muscle twice a week. Upper/lower trains each muscle once.' },
+    { q: 'When should I move up to three days?', a: 'When sessions have grown too long, progress has stalled despite good effort, or you simply have the time. A 3-day full-body or upper/lower/upper rotation is the natural next step.' },
+  ],
+  finder: 'days=2&exp=beginner',
+},
+{
+  days: 3, slug: '3-day',
+  metaTitle: '3-Day Workout Split: Full Body, PPL & More | SplitsWorkout',
+  metaDescription: 'Compare the best 3-day workout splits — full body, push/pull/legs and upper/lower rotations — with sample weeks, pros and cons, and who each suits.',
+  h1: '3-Day Workout Split: Full Body, PPL or Upper/Lower?',
+  kicker: 'The most popular schedule for beginners and intermediates',
+  quickAnswer: 'For most people, three non-consecutive full-body days (Mon/Wed/Fri) is the best 3-day split. If you prefer shorter sessions, an upper/lower/full-body rotation is a strong alternative.',
+  intro: [
+    'Three days a week is the sweet spot where recovery, results and real life tend to meet. It is enough to train every muscle multiple times a week, with rest days that keep fatigue manageable.',
+    'The right structure depends on how you want to spend each session. Full body maximises frequency, a push/pull/legs rotation shortens each workout but trains muscles only once a week, and an upper/lower hybrid sits between the two.',
+  ],
+  structures: [
+    { name: 'Full Body ×3 (recommended)', splitSlug: 'full-body',
+      week: ['Mon|Full Body A', rest('Tue'), 'Wed|Full Body B', rest('Thu'), 'Fri|Full Body C', rest('Sat'), rest('Sun')],
+      best: 'Beginners and intermediates. Every muscle is trained three times a week with a rest day in between.',
+      tradeoff: 'Each session is broad, so you need to choose exercises carefully to avoid long, exhausting workouts.' },
+    { name: 'Upper / Lower / Full Body', splitSlug: 'upper-lower',
+      week: ['Mon|Upper', rest('Tue'), 'Wed|Lower', rest('Thu'), 'Fri|Full Body', rest('Sat'), rest('Sun')],
+      best: 'Lifters who like a little more focus per session but still want most muscles twice a week.',
+      tradeoff: 'The week is uneven, so plan which muscles get the extra full-body hit.' },
+    { name: 'Push / Pull / Legs (once each)', splitSlug: 'push-pull-legs',
+      week: ['Mon|Push', rest('Tue'), 'Wed|Pull', rest('Thu'), 'Fri|Legs', rest('Sat'), rest('Sun')],
+      best: 'People who like focused sessions and are comfortable with once-a-week frequency per muscle.',
+      tradeoff: 'Each muscle is trained once a week, which usually builds muscle more slowly than a full-body plan on the same days.' },
+  ],
+  ratings: [['Beginner friendly', 'Excellent (full body)'], ['Muscle building', 'Very good'], ['Strength', 'Very good — practise main lifts often'], ['Schedule flexibility', 'High'], ['Recovery demand', 'Low–moderate'], ['Session length', '50–75 min'], ['Weekly frequency per muscle', '3× full body; ~2× upper/lower/full; 1× PPL']],
+  pros: ['Balanced frequency, volume and recovery', 'Works for beginners and intermediates', 'Several valid structures to choose from', 'Easy to catch up if you miss a day'],
+  cons: ['Less volume per muscle per session than a body-part split', 'Full-body sessions need disciplined exercise selection', 'Advanced lifters may need more weekly volume'],
+  recoveryTitle: 'Recovery and spacing',
+  recovery: ['Mon/Wed/Fri puts a full rest day between sessions, which is why this schedule is so forgiving. If you can only train on consecutive days, favour an upper/lower or push/pull/legs structure so the same muscles are not hit back to back.', 'Progress by adding reps or small amounts of weight each week; with three sessions you rarely need to push every set to failure.'],
+  whoFor: ['Beginners starting a structured plan', 'Intermediates with limited time', 'Lifters who want strength and size without living in the gym', 'People who miss sessions occasionally'],
+  whoAvoid: ['Advanced lifters who need more weekly volume', 'Anyone who wants a high-frequency, high-volume bodybuilding plan'],
+  exercises: [
+    { heading: 'Full body essentials', slugs: ['squat', 'dumbbell-bench-press', 'barbell-row', 'romanian-deadlift', 'dumbbell-shoulder-press', 'plank'], note: 'Vary each workout slightly (A/B/C) — for example barbell bench one day, dumbbell bench the next.' },
+    { heading: 'Easy swaps when equipment is limited', slugs: ['goblet-squat', 'push-up', 'dumbbell-row', 'glute-bridge'], note: 'Dumbbells and bodyweight cover every movement pattern on a 3-day plan.' },
+  ],
+  faqs: [
+    { q: 'Is a 3-day split enough to build muscle?', a: 'For most beginners and intermediates, yes. Muscle growth responds to total weekly volume, effort and consistency, and three well-run sessions can deliver all three.' },
+    { q: 'Should I do full body or push/pull/legs on 3 days?', a: 'Full body trains each muscle three times a week; push/pull/legs trains each once. For the same three days, full body is the more efficient default.' },
+    { q: 'Can I train three days in a row?', a: 'You can, but a day of rest between sessions makes full-body training easier to recover from. If you must train consecutively, use a push/pull/legs or upper/lower structure.' },
+  ],
+  finder: 'days=3',
+},
+{
+  days: 4, slug: '4-day',
+  metaTitle: '4-Day Workout Split: Best Gym Routines & Plans | SplitsWorkout',
+  metaDescription: 'The best 4-day workout splits compared: upper/lower, PPL + upper hybrid and body-part pairs, with sample weeks, frequency, and who each plan suits.',
+  h1: '4-Day Workout Split: The Best Routines Compared',
+  kicker: 'Where frequency, volume and recovery line up best',
+  quickAnswer: 'Upper/lower is the best 4-day split for most lifters: every muscle is trained twice a week, sessions are manageable, and recovery is straightforward.',
+  intro: [
+    'Four days is where training gets flexible enough to give every muscle direct work twice a week without every session feeling endless. For many lifters it is the most productive schedule in terms of results per hour in the gym.',
+    'Your options are mainly about how to divide the body. Upper/lower is the cleanest answer, a push/pull/legs plus upper hybrid adds variety, and body-part pairs trade frequency for focus.',
+  ],
+  structures: [
+    { name: 'Upper / Lower (recommended)', splitSlug: 'upper-lower',
+      week: ['Mon|Upper', 'Tue|Lower', rest('Wed'), 'Thu|Upper', 'Fri|Lower', rest('Sat'), rest('Sun')],
+      best: 'Most intermediates and many beginners. Each muscle is trained twice a week with two rest days.',
+      tradeoff: 'Upper days cover a lot of muscles, so exercise selection and time management matter.' },
+    { name: 'Push / Pull / Legs + Upper',
+      week: ['Mon|Push', 'Tue|Pull', rest('Wed'), 'Thu|Legs', 'Fri|Upper', rest('Sat'), rest('Sun')],
+      best: 'Lifters who like PPL but only have four days. Upper body gets twice-a-week frequency.',
+      tradeoff: 'Legs are trained only once a week, so add a lower-body emphasis to the upper day or choose upper/lower instead.' },
+    { name: 'Body-part pairs', splitSlug: 'bro-split',
+      week: ['Mon|Chest & Triceps', 'Tue|Back & Biceps', rest('Wed'), 'Thu|Legs', 'Fri|Shoulders & Abs', rest('Sat'), rest('Sun')],
+      best: 'People who enjoy dedicated sessions and higher volume per muscle in one visit.',
+      tradeoff: 'Each muscle is trained about once a week.' },
+  ],
+  ratings: [['Beginner friendly', 'Good (upper/lower)'], ['Muscle building', 'Excellent'], ['Strength', 'Excellent — main lifts twice a week'], ['Schedule flexibility', 'Moderate'], ['Recovery demand', 'Moderate'], ['Session length', '55–75 min'], ['Weekly frequency per muscle', '2× (upper/lower); 1–2× others']],
+  pros: ['Every muscle trained twice a week (upper/lower)', 'Room for both heavy compound lifts and accessory work', 'Two full rest days', 'Fits most work schedules'],
+  cons: ['Less forgiving of missed sessions than 3-day plans', 'Easy to overload upper days with too many exercises', 'Needs a rough weekly plan for volume'],
+  recoveryTitle: 'Recovery on four days',
+  recovery: ['The Mon/Tue/Thu/Fri layout gives each half of the body at least two days before it is trained again, and two full rest days for everything. Sleep and food matter more here than on a 3-day plan because you are doing more total work.', 'If a session is going badly, trim accessory sets rather than skipping the main lifts — the main lifts drive most of the progress.'],
+  whoFor: ['Intermediate lifters wanting steady progress', 'Beginners ready to move up from 3 days', 'Anyone prioritising both size and strength', 'People who like a predictable weekly rhythm'],
+  whoAvoid: ['People who can only train irregularly', 'Lifters who want to train each muscle only once per week for time reasons'],
+  exercises: [
+    { heading: 'Upper day', slugs: ['barbell-bench-press', 'barbell-row', 'overhead-press', 'lat-pulldown', 'lateral-raise', 'tricep-pushdown'], note: 'Press, pull, overhead press, vertical pull, then shoulder and arm accessories.' },
+    { heading: 'Lower day', slugs: ['squat', 'romanian-deadlift', 'leg-press', 'leg-curl', 'calf-raise', 'hanging-leg-raise'], note: 'Squat pattern, hinge pattern, then leg isolation, calves and core.' },
+  ],
+  faqs: [
+    { q: 'What is the best 4-day workout split?', a: 'Upper/lower is the best default: each muscle twice a week and balanced recovery. PPL + upper and body-part pairs are valid alternatives depending on preference.' },
+    { q: 'Is a 4-day split better than 5 days?', a: 'Not necessarily. Four days is often easier to recover from and sustain, and results depend more on consistency and total volume than on the number of days.' },
+    { q: 'Which days should I train?', a: 'Mon/Tue/Thu/Fri works well, but any pattern that separates upper and lower sessions and gives you two rest days is fine.' },
+  ],
+  finder: 'days=4',
+},
+{
+  days: 5, slug: '5-day',
+  metaTitle: '5-Day Workout Split: Best Gym & Muscle-Building Routines | SplitsWorkout',
+  metaDescription: 'Compare 5-day workout splits: PPL + upper/lower hybrid, classic body-part and upper/lower plus a weak-point day, with sample weeks and recovery advice.',
+  h1: '5-Day Workout Split: PPL Hybrid, Body-Part or Upper/Lower',
+  kicker: 'More volume and variety — if recovery can keep up',
+  quickAnswer: 'A push/pull/legs + upper/lower hybrid is the most balanced 5-day split: most muscles get hit twice a week while you keep two rest days.',
+  intro: [
+    'Five days gives you room for higher weekly volume and more exercise variety, which can help intermediate and advanced lifters keep progressing. The trade-off is that recovery and scheduling now matter.',
+    'No 5-day structure divides the week perfectly, because five does not split evenly into upper/lower or push/pull/legs. The options below handle that in different ways, and the best one depends on whether you value frequency or focus.',
+  ],
+  structures: [
+    { name: 'PPL + Upper/Lower hybrid — PPLUL (recommended)', splitSlug: 'pplul',
+      week: ['Mon|Push', 'Tue|Pull', 'Wed|Legs', rest('Thu'), 'Fri|Upper', 'Sat|Lower', rest('Sun')],
+      best: 'Intermediates who want most muscles twice a week without a six-day commitment.',
+      tradeoff: 'Frequency is uneven — push/pull muscles get more weekly hits than legs depending on how you balance upper and lower days.' },
+    { name: 'Classic body-part split', splitSlug: 'bro-split',
+      week: ['Mon|Chest', 'Tue|Back', 'Wed|Shoulders', 'Thu|Arms', 'Fri|Legs', rest('Sat'), rest('Sun')],
+      best: 'Lifters who enjoy high volume on one muscle per day and train near-failure on isolation work.',
+      tradeoff: 'One hit per muscle per week, and a missed session means a missed muscle.' },
+    { name: 'Upper/Lower + weak-point day', splitSlug: 'upper-lower',
+      week: ['Mon|Upper', 'Tue|Lower', rest('Wed'), 'Thu|Upper', 'Fri|Lower', 'Sat|Weak points', rest('Sun')],
+      best: 'Four-day upper/lower lifters who want an extra day for lagging muscles.',
+      tradeoff: 'The fifth day adds volume but also fatigue — keep it short and focused.' },
+  ],
+  ratings: [['Beginner friendly', 'Low — more than most beginners need'], ['Muscle building', 'Excellent for intermediates'], ['Strength', 'Good — depends on structure'], ['Schedule flexibility', 'Low–moderate'], ['Recovery demand', 'High'], ['Session length', '45–70 min'], ['Weekly frequency per muscle', '1–2× depending on structure']],
+  pros: ['More weekly volume and exercise variety', 'Shorter sessions than 3–4 day plans', 'Easy to add weak-point work', 'Multiple structures to match your preference'],
+  cons: ['Harder to recover from; sleep and food matter more', 'Unevenly divided weeks in most structures', 'Missed sessions can leave gaps', 'Often unnecessary for beginners'],
+  recoveryTitle: 'Managing recovery on five days',
+  recovery: ['Place your two rest days deliberately — after your hardest leg or deadlift day, and before the next heavy block. A Wed or Thu rest day splits the week well.', 'If you feel flat by day four or five, reduce sets on isolation exercises before cutting the main lifts. Persistent poor sleep, falling performance and loss of motivation are signs to drop to four days for a few weeks.'],
+  whoFor: ['Intermediate lifters wanting more weekly volume', 'People who enjoy gym time and recover well', 'Lifters preparing for physique goals with room for weak-point work'],
+  whoAvoid: ['Beginners — three or four days is usually enough', 'Anyone with an unpredictable schedule', 'People already short on sleep or recovery'],
+  exercises: [
+    { heading: 'Push day staples', slugs: ['barbell-bench-press', 'incline-dumbbell-press', 'overhead-press', 'lateral-raise', 'tricep-pushdown'], note: 'Press from two angles, an overhead press, then lateral delts and triceps.' },
+    { heading: 'Pull and legs staples', slugs: ['pull-up', 'barbell-row', 'face-pull', 'squat', 'romanian-deadlift', 'leg-press'], note: 'Vertical and horizontal pulling, rear delts, then squat, hinge and a machine quad builder.' },
+  ],
+  faqs: [
+    { q: 'Is a 5-day split good for beginners?', a: 'Usually not necessary. Beginners tend to progress well on three or four days and benefit from the extra recovery.' },
+    { q: 'How do I split muscle groups over 5 days?', a: 'Either a PPL + upper/lower hybrid (most muscles twice weekly) or a body-part split (each muscle once). Pick based on whether you want frequency or focus.' },
+    { q: 'Should I train 5 days in a row?', a: 'Avoid it if you can. Two rest days spread through the week make a 5-day plan far easier to sustain.' },
+  ],
+  finder: 'days=5&exp=intermediate',
+},
+{
+  days: 6, slug: '6-day',
+  metaTitle: '6-Day Workout Split: PPL, Arnold & More | SplitsWorkout',
+  metaDescription: 'Explore 6-day workout splits — push/pull/legs twice weekly, the Arnold split and a heavy/light PPL — with sample weeks, recovery advice, and who should avoid them.',
+  h1: '6-Day Workout Split: PPL, Arnold Split and Heavy/Light Options',
+  kicker: 'High volume, high frequency — and a high recovery bill',
+  quickAnswer: 'Push/pull/legs run twice a week is the standard 6-day split, giving every muscle two sessions. The Arnold split is a higher-volume alternative for experienced lifters.',
+  intro: [
+    'A six-day split is a commitment to training nearly every day. Done well, it gives each muscle two weekly sessions and enough total volume to keep advanced lifters progressing. Done poorly, it is a fast route to fatigue.',
+    'The key is that six hard sessions are not required — many lifters run a 6-day structure with a deliberate mix of heavy and lighter days so that fatigue does not accumulate.',
+  ],
+  structures: [
+    { name: 'Push / Pull / Legs ×2 (recommended)', splitSlug: 'push-pull-legs',
+      week: ['Mon|Push', 'Tue|Pull', 'Wed|Legs', 'Thu|Push', 'Fri|Pull', 'Sat|Legs', rest('Sun')],
+      best: 'Intermediate to advanced lifters who recover well. Each muscle twice a week with clear separation.',
+      tradeoff: 'Legs twice a week plus pulling twice puts real demand on your lower back and grip across the week.' },
+    { name: 'Arnold Split', splitSlug: 'arnold-split',
+      week: ['Mon|Chest & Back', 'Tue|Shoulders & Arms', 'Wed|Legs', 'Thu|Chest & Back', 'Fri|Shoulders & Arms', 'Sat|Legs', rest('Sun')],
+      best: 'Experienced lifters who like antagonist pairings and high-volume training.',
+      tradeoff: 'Chest & back sessions are long. It is demanding and usually not a first choice for newer lifters.' },
+    { name: 'Heavy / Light PPL',
+      week: ['Mon|Push (heavy)', 'Tue|Pull (heavy)', 'Wed|Legs (heavy)', 'Thu|Push (light)', 'Fri|Pull (light)', 'Sat|Legs (light)', rest('Sun')],
+      best: 'Lifters who want PPL volume but need to manage fatigue. First half of the week is heavy; second is lighter and higher-rep.',
+      tradeoff: 'Requires honest self-regulation — light days really have to be light.' },
+  ],
+  ratings: [['Beginner friendly', 'Low'], ['Muscle building', 'Excellent for advanced lifters'], ['Strength', 'Good — depends on how heavy the main lifts are'], ['Schedule flexibility', 'Low'], ['Recovery demand', 'Very high'], ['Session length', '60–90 min'], ['Weekly frequency per muscle', '2×']],
+  pros: ['Twice-weekly frequency for every muscle', 'High weekly volume potential', 'Short breaks between muscle groups', 'Predictable structure'],
+  cons: ['Very demanding on recovery, sleep and nutrition', 'Little room for life disruptions', 'Easy to accumulate fatigue and stall', 'Not necessary for most people'],
+  recoveryTitle: 'Recovery is the whole game',
+  recovery: ['With one rest day a week, recovery has to be managed inside the plan: vary intensity between the two cycles, limit sets taken to failure, and keep total sets per muscle in a reasonable range.', 'Watch for the usual warning signs — falling performance, persistent soreness, poor sleep, low motivation. If they appear, drop a day or run a lighter week rather than pushing on.'],
+  whoFor: ['Experienced lifters with solid recovery', 'People who enjoy daily training and have the time', 'Lifters who have outgrown 4–5 day plans'],
+  whoAvoid: ['Beginners', 'People with limited sleep, high stress or physically demanding jobs', 'Anyone who regularly misses sessions'],
+  exercises: [
+    { heading: 'Heavy day staples', slugs: ['barbell-bench-press', 'pull-up', 'squat', 'overhead-press', 'barbell-row', 'romanian-deadlift'], note: 'Main compound lifts for the heavy half of the week.' },
+    { heading: 'Lighter, higher-rep accessories', slugs: ['cable-fly', 'face-pull', 'leg-extension', 'leg-curl', 'lateral-raise', 'hammer-curl'], note: 'Use for the lighter half of the week to build volume without piling on joint stress.' },
+  ],
+  faqs: [
+    { q: 'Is a 6-day workout split good?', a: 'It can be for experienced lifters who recover well. For most people, four or five days produces similar results with less fatigue.' },
+    { q: 'PPL or Arnold on six days?', a: 'PPL is simpler and easier to progress. The Arnold split trains more muscles per session and suits experienced lifters who like higher volume.' },
+    { q: 'How do I avoid burnout on a 6-day plan?', a: 'Use heavy and light days, keep most sets short of failure, schedule a deload week every 6–8 weeks, and take your rest day seriously.' },
+  ],
+  finder: 'days=6&exp=advanced',
+},
+{
+  days: 7, slug: '7-day',
+  metaTitle: '7-Day Workout Split: Train Every Day? | SplitsWorkout',
+  metaDescription: 'Do you need a 7-day workout split? See how to structure a week with six lifting days and a rest day, or five lifting days plus active recovery.',
+  h1: '7-Day Workout Split: Do You Really Need to Train Every Day?',
+  kicker: 'Most people are better off with one or two true rest days',
+  quickAnswer: 'You do not need to lift seven days a week. The most sustainable 7-day plans are six lifting days plus a full rest day, or five lifting days with two active-recovery days.',
+  intro: [
+    'Searching for a 7-day workout split usually means one of two things: you want to be active every day, or you are looking for the maximum possible volume. The good news is that you can do the first without doing the second.',
+    'Lifting hard seven days in a row leaves no recovery window, and recovery is when you actually adapt. The structures below keep you moving every day while still protecting your ability to train hard.',
+  ],
+  structures: [
+    { name: '6 lifting days + 1 full rest', splitSlug: 'push-pull-legs',
+      week: ['Mon|Push', 'Tue|Pull', 'Wed|Legs', 'Thu|Push', 'Fri|Pull', 'Sat|Legs', rest('Sun')],
+      best: 'Experienced lifters who recover well. The standard high-frequency week with one real day off.',
+      tradeoff: 'Very demanding, see the 6-day guide for recovery advice.' },
+    { name: '5 lifting days + 2 active recovery',
+      week: ['Mon|Upper', 'Tue|Lower', 'Wed|Walk / mobility', 'Thu|Upper', 'Fri|Lower', 'Sat|Active (easy)', rest('Sun')],
+      best: 'People who want to move daily but still recover. Active days are easy: walking, light cycling, mobility work.',
+      tradeoff: 'Active recovery must be genuinely easy — if it is tiring, it is training.' },
+    { name: '4 lifting days + 3 activity days',
+      week: ['Mon|Upper', 'Tue|Lower', 'Wed|Cardio / sport', 'Thu|Upper', 'Fri|Lower', 'Sat|Sport / hike', rest('Sun')],
+      best: 'Lifters who also play sports, run, or want regular cardio without compromising strength work.',
+      tradeoff: 'Overall volume across the week is high; keep an eye on sleep and appetite.' },
+  ],
+  ratings: [['Beginner friendly', 'Not recommended'], ['Muscle building', 'Same or less than a 4–6 day plan with good recovery'], ['Strength', 'Not improved by lifting daily'], ['Schedule flexibility', 'Low'], ['Recovery demand', 'Extreme if all days are hard'], ['Session length', '40–90 min'], ['Weekly frequency per muscle', '2× with six lifting days']],
+  pros: ['Builds a daily habit', 'Active-recovery days can aid mobility and general fitness', 'Flexible to combine lifting, cardio and sport'],
+  cons: ['No true rest if every day is a hard lifting session', 'Greater overuse and fatigue risk', 'Little benefit over well-structured 4–6 day plans', 'Easy to under-recover without noticing'],
+  recoveryTitle: 'What "rest" means on a 7-day week',
+  recovery: ['A rest day does not have to mean doing nothing; it means no hard training. Walking, stretching and easy movement count. What does not count is another full workout.', 'If you do train hard six or seven days, schedule a lighter week every 4–8 weeks and pay attention to sleep, appetite and performance trends.'],
+  whoFor: ['Experienced lifters with a structured plan and good recovery', 'Active people who combine lifting with sport or cardio', 'People who want a daily routine with light days built in'],
+  whoAvoid: ['Beginners', 'Anyone feeling run-down, sleeping poorly or recovering from injury', 'Lifters expecting daily hard sessions to speed up results'],
+  exercises: [
+    { heading: 'Main lifting days', slugs: ['squat', 'barbell-bench-press', 'pull-up', 'romanian-deadlift', 'overhead-press'], note: 'Keep the big lifts heavy and keep volume sensible.' },
+    { heading: 'Active-recovery work', slugs: ['farmer-carry', 'bird-dog', 'dead-bug', 'band-pull-apart'], note: 'Low-fatigue movements that keep you moving without adding training stress.' },
+  ],
+  faqs: [
+    { q: 'Is it OK to work out every day?', a: 'Moving every day is fine. Training hard every day usually is not, because recovery is where adaptation happens. Mix hard sessions with genuinely easy ones.' },
+    { q: 'Do I need a rest day?', a: 'Most lifters benefit from at least one day a week with no hard training. Which day matters less than keeping it consistent.' },
+    { q: 'What is the best 7-day split?', a: 'There is no single best one; a 6-on/1-off PPL or 5 lifting days plus 2 active days are the most sustainable.' },
+  ],
+  finder: 'days=7&exp=advanced',
+},
+];
+
+export const getDayPlan = (slug: string) => dayPlans.find((d) => d.slug === slug);

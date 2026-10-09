@@ -1,0 +1,42 @@
+---
+// Contextual product CTAs — one component, one wording per page type (SEO → product loop).
+interface Props {
+  variant: 'exercise' | 'muscle' | 'split' | 'comparison' | 'calculator' | 'guide' | 'generic';
+  slug?: string;        // exercise slug | muscle slug | split slug
+  cat?: string;         // planner category filter for the muscle variant (e.g. "Chest")
+  heading?: string;
+  text?: string;
+}
+const { variant, slug = '', cat = '', heading, text } = Astro.props;
+
+const conf = {
+  exercise:   { h: 'Ready to use it?', t: 'Add this exercise to a training day, set your sets and reps, and see how it changes your weekly muscle coverage.', label: 'Add This Exercise to Your Workout →', href: `/workout-planner?add=${slug}`, sLabel: 'Find Exercises for This Muscle →', sHref: '/exercises' },
+  muscle:     { h: 'Train this muscle', t: 'Open the planner with this muscle group pre-selected and pick exercises that fit your equipment.', label: 'Build a Workout for This Muscle →', href: `/workout-planner?cat=${encodeURIComponent(cat)}`, sLabel: 'Find My Best Split →', sHref: '/workout-split-finder' },
+  split:      { h: 'Take this split with you', t: 'Load the full weekly schedule into the planner, swap exercises, edit sets and reps, and export it.', label: 'Build This Split in the Planner →', href: `/workout-planner?split=${slug}`, sLabel: 'Not sure it fits? Use the Split Finder →', sHref: '/workout-split-finder' },
+  comparison: { h: 'Still not sure?', t: 'Answer a few questions about your schedule, goal and experience and get a ranked recommendation.', label: 'Find Which Split Fits You →', href: '/workout-split-finder', sLabel: 'Browse all workout splits →', sHref: '/workout-splits' },
+  calculator: { h: 'Turn your numbers into a plan', t: 'Your calorie target is half the equation. Find a training split that matches your goal and schedule.', label: 'Find a Workout Split for Your Goal →', href: '/workout-split-finder', sLabel: 'Open the Workout Planner →', sHref: '/workout-planner' },
+  guide:      { h: 'Put it into practice', t: 'Build your own routine from the exercise library and see your muscle coverage as you go.', label: 'Build Your Workout →', href: '/workout-planner', sLabel: 'Find My Best Split →', sHref: '/workout-split-finder' },
+  generic:    { h: 'Not sure where to start?', t: 'Tell us your schedule, goal and experience — we will rank the splits that fit.', label: 'Find My Best Split →', href: '/workout-split-finder', sLabel: 'Build a Workout →', sHref: '/workout-planner' },
+}[variant];
+---
+<aside class="cta-box" aria-label={heading ?? conf.h}>
+  <div class="cta-box-copy">
+    <div class="cta-box-h">{heading ?? conf.h}</div>
+    <p class="cta-box-t">{text ?? conf.t}</p>
+  </div>
+  <div class="cta-box-actions">
+    <a class="btn btn-primary" href={conf.href}>{conf.label}</a>
+    <a class="cta-box-link" href={conf.sHref}>{conf.sLabel}</a>
+  </div>
+</aside>
+<style is:global>
+  .cta-box { display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
+    background:var(--accent-bg); border:1px solid var(--accent-border); border-radius:var(--radius-xl);
+    padding:20px 24px; margin:32px 0; }
+  .cta-box-copy { flex:1 1 280px; min-width:0; }
+  .cta-box-h { font-family:'Poppins',sans-serif; font-weight:800; font-size:1.05rem; color:var(--text); margin-bottom:4px; }
+  .cta-box-t { margin:0; font-size:0.85rem; line-height:1.65; color:var(--text-2); }
+  .cta-box-actions { display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+  .cta-box-link { font-size:0.8rem; font-weight:600; color:var(--accent-hover); text-decoration:none; }
+  .cta-box-link:hover { text-decoration:underline; }
+</style>

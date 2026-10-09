@@ -1,0 +1,203 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MovementSVG from '../components/MovementSVG.astro';
+import { getMovementIllustration } from '../data/exerciseMedia';
+import Mascot from '../components/Mascot.astro';
+import ExerciseIllustration from '../components/ExerciseIllustration.astro';
+import MuscleSVG from '../components/MuscleSVG.astro';
+import { exercises as allExercises } from '../data/exercises';
+import { visibleOnly } from '../lib/seo';
+import EquipmentIcon from '../components/EquipmentIcon.astro';
+import { coreEquipment } from '../lib/swapEngine';
+const exercises = visibleOnly(allExercises);
+
+const muscles = [...new Set(exercises.map(e => e.primaryMuscle))].sort();
+const equipment = [...new Set(exercises.flatMap(e => e.equipment))].sort();
+const muscleColors = {
+  'Chest':'#EF4444','Back':'#3B82F6','Lats':'#3B82F6','Shoulders':'#F59E0B',
+  'Quads':'#10B981','Hamstrings':'#06B6D4','Glutes':'#EC4899','Biceps':'#8B5CF6',
+  'Triceps':'#A78BFA','Core':'#6B7280','Calves':'#84CC16',
+};
+---
+
+<Layout
+  title={`Exercise Library: ${exercises.length} Exercises by Muscle | SplitsWorkout`}
+  description={`Browse ${exercises.length} exercises by muscle, equipment, difficulty and movement — barbell, dumbbell, cable, machine and bodyweight — with instructions, form cues and alternatives.`}
+  canonical="/exercises"
+  currentPage="exercises"
+  ogImage="/og/exercises.png"
+  breadcrumbs={[{ name: 'Exercises' }]}
+>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <h1 class="page-title">Exercise Database</h1>
+    <p class="page-desc">Step-by-step guides for every major exercise — with form cues, muscle maps, common mistakes, and alternatives.</p>
+    <div class="page-meta">
+      <span class="tag tag-green">🏋️ {exercises.length}+ Exercises</span>
+      <span class="tag tag-gray">Illustrated Guides</span>
+      <span class="tag tag-purple">Muscle Maps</span>
+    </div>
+  </div>
+</div>
+
+<div style="max-width:1280px;margin:0 auto;padding:32px 24px 64px;">
+
+  <!-- Search & Filter bar -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:24px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);">
+    <div class="search-wrap" style="flex:1;min-width:200px;">
+      <div class="search-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </div>
+      <input type="search" id="ex-search" placeholder="Search exercises..." class="search-input" aria-label="Search exercises" />
+    </div>
+    <select id="ex-muscle" class="search-input" style="max-width:160px;" aria-label="Filter by muscle">
+      <option value="">All Muscles</option>
+      {muscles.map(m => <option value={m}>{m}</option>)}
+    </select>
+    <select id="ex-equip" class="search-input" style="max-width:160px;" aria-label="Filter by equipment">
+      <option value="">All Equipment</option>
+      {equipment.map(e => <option value={e}>{e}</option>)}
+    </select>
+    <select id="ex-diff" class="search-input" style="max-width:140px;" aria-label="Filter by difficulty">
+      <option value="">Any Level</option>
+      <option value="Beginner">Beginner</option>
+      <option value="Intermediate">Intermediate</option>
+      <option value="Advanced">Advanced</option>
+    </select>
+    <select id="ex-type" class="search-input" style="max-width:140px;" aria-label="Filter by exercise type">
+      <option value="">All Types</option>
+      <option value="Compound">Compound</option>
+      <option value="Isolation">Isolation</option>
+    </select>
+    <button id="ex-clear" class="btn btn-ghost btn-sm" style="white-space:nowrap;">Clear filters</button>
+  </div>
+
+  <!-- Results count -->
+  <div style="margin-bottom:16px;font-size:0.85rem;color:var(--text-3);" id="ex-count">{exercises.length} exercises</div>
+
+  <!-- Exercise grid -->
+  <div id="ex-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;">
+    {exercises.map(ex => {
+      const color = (muscleColors as any)[ex.primaryMuscle] || '#22C55E';
+      const icons = {'Chest':'🏋️','Back':'💪','Lats':'💪','Shoulders':'🦾','Quads':'🦵','Hamstrings':'🦵','Glutes':'🍑','Biceps':'💪','Triceps':'💪','Core':'🔥','Calves':'🦵'};
+      const icon = (icons as any)[ex.primaryMuscle] || '🏋️';
+      return (
+        <a href={`/exercises/${ex.slug}`}
+          class="exercise-card"
+          style="text-decoration:none;"
+          data-name={ex.name.toLowerCase()}
+          data-muscle={ex.primaryMuscle}
+          data-equipment={ex.equipment.join(',')}
+          data-difficulty={ex.difficulty}
+          data-type={ex.type}
+        >
+          <div class="exercise-card-thumb" style={`color:${color};background:${color}1a;`} title={coreEquipment(ex).join(', ') || 'Bodyweight'}>
+            <EquipmentIcon name={coreEquipment(ex)[0] || 'Bodyweight'} size={26} />
+          </div>
+          <div class="exercise-card-info">
+            <div class="exercise-card-name">{ex.name}</div>
+            <div class="exercise-card-meta">
+              <span class="tag tag-gray" style="font-size:0.65rem;">{ex.primaryMuscle}</span>
+              <span class={`tag diff-${ex.difficulty.toLowerCase()}`} style="font-size:0.65rem;">{ex.difficulty}</span>
+            </div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-4);flex-shrink:0;" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      );
+    })}
+  </div>
+
+  <!-- Empty state -->
+  <div id="ex-empty" class="empty-state" style="display:none;">
+    <Mascot mood="wink" size="sm" />
+    <div class="empty-state-title" style="margin-top:12px;">No exercises found</div>
+    <p class="empty-state-desc">Try adjusting your filters or search term.</p>
+    <button onclick="clearFilters()" class="btn btn-primary" style="margin-top:12px;">Clear Filters</button>
+  </div>
+
+  <!-- SEO content -->
+  <p style="font-size:0.85rem;color:var(--text-3);margin-top:28px;">Building a routine? Add any exercise to the <a href="/workout-planner" style="color:var(--accent-hover);font-weight:600;">workout planner</a>, or let the <a href="/workout-split-finder" style="color:var(--accent-hover);font-weight:600;">Split Finder</a> choose a structure for you. Learn how exercises are classified in our <a href="/methodology/exercises" style="color:var(--accent-hover);font-weight:600;">exercise methodology</a>.</p>
+  <div style="margin-top:48px;padding:28px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-xl);">
+    <h2 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.125rem;color:var(--text);margin-bottom:12px;">About the Exercise Database</h2>
+    <p style="font-size:0.875rem;color:var(--text-2);line-height:1.8;margin-bottom:12px;">Exercise pages include step-by-step instructions, form cues, common mistakes, muscles worked with a visual anatomy map, recommended sets and reps, and alternative exercises for when your equipment is limited.</p>
+    <p style="font-size:0.875rem;color:var(--text-2);line-height:1.8;">Exercises are linked to the workout splits they belong in — making it easy to understand how individual movements fit into a complete training programme.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;">
+      {['Chest','Back','Shoulders','Biceps','Triceps','Quads','Hamstrings','Glutes','Abs','Calves'].map(m => (
+        <a href={`/muscles/${m.toLowerCase()}`} class="btn btn-secondary btn-sm">{m} exercises →</a>
+      ))}
+    </div>
+  </div>
+
+</div>
+
+<script>
+const searchEl = document.getElementById('ex-search') as HTMLInputElement;
+const muscleEl = document.getElementById('ex-muscle') as HTMLSelectElement;
+const equipEl = document.getElementById('ex-equip') as HTMLSelectElement;
+const diffEl = document.getElementById('ex-diff') as HTMLSelectElement;
+const typeEl = document.getElementById('ex-type') as HTMLSelectElement;
+const grid = document.getElementById('ex-grid');
+const empty = document.getElementById('ex-empty');
+const count = document.getElementById('ex-count');
+const cards = grid ? Array.from(grid.querySelectorAll('.exercise-card')) as HTMLElement[] : [];
+
+function filterExercises() {
+  const q = searchEl?.value.toLowerCase() || '';
+  const muscle = muscleEl?.value || '';
+  const equip = equipEl?.value || '';
+  const diff = diffEl?.value || '';
+  const type = typeEl?.value || '';
+
+  let shown = 0;
+  cards.forEach(card => {
+    const name = card.dataset.name || '';
+    const m = card.dataset.muscle || '';
+    const e = card.dataset.equipment || '';
+    const d = card.dataset.difficulty || '';
+    const t = card.dataset.type || '';
+
+    const matches =
+      (!q || name.includes(q)) &&
+      (!muscle || m === muscle) &&
+      (!equip || e.includes(equip)) &&
+      (!diff || d === diff) &&
+      (!type || t === type);
+
+    card.style.display = matches ? '' : 'none';
+    if (matches) shown++;
+  });
+
+  if (count) count.textContent = shown + ' exercise' + (shown !== 1 ? 's' : '');
+  if (empty) empty.style.display = shown === 0 ? 'block' : 'none';
+  if (grid) grid.style.display = shown === 0 ? 'none' : '';
+}
+
+window.clearFilters = function() {
+  if (searchEl) searchEl.value = '';
+  if (muscleEl) muscleEl.value = '';
+  if (equipEl) equipEl.value = '';
+  if (diffEl) diffEl.value = '';
+  if (typeEl) typeEl.value = '';
+  filterExercises();
+};
+
+document.getElementById('ex-clear')?.addEventListener('click', window.clearFilters);
+searchEl?.addEventListener('input', filterExercises);
+muscleEl?.addEventListener('change', filterExercises);
+equipEl?.addEventListener('change', filterExercises);
+diffEl?.addEventListener('change', filterExercises);
+typeEl?.addEventListener('change', filterExercises);
+
+// Handle URL params
+const params = new URLSearchParams(window.location.search);
+const qParam = params.get('q');
+const muscleParam = params.get('muscle');
+const equipParam = params.get('equipment');
+if (qParam && searchEl) { searchEl.value = qParam; }
+if (muscleParam && muscleEl) { muscleEl.value = muscleParam; }
+if (equipParam && equipEl) { equipEl.value = equipParam; }
+if (qParam || muscleParam || equipParam) filterExercises();
+</script>
+
+</Layout>

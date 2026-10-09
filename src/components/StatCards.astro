@@ -1,0 +1,80 @@
+---
+import { exercises } from '../data/exercises';
+import { splits } from '../data/splits';
+import { visibleOnly } from '../lib/seo';
+// Numbers are computed from the real datasets (no fabricated stats).
+// Brand-guide stat cards, populated with real counts.
+---
+<div class="stat-cards-row" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+  <div class="stat-card">
+    <div class="stat-card-icon" style="color:#22C55E;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M6 4v16M18 4v16M6 12h12M3 6h3M18 6h3M3 18h3M18 18h3"/>
+      </svg>
+    </div>
+    <div class="stat-card-num">{visibleOnly(exercises).length}</div>
+    <div class="stat-card-label">Exercises</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon" style="color:#A78BFA;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+    </div>
+    <div class="stat-card-num">{splits.length}</div>
+    <div class="stat-card-label">Split Guides</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon" style="color:#FB923C;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+      </svg>
+    </div>
+    <div class="stat-card-num">10</div>
+    <div class="stat-card-label">Muscle Guides</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon" style="color:#3B82F6;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+    <div class="stat-card-num">5</div>
+    <div class="stat-card-label">Free Tools</div>
+  </div>
+</div>
+
+<style>
+  .stat-cards-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 100px;
+    transition: all 0.2s;
+    flex: 1;
+  }
+  .stat-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+  }
+  .stat-card-icon { margin-bottom: 4px; }
+  .stat-card-num {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .stat-card-label {
+    font-size: 0.72rem;
+    color: var(--text-3);
+    font-weight: 500;
+    text-align: center;
+  }
+</style>

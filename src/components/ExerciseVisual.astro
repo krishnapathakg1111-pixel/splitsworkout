@@ -1,0 +1,44 @@
+---
+// Exercise-specific visual: movement illustration tinted by muscle group + the real equipment and level.
+// Everything shown is derived from this exercise's own data, so no two exercise pages look identical.
+import MovementSVG from './MovementSVG.astro';
+import EquipmentIcon from './EquipmentIcon.astro';
+import { coreEquipment } from '../lib/swapEngine';
+import { MOVES, implementFor, moveKeyFor } from '../lib/moves';
+import { renderDiagram } from '../lib/figure';
+import type { Exercise } from '../data/exercises';
+interface Props { ex: Exercise; illustration: string; color: string }
+const { ex, illustration, color } = Astro.props;
+const eq = coreEquipment(ex);
+const impl = implementFor(ex.equipment);
+const mv = MOVES[moveKeyFor(illustration, ex.name, impl)];
+const svg = mv ? renderDiagram(mv, impl, ex.primaryMuscle, color, `${ex.name} — start and finish positions`) : '';
+const equipment = eq.length ? eq : ex.equipment.length ? [ex.equipment[0]] : ['Bodyweight'];
+---
+<figure class="xv" style={`--xv:${color};`}>
+  {svg
+    ? <div class="xv-diagram" style={`background:linear-gradient(135deg,${color}26 0%,${color}0d 100%);`} set:html={svg} />
+    : <MovementSVG movement={illustration} name={ex.name} size="lg" tint={color} />}
+  <figcaption class="xv-meta">
+    <div class="xv-row">
+      {equipment.map((e) => (<span class="xv-chip"><EquipmentIcon name={e} size={16} /> {e}</span>))}
+    </div>
+    <div class="xv-row">
+      <span class="xv-chip xv-muscle"><i></i>{ex.primaryMuscle}</span>
+      <span class="xv-chip">{ex.difficulty}</span>
+      <span class="xv-chip">{ex.type}</span>
+      {ex.unilateral && <span class="xv-chip">One side at a time</span>}
+    </div>
+  </figcaption>
+</figure>
+<style is:global>
+  .xv { margin:0; width:440px; max-width:100%; }
+  .xv-diagram { border-radius:16px; padding:10px 8px 6px; box-shadow:0 0 0 2px color-mix(in srgb, var(--xv) 35%, transparent) inset; }
+  .xv-diagram svg { display:block; width:100%; height:auto; }
+  .xv .movement-svg-wrap { width:100% !important; box-shadow:0 0 0 2px color-mix(in srgb, var(--xv) 35%, transparent) inset; }
+  .xv-meta { margin-top:10px; display:flex; flex-direction:column; gap:6px; }
+  .xv-row { display:flex; flex-wrap:wrap; gap:6px; }
+  .xv-chip { display:inline-flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:700; color:var(--text-2); background:var(--surface); border:1px solid var(--border); border-radius:100px; padding:3px 10px; }
+  .xv-muscle { color:var(--text); border-color:color-mix(in srgb, var(--xv) 45%, var(--border)); }
+  .xv-muscle i { width:8px; height:8px; border-radius:50%; background:var(--xv); display:inline-block; }
+</style>

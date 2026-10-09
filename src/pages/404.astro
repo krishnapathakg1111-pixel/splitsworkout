@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Page Not Found | SplitsWorkout" description="The page you were looking for does not exist. Find workout splits, exercises and tools on SplitsWorkout." canonical="/404" currentPage="" noindex={true}>
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:65vh;text-align:center;padding:48px 24px;">
+  <!-- Wink/confused mascot for 404 -->
+  <div style="width:140px;height:140px;background-image:url('/mascot-expressions-2.webp');background-size:300% 200%;background-position:50% 100%;background-repeat:no-repeat;margin:0 auto 20px;" role="img" aria-label="Professor Splits confused"></div>
+  <h1 style="font-family:'Poppins',sans-serif;font-size:2.25rem;font-weight:800;color:var(--text);margin-bottom:10px;letter-spacing:-0.03em;">Page Not Found</h1>
+  <p style="color:var(--text-3);margin-bottom:28px;max-width:380px;font-size:0.9rem;">Professor Splits couldn't find what you were looking for. Let's get you back on track.</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+    <a href="/" class="btn btn-primary">Go Home</a>
+    <a href="/exercises" class="btn btn-secondary">Browse Exercises</a>
+    <a href="/workout-splits" class="btn btn-secondary">Workout Splits</a>
+  </div>
+</div>
+</Layout>

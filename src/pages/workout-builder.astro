@@ -1,0 +1,873 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { exercises } from '../data/exercises';
+
+const exData = exercises.map(e => ({
+  slug: e.slug,
+  name: e.name,
+  category: e.category,
+  muscle: e.primaryMuscle,
+  sets: e.sets,
+  reps: e.reps,
+  difficulty: e.difficulty,
+}));
+---
+
+<Layout
+  title="Workout Builder — Create Your Custom Plan | SplitsWorkout"
+  description="Build a custom workout plan for free. Add exercises, create your weekly schedule, analyze muscle coverage, and export a PDF. No account required."
+  canonical="/workout-builder"
+  currentPage="builder"
+>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <nav class="breadcrumb"><a href="/">Home</a><span class="breadcrumb-sep">›</span><span>Workout Builder</span></nav>
+    <h1 class="page-title">Workout Builder</h1>
+    <p class="page-desc">Build your custom weekly training plan. Add exercises to each day, customise sets &amp; reps, track muscle coverage, and export a printable PDF.</p>
+    <div class="page-meta">
+      <span class="tag tag-green">✓ Free forever</span>
+      <span class="tag tag-purple">📄 PDF export</span>
+      <span class="tag tag-gray">💾 Saves locally</span>
+    </div>
+  </div>
+</div>
+
+<div id="wb-root">
+  <div id="wb-left">
+    <!-- TOP BAR -->
+    <div class="wb-card" style="margin-bottom:14px;">
+      <div class="wb-card-hd">
+        <span class="wb-card-title">📋 My Workout</span>
+        <div style="display:flex;gap:8px;">
+          <button id="wb-save" class="btn btn-secondary btn-sm">💾 Save</button>
+          <button id="wb-load" class="btn btn-ghost btn-sm">📂 Load</button>
+          <button id="wb-pdf" class="btn btn-primary btn-sm">📄 Export PDF</button>
+        </div>
+      </div>
+      <div style="padding:12px 20px;">
+        <input id="wb-planname" type="text" value="My Workout Plan" placeholder="Workout name..."
+          style="width:100%;background:transparent;border:none;outline:none;font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);" />
+      </div>
+    </div>
+
+    <!-- ACTIVE DAY INDICATOR -->
+    <div id="wb-active-label" style="font-size:0.78rem;font-weight:700;color:var(--accent);margin-bottom:10px;padding:0 2px;"></div>
+
+    <!-- DAYS -->
+    <div id="wb-days"></div>
+
+    <!-- ADD DAY -->
+    <button id="wb-addday" class="wb-addbtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Training Day
+    </button>
+
+    <!-- COVERAGE -->
+    <div class="wb-card" style="margin-top:18px;">
+      <div class="wb-card-hd">
+        <span class="wb-card-title">💪 Weekly Muscle Coverage</span>
+        <span style="font-size:0.72rem;color:var(--text-3);">8–20 sets/week per muscle is optimal</span>
+      </div>
+      <div id="wb-coverage" style="padding:16px 20px;">
+        <div class="wb-empty"><div style="font-size:2rem;margin-bottom:6px;">📊</div>Add exercises to see coverage</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: PICKER -->
+  <div id="wb-right">
+    <div class="wb-card" style="position:sticky;top:88px;">
+      <div class="wb-card-hd">
+        <span class="wb-card-title">🏋️ Exercise Library</span>
+        <span id="wb-excount" style="font-size:0.7rem;color:var(--text-3);font-weight:500;"></span>
+      </div>
+
+      <div id="wb-picker-controls">
+        <!-- Search -->
+        <div style="position:relative;margin-bottom:10px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-4);pointer-events:none;">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input id="wb-search" type="search" placeholder="Search 126 exercises..." autocomplete="off"
+            style="width:100%;height:40px;padding:0 12px 0 34px;border:1.5px solid var(--border);border-radius:var(--radius-lg);
+                   background:var(--bg-2);color:var(--text);font-size:0.82rem;outline:none;box-sizing:border-box;" />
+        </div>
+        <!-- Category chips -->
+        <div id="wb-chips" style="display:flex;flex-wrap:wrap;gap:5px;"></div>
+      </div>
+
+      <div id="wb-picker-list" role="list"></div>
+
+      <div style="padding:9px 14px;text-align:center;font-size:0.7rem;color:var(--text-3);border-top:1px solid var(--border);">
+        Tap <strong>+</strong> to add to the active day
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div id="wb-toasts"></div>
+
+<style is:global>
+  /* ── WORKOUT BUILDER — all styles must be global for JS-created elements ── */
+  #wb-root {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 20px 24px 60px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+    align-items: start;
+  }
+  @media(max-width:1024px) {
+    #wb-root { grid-template-columns: 1fr !important; }
+    #wb-right { position: static !important; }
+  }
+
+  /* Cards */
+  .wb-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden; }
+  .wb-card-hd {
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 20px;border-bottom:1px solid var(--border);background:var(--bg-2);
+  }
+  .wb-card-title { font-family:'Poppins',sans-serif;font-weight:700;font-size:0.875rem;color:var(--text); }
+
+  /* Add day button */
+  .wb-addbtn {
+    width:100%;margin-top:10px;padding:14px;border:1.5px dashed var(--border);
+    border-radius:var(--radius-xl);background:transparent;color:var(--text-3);
+    font-size:0.82rem;font-weight:600;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.15s;
+  }
+  .wb-addbtn:hover { border-color:var(--accent);color:var(--accent);background:var(--accent-bg); }
+
+  /* Empty states */
+  .wb-empty { text-align:center;padding:24px;color:var(--text-3);font-size:0.82rem;line-height:1.6; }
+
+  /* ── DAY BLOCKS ── */
+  .wb-day {
+    background:var(--surface);border:1.5px solid var(--border);
+    border-radius:var(--radius-xl);margin-bottom:12px;overflow:hidden;
+    transition:border-color 0.15s,box-shadow 0.15s;
+  }
+  .wb-day.active {
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(34,197,94,0.12);
+  }
+  .wb-day-hd {
+    display:flex;align-items:center;gap:10px;padding:11px 16px;
+    background:var(--bg-2);border-bottom:1px solid var(--border);
+    cursor:pointer;transition:background 0.15s;
+  }
+  .wb-day.active .wb-day-hd { background:rgba(34,197,94,0.08); }
+  .wb-day-dot {
+    width:10px;height:10px;border-radius:50%;background:var(--border-strong);
+    flex-shrink:0;transition:background 0.15s;
+  }
+  .wb-day.active .wb-day-dot { background:var(--accent); }
+  .wb-day-name {
+    flex:1;min-width:0;background:transparent;border:none;outline:none;
+    font-family:'Poppins',sans-serif;font-weight:700;font-size:0.875rem;
+    color:var(--text);cursor:pointer;
+  }
+  .wb-day-name:focus { cursor:text; }
+  .wb-day-btns { display:flex;gap:4px;margin-left:auto;flex-shrink:0; }
+  .wb-ico-btn {
+    border:1px solid var(--border);background:transparent;border-radius:var(--radius);
+    width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:0.75rem;color:var(--text-3);transition:all 0.15s;
+  }
+  .wb-ico-btn.sel:hover { border-color:var(--accent);color:var(--accent);background:var(--accent-bg); }
+  .wb-ico-btn.del:hover { border-color:#EF4444;color:#EF4444;background:rgba(239,68,68,0.08); }
+
+  /* Exercise rows inside days */
+  .wb-day-body { padding:10px 12px 12px; }
+  .wb-ex-row {
+    display:flex;align-items:center;gap:8px;padding:9px 10px;
+    border:1px solid var(--border);border-radius:var(--radius);
+    margin-bottom:6px;background:var(--bg-2);font-size:0.82rem;
+  }
+  .wb-ex-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+  .wb-ex-name {
+    flex:1;min-width:0;font-weight:600;color:var(--text);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .wb-lbl { font-size:0.62rem;color:var(--text-4);white-space:nowrap; }
+  .wb-setsreps {
+    width:44px;height:28px;border:1px solid var(--border);border-radius:var(--radius);
+    background:var(--surface);color:var(--text);text-align:center;
+    font-size:0.78rem;font-weight:600;outline:none;padding:0 4px;
+  }
+  .wb-setsreps:focus { border-color:var(--accent); }
+  .wb-ex-del {
+    background:transparent;border:none;color:var(--text-4);cursor:pointer;
+    padding:2px 6px;border-radius:4px;font-size:0.85rem;transition:color 0.12s;
+  }
+  .wb-ex-del:hover { color:#EF4444; }
+  .wb-day-empty { padding:14px 0;text-align:center;font-size:0.78rem;color:var(--text-4); }
+
+  /* ── EXERCISE PICKER ── */
+  #wb-picker-controls { padding:12px 14px;border-bottom:1px solid var(--border); }
+
+  /* Category filter chips */
+  .wb-chip {
+    border:1.5px solid var(--border);background:transparent;border-radius:100px;
+    padding:4px 12px;font-size:0.72rem;font-weight:600;color:var(--text-3);
+    cursor:pointer;transition:all 0.12s;white-space:nowrap;
+  }
+  .wb-chip:hover { border-color:var(--accent);color:var(--accent); }
+  .wb-chip.on { background:var(--accent);border-color:var(--accent);color:white; }
+
+  /* Exercise list */
+  #wb-picker-list { max-height:460px;overflow-y:auto; }
+  .wb-pi {
+    display:flex;align-items:center;gap:10px;padding:11px 14px;
+    border-bottom:1px solid var(--border);cursor:pointer;
+    transition:background 0.1s;user-select:none;
+  }
+  .wb-pi:last-child { border-bottom:none; }
+  .wb-pi:hover { background:var(--bg-2); }
+  .wb-pi-badge {
+    width:40px;height:40px;border-radius:var(--radius);display:flex;
+    align-items:center;justify-content:center;flex-shrink:0;
+    font-weight:800;font-size:0.62rem;letter-spacing:0.02em;
+  }
+  .wb-pi-info { flex:1;min-width:0; }
+  .wb-pi-name {
+    font-weight:700;font-size:0.875rem;color:var(--text);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .wb-pi-sub { font-size:0.7rem;color:var(--text-3);margin-top:2px; }
+
+  /* The + add button */
+  .wb-plus {
+    width:36px;height:36px;border-radius:var(--radius);
+    background:var(--accent);border:none;color:white;
+    font-size:1.4rem;font-weight:700;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;transition:all 0.12s;line-height:1;
+  }
+  .wb-plus:hover { background:#16A34A;transform:scale(1.1); }
+  .wb-plus:active { transform:scale(0.93); }
+
+  /* ── COVERAGE BARS ── */
+  .wb-cov-row {
+    display:grid;grid-template-columns:96px 1fr 54px;
+    align-items:center;gap:8px;margin-bottom:9px;
+  }
+  .wb-cov-label { font-size:0.78rem;font-weight:600;color:var(--text-2); }
+  .wb-cov-track { height:8px;border-radius:100px;background:var(--bg-3);overflow:hidden; }
+  .wb-cov-fill { height:100%;border-radius:100px;transition:width 0.4s ease; }
+  .wb-cov-sets { font-size:0.7rem;font-weight:700;text-align:right; }
+
+  /* ── TOASTS ── */
+  #wb-toasts {
+    position:fixed;bottom:24px;right:24px;z-index:9999;
+    display:flex;flex-direction:column;gap:7px;pointer-events:none;
+  }
+  .wb-toast {
+    background:#1F2937;color:white;padding:10px 16px;border-radius:var(--radius-lg);
+    font-size:0.82rem;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,0.25);
+    pointer-events:auto;border-left:3px solid #22C55E;max-width:280px;
+    animation:wbIn 0.18s ease;
+  }
+  .wb-toast.err { border-left-color:#EF4444; }
+  .wb-toast.bye { animation:wbOut 0.22s ease forwards; }
+  @keyframes wbIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes wbOut { to{opacity:0;transform:translateY(6px)} }
+
+  /* ── SEARCH INPUT ── */
+  #wb-search {
+    width:100%;height:40px;padding:0 12px 0 34px;
+    border:1.5px solid var(--border);border-radius:var(--radius-lg);
+    background:var(--bg-2);color:var(--text);font-size:0.82rem;outline:none;
+    box-sizing:border-box;transition:border-color 0.15s;
+  }
+  #wb-search:focus { border-color:var(--accent); }
+  #wb-search::placeholder { color:var(--text-4); }
+
+  .wb-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden; }
+  .wb-card-hd { display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--bg-2); }
+  .wb-card-title { font-family:'Poppins',sans-serif;font-weight:700;font-size:0.875rem;color:var(--text); }
+
+  .wb-addbtn {
+    width:100%;margin-top:10px;padding:14px;border:1.5px dashed var(--border);border-radius:var(--radius-xl);
+    background:transparent;color:var(--text-3);font-size:0.82rem;font-weight:600;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.15s;
+  }
+  .wb-addbtn:hover { border-color:var(--accent);color:var(--accent);background:var(--accent-bg); }
+
+  .wb-empty { text-align:center;padding:24px;color:var(--text-3);font-size:0.82rem; }
+
+  /* Day block */
+  .wb-day { background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-xl);margin-bottom:12px;overflow:hidden;transition:border-color 0.15s,box-shadow 0.15s; }
+  .wb-day.active { border-color:var(--accent);box-shadow:0 0 0 3px rgba(34,197,94,0.1); }
+  .wb-day-hd {
+    display:flex;align-items:center;gap:10px;padding:11px 16px;
+    background:var(--bg-2);border-bottom:1px solid var(--border);cursor:pointer;
+    transition:background 0.15s;
+  }
+  .wb-day.active .wb-day-hd { background:rgba(34,197,94,0.08); }
+  .wb-day-dot { width:9px;height:9px;border-radius:50%;background:var(--border-strong);flex-shrink:0;transition:background 0.15s; }
+  .wb-day.active .wb-day-dot { background:var(--accent); }
+  .wb-day-name {
+    flex:1;min-width:0;background:transparent;border:none;outline:none;
+    font-family:'Poppins',sans-serif;font-weight:700;font-size:0.875rem;color:var(--text);cursor:pointer;
+  }
+  .wb-day-name:focus { cursor:text; }
+  .wb-day-btns { display:flex;gap:4px;margin-left:auto;flex-shrink:0; }
+  .wb-ico-btn {
+    border:1px solid var(--border);background:transparent;border-radius:var(--radius);
+    width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:0.75rem;color:var(--text-3);transition:all 0.15s;
+  }
+  .wb-ico-btn.sel:hover { border-color:var(--accent);color:var(--accent);background:var(--accent-bg); }
+  .wb-ico-btn.del:hover { border-color:#EF4444;color:#EF4444;background:rgba(239,68,68,0.08); }
+
+  /* Exercise rows in days */
+  .wb-day-body { padding:10px 12px 12px; }
+  .wb-ex-row {
+    display:flex;align-items:center;gap:8px;padding:9px 10px;
+    border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px;
+    background:var(--bg-2);font-size:0.82rem;
+  }
+  .wb-ex-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+  .wb-ex-name { flex:1;min-width:0;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .wb-lbl { font-size:0.62rem;color:var(--text-4);white-space:nowrap; }
+  .wb-setsreps {
+    width:44px;height:28px;border:1px solid var(--border);border-radius:var(--radius);
+    background:var(--surface);color:var(--text);text-align:center;font-size:0.78rem;font-weight:600;
+    outline:none;padding:0 4px;
+  }
+  .wb-setsreps:focus { border-color:var(--accent); }
+  .wb-ex-del { background:transparent;border:none;color:var(--text-4);cursor:pointer;padding:2px 6px;border-radius:4px;font-size:0.85rem;transition:color 0.12s; }
+  .wb-ex-del:hover { color:#EF4444; }
+  .wb-day-empty { padding:12px 0;text-align:center;font-size:0.78rem;color:var(--text-4); }
+
+  /* Picker */
+  #wb-picker-controls { padding:12px 14px;border-bottom:1px solid var(--border); }
+  .wb-chip {
+    border:1.5px solid var(--border);background:transparent;border-radius:100px;
+    padding:4px 12px;font-size:0.72rem;font-weight:600;color:var(--text-3);cursor:pointer;transition:all 0.12s;
+  }
+  .wb-chip:hover { border-color:var(--accent);color:var(--accent); }
+  .wb-chip.on { background:var(--accent);border-color:var(--accent);color:white; }
+
+  #wb-picker-list { max-height:460px;overflow-y:auto; }
+  .wb-pi {
+    display:flex;align-items:center;gap:10px;padding:10px 14px;
+    border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;
+  }
+  .wb-pi:last-child { border-bottom:none; }
+  .wb-pi:hover { background:var(--bg-2); }
+  .wb-pi-badge {
+    width:38px;height:38px;border-radius:var(--radius);display:flex;align-items:center;
+    justify-content:center;flex-shrink:0;font-weight:800;font-size:0.62rem;letter-spacing:0.02em;
+  }
+  .wb-pi-info { flex:1;min-width:0; }
+  .wb-pi-name { font-weight:700;font-size:0.875rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .wb-pi-sub { font-size:0.7rem;color:var(--text-3);margin-top:1px; }
+  .wb-plus {
+    width:34px;height:34px;border-radius:var(--radius);background:var(--accent);border:none;
+    color:white;font-size:1.35rem;font-weight:700;cursor:pointer;display:flex;align-items:center;
+    justify-content:center;flex-shrink:0;transition:all 0.12s;line-height:1;
+  }
+  .wb-plus:hover { background:#16A34A;transform:scale(1.1); }
+  .wb-plus:active { transform:scale(0.93); }
+
+  /* Coverage */
+  .wb-cov-row { display:grid;grid-template-columns:90px 1fr 54px;align-items:center;gap:8px;margin-bottom:8px; }
+  .wb-cov-label { font-size:0.78rem;font-weight:600;color:var(--text-2); }
+  .wb-cov-track { height:8px;border-radius:100px;background:var(--bg-3);overflow:hidden; }
+  .wb-cov-fill { height:100%;border-radius:100px;transition:width 0.4s ease; }
+  .wb-cov-sets { font-size:0.7rem;font-weight:700;text-align:right; }
+
+  /* Toasts */
+  #wb-toasts { position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none; }
+  .wb-toast {
+    background:#1F2937;color:white;padding:10px 16px;border-radius:var(--radius-lg);
+    font-size:0.82rem;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,0.25);
+    pointer-events:auto;border-left:3px solid #22C55E;max-width:280px;
+    animation:wbIn 0.18s ease;
+  }
+  .wb-toast.err { border-left-color:#EF4444; }
+  .wb-toast.bye { animation:wbOut 0.22s ease forwards; }
+  @keyframes wbIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes wbOut { to{opacity:0;transform:translateY(6px)} }
+</style>
+
+<script define:vars={{ exData }}>
+// ───────────────────────────────────
+// WORKOUT BUILDER — Full rewrite
+// All DOM work runs after DOMContentLoaded
+// ───────────────────────────────────
+
+const EXERCISES = exData;
+
+const MC = {
+  'Chest':'#EF4444','Upper Chest':'#F87171','Back':'#3B82F6','Lats':'#60A5FA',
+  'Upper Back':'#93C5FD','Traps':'#BFDBFE','Shoulders':'#F59E0B','Side Delts':'#FCD34D',
+  'Rear Delts':'#FDE68A','Quads':'#10B981','Hamstrings':'#06B6D4','Glutes':'#EC4899',
+  'Calves':'#84CC16','Soleus':'#A3E635','Biceps':'#8B5CF6','Brachialis':'#A78BFA',
+  'Brachioradialis':'#C4B5FD','Triceps':'#7C3AED','Forearms':'#6D28D9',
+  'Core':'#6B7280','Obliques':'#9CA3AF','Full Body':'#22C55E',
+};
+
+const CATS = ['All','Chest','Back','Shoulders','Biceps','Triceps','Quads','Hamstrings','Glutes','Calves','Core','Full Body','Forearms'];
+
+// ── STATE ──
+let days = [
+  { name: 'Day 1 — Push', exercises: [] },
+  { name: 'Day 2 — Pull', exercises: [] },
+  { name: 'Day 3 — Legs', exercises: [] },
+];
+let activeDay = 0;
+let filterCat = 'All';
+let searchQ = '';
+
+// ── TOAST ──
+function toast(msg, type) {
+  const c = document.getElementById('wb-toasts');
+  if (!c) return;
+  const el = document.createElement('div');
+  el.className = 'wb-toast' + (type === 'err' ? ' err' : '');
+  el.textContent = msg;
+  c.appendChild(el);
+  setTimeout(function() {
+    el.classList.add('bye');
+    setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 240);
+  }, 2500);
+}
+
+// ── RENDER DAYS (left column) ──
+function renderDays() {
+  const container = document.getElementById('wb-days');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const label = document.getElementById('wb-active-label');
+  if (label) {
+    const d = days[activeDay];
+    label.textContent = d ? '● Adding exercises to: ' + d.name : '';
+  }
+
+  days.forEach(function(day, di) {
+    const isAct = di === activeDay;
+    const block = document.createElement('div');
+    block.className = 'wb-day' + (isAct ? ' active' : '');
+
+    // ── Header ──
+    const hd = document.createElement('div');
+    hd.className = 'wb-day-hd';
+
+    const dot = document.createElement('div');
+    dot.className = 'wb-day-dot';
+
+    const nameIn = document.createElement('input');
+    nameIn.className = 'wb-day-name';
+    nameIn.type = 'text';
+    nameIn.value = day.name;
+    nameIn.placeholder = 'Day name...';
+    // Clicking name selects day + allows editing
+    nameIn.addEventListener('focus', function() { setActive(di); });
+    nameIn.addEventListener('input', function() {
+      days[di].name = nameIn.value;
+      const lbl = document.getElementById('wb-active-label');
+      if (lbl && di === activeDay) lbl.textContent = '● Adding exercises to: ' + nameIn.value;
+    });
+
+    // Clicking anywhere on header selects day
+    hd.addEventListener('click', function(e) {
+      if (e.target !== nameIn) { nameIn.focus(); }
+      setActive(di);
+    });
+
+    const btns = document.createElement('div');
+    btns.className = 'wb-day-btns';
+
+    const selBtn = document.createElement('button');
+    selBtn.className = 'wb-ico-btn sel';
+    selBtn.title = 'Set active';
+    selBtn.innerHTML = isAct ? '●' : '○';
+    selBtn.addEventListener('click', function(e) { e.stopPropagation(); setActive(di); });
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'wb-ico-btn del';
+    delBtn.title = 'Remove day';
+    delBtn.innerHTML = '✕';
+    delBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (days.length <= 1) { toast('Cannot remove last day', 'err'); return; }
+      days.splice(di, 1);
+      if (activeDay >= days.length) activeDay = days.length - 1;
+      renderDays();
+      renderCoverage();
+    });
+
+    btns.appendChild(selBtn);
+    btns.appendChild(delBtn);
+    hd.appendChild(dot);
+    hd.appendChild(nameIn);
+    hd.appendChild(btns);
+
+    // ── Body ──
+    const body = document.createElement('div');
+    body.className = 'wb-day-body';
+
+    if (day.exercises.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'wb-day-empty';
+      empty.textContent = isAct ? '← Select an exercise from the library on the right' : 'No exercises added yet';
+      body.appendChild(empty);
+    } else {
+      day.exercises.forEach(function(ex, ei) {
+        const row = document.createElement('div');
+        row.className = 'wb-ex-row';
+
+        const dot2 = document.createElement('div');
+        dot2.className = 'wb-ex-dot';
+        dot2.style.background = MC[ex.muscle] || '#22C55E';
+
+        const name = document.createElement('div');
+        name.className = 'wb-ex-name';
+        name.textContent = ex.name;
+        name.title = ex.name;
+
+        const sLbl = document.createElement('span');
+        sLbl.className = 'wb-lbl';
+        sLbl.textContent = 'Sets';
+
+        const sIn = document.createElement('input');
+        sIn.className = 'wb-setsreps';
+        sIn.value = ex.sets;
+        sIn.title = 'Sets';
+        sIn.addEventListener('change', function() { days[di].exercises[ei].sets = sIn.value; renderCoverage(); });
+
+        const x = document.createElement('span');
+        x.className = 'wb-lbl';
+        x.textContent = '×';
+
+        const rIn = document.createElement('input');
+        rIn.className = 'wb-setsreps';
+        rIn.style.width = '58px';
+        rIn.value = ex.reps;
+        rIn.title = 'Reps';
+        rIn.addEventListener('change', function() { days[di].exercises[ei].reps = rIn.value; });
+
+        const del = document.createElement('button');
+        del.className = 'wb-ex-del';
+        del.innerHTML = '✕';
+        del.title = 'Remove';
+        del.addEventListener('click', function(e) {
+          e.stopPropagation();
+          days[di].exercises.splice(ei, 1);
+          renderDays();
+          renderCoverage();
+        });
+
+        row.appendChild(dot2);
+        row.appendChild(name);
+        row.appendChild(sLbl);
+        row.appendChild(sIn);
+        row.appendChild(x);
+        row.appendChild(rIn);
+        row.appendChild(del);
+        body.appendChild(row);
+      });
+    }
+
+    block.appendChild(hd);
+    block.appendChild(body);
+    container.appendChild(block);
+  });
+}
+
+function setActive(di) {
+  if (activeDay === di) return;
+  activeDay = di;
+  renderDays();
+  toast('Active: ' + days[di].name);
+}
+
+// ── COVERAGE ──
+function renderCoverage() {
+  const wrap = document.getElementById('wb-coverage');
+  if (!wrap) return;
+  const counts = {};
+  days.forEach(function(day) {
+    day.exercises.forEach(function(ex) {
+      const k = ex.muscle || 'Other';
+      const s = parseInt(String(ex.sets).replace(/\D.*/, '')) || 3;
+      counts[k] = (counts[k] || 0) + s;
+    });
+  });
+
+  if (!Object.keys(counts).length) {
+    wrap.innerHTML = '<div class="wb-empty"><div style="font-size:2rem;margin-bottom:6px;">📊</div>Add exercises to see your muscle coverage</div>';
+    return;
+  }
+
+  wrap.innerHTML = '<p style="font-size:0.7rem;color:var(--text-3);margin-bottom:12px;">Optimal: 10–20 sets/week per muscle. ⚠️ = under-trained, 🔴 = excessive.</p>';
+  const max = Math.max.apply(null, Object.values(counts).concat([20]));
+  Object.entries(counts).sort(function(a,b){return b[1]-a[1];}).forEach(function(entry) {
+    const muscle = entry[0], sets = entry[1];
+    const pct = Math.round((sets / max) * 100);
+    const color = MC[muscle] || '#22C55E';
+    const status = sets < 8 ? ' ⚠️' : sets > 24 ? ' 🔴' : ' ✓';
+
+    const row = document.createElement('div');
+    row.className = 'wb-cov-row';
+
+    const lbl = document.createElement('div');
+    lbl.className = 'wb-cov-label';
+    lbl.textContent = muscle;
+
+    const track = document.createElement('div');
+    track.className = 'wb-cov-track';
+    const fill = document.createElement('div');
+    fill.className = 'wb-cov-fill';
+    fill.style.width = pct + '%';
+    fill.style.background = color;
+    track.appendChild(fill);
+
+    const sl = document.createElement('div');
+    sl.className = 'wb-cov-sets';
+    sl.textContent = sets + 'x' + status;
+    sl.style.color = sets < 8 ? '#F59E0B' : sets > 24 ? '#EF4444' : color;
+
+    row.appendChild(lbl);
+    row.appendChild(track);
+    row.appendChild(sl);
+    wrap.appendChild(row);
+  });
+}
+
+// ── ADD EXERCISE ──
+function addEx(slug) {
+  const found = EXERCISES.find(function(e) { return e.slug === slug; });
+  if (!found) return;
+  if (!days.length) { toast('Add a day first', 'err'); return; }
+  if (activeDay >= days.length) activeDay = 0;
+
+  days[activeDay].exercises.push({
+    slug: found.slug,
+    name: found.name,
+    muscle: found.muscle,
+    sets: found.sets || '3',
+    reps: found.reps || '10–12',
+  });
+
+  renderDays();
+  renderCoverage();
+  toast('✓ ' + found.name + ' → ' + days[activeDay].name);
+}
+
+// ── PICKER ──
+function buildChips() {
+  const c = document.getElementById('wb-chips');
+  if (!c) return;
+  c.innerHTML = '';
+  CATS.forEach(function(cat) {
+    const btn = document.createElement('button');
+    btn.className = 'wb-chip' + (cat === filterCat ? ' on' : '');
+    btn.textContent = cat;
+    btn.addEventListener('click', function() {
+      filterCat = cat;
+      c.querySelectorAll('.wb-chip').forEach(function(b) { b.classList.remove('on'); });
+      btn.classList.add('on');
+      renderPicker();
+    });
+    c.appendChild(btn);
+  });
+}
+
+function renderPicker() {
+  const list = document.getElementById('wb-picker-list');
+  const countEl = document.getElementById('wb-excount');
+  if (!list) return;
+
+  const q = searchQ.toLowerCase().trim();
+  const filtered = EXERCISES.filter(function(ex) {
+    const catOk = filterCat === 'All' || ex.category === filterCat;
+    const qOk = !q || ex.name.toLowerCase().indexOf(q) !== -1 || ex.muscle.toLowerCase().indexOf(q) !== -1;
+    return catOk && qOk;
+  });
+
+  if (countEl) countEl.textContent = filtered.length + ' exercises';
+
+  list.innerHTML = '';
+  if (!filtered.length) {
+    list.innerHTML = '<div class="wb-empty">No exercises found</div>';
+    return;
+  }
+
+  filtered.forEach(function(ex) {
+    const color = MC[ex.muscle] || '#22C55E';
+    const abbr = ex.category.slice(0,3).toUpperCase();
+
+    const item = document.createElement('div');
+    item.className = 'wb-pi';
+    item.setAttribute('role', 'listitem');
+    item.setAttribute('tabindex', '0');
+
+    const badge = document.createElement('div');
+    badge.className = 'wb-pi-badge';
+    badge.style.background = color + '22';
+    badge.style.color = color;
+    badge.textContent = abbr;
+
+    const info = document.createElement('div');
+    info.className = 'wb-pi-info';
+    const nm = document.createElement('div');
+    nm.className = 'wb-pi-name';
+    nm.textContent = ex.name;
+    const sub = document.createElement('div');
+    sub.className = 'wb-pi-sub';
+    sub.textContent = ex.muscle + ' · ' + ex.difficulty;
+    info.appendChild(nm);
+    info.appendChild(sub);
+
+    const plus = document.createElement('button');
+    plus.className = 'wb-plus';
+    plus.textContent = '+';
+    plus.title = 'Add ' + ex.name;
+    // Stop propagation so item click doesn't double-fire
+    plus.addEventListener('click', function(e) {
+      e.stopPropagation();
+      addEx(ex.slug);
+    });
+
+    // Clicking anywhere on the row adds (except the + button which handles itself)
+    item.addEventListener('click', function(e) {
+      if (e.target !== plus) addEx(ex.slug);
+    });
+    item.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); addEx(ex.slug); }
+    });
+
+    item.appendChild(badge);
+    item.appendChild(info);
+    item.appendChild(plus);
+    list.appendChild(item);
+  });
+}
+
+// ── SAVE / LOAD / PDF ──
+function initButtons() {
+  // Search
+  const srch = document.getElementById('wb-search');
+  if (srch) {
+    srch.addEventListener('input', function() { searchQ = srch.value; renderPicker(); });
+  }
+
+  // Add day
+  const addDayBtn = document.getElementById('wb-addday');
+  if (addDayBtn) {
+    addDayBtn.addEventListener('click', function() {
+      const n = days.length + 1;
+      const names = ['Push','Pull','Legs','Upper','Lower','Full Body','Shoulders & Arms','Chest & Back'];
+      const label = 'Day ' + n + (names[n-1] ? ' — ' + names[n-1] : '');
+      days.push({ name: label, exercises: [] });
+      activeDay = days.length - 1;
+      renderDays();
+      renderCoverage();
+      toast('Day ' + n + ' added!');
+    });
+  }
+
+  // Plan name
+  const pn = document.getElementById('wb-planname');
+  if (pn) pn.addEventListener('input', function() {});
+
+  // Save
+  const saveBtn = document.getElementById('wb-save');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', function() {
+      try {
+        const pname = document.getElementById('wb-planname');
+        const data = { name: pname ? pname.value : 'My Plan', days: days, activeDay: activeDay, v: 3 };
+        localStorage.setItem('sw_wb_v3', JSON.stringify(data));
+        toast('💾 Workout saved!');
+      } catch(e) { toast('Could not save — storage unavailable', 'err'); }
+    });
+  }
+
+  // Load
+  const loadBtn = document.getElementById('wb-load');
+  if (loadBtn) {
+    loadBtn.addEventListener('click', function() {
+      try {
+        const raw = localStorage.getItem('sw_wb_v3');
+        if (!raw) { toast('No saved workout found', 'err'); return; }
+        const data = JSON.parse(raw);
+        days = data.days || [];
+        activeDay = data.activeDay || 0;
+        const pname = document.getElementById('wb-planname');
+        if (pname && data.name) pname.value = data.name;
+        renderDays();
+        renderCoverage();
+        toast('📂 Workout loaded!');
+      } catch(e) { toast('Could not load workout', 'err'); }
+    });
+  }
+
+  // PDF
+  const pdfBtn = document.getElementById('wb-pdf');
+  if (pdfBtn) {
+    pdfBtn.addEventListener('click', function() {
+      const pname = document.getElementById('wb-planname');
+      const planName = pname ? pname.value || 'My Workout' : 'My Workout';
+
+      const rows = days.map(function(d) {
+        const exRows = d.exercises.map(function(ex) {
+          return '<tr><td><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" style="width:14px;height:14px;"> ' + ex.name + '</label></td><td style="text-align:center;">' + ex.sets + '</td><td style="text-align:center;">' + ex.reps + '</td><td></td></tr>';
+        }).join('');
+        return '<div class="ds"><h3>' + d.name + '</h3><table><thead><tr><th>Exercise</th><th>Sets</th><th>Reps</th><th>Weight</th></tr></thead><tbody>' + (exRows || '<tr><td colspan="4" style="color:#9CA3AF;font-style:italic;padding:8px;">Rest day</td></tr>') + '</tbody></table></div>';
+      }).join('');
+
+      const html = '<!doctype html><html><head><meta charset="utf-8"><title>' + planName + '</title>' +
+        '<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;padding:28px 32px;color:#111827;font-size:13px;line-height:1.5;}' +
+        '.hdr{border-bottom:3px solid #22C55E;padding-bottom:12px;margin-bottom:20px;}' +
+        '.brand{font-size:1.2rem;font-weight:900;color:#22C55E;letter-spacing:-0.02em;}' +
+        'h2{font-size:1.4rem;font-weight:800;margin-top:5px;}.sub{font-size:0.72rem;color:#9CA3AF;margin-top:3px;}' +
+        '.ds{break-inside:avoid;margin-bottom:18px;}h3{font-size:0.9rem;font-weight:700;color:#374151;padding:7px 0 6px;border-bottom:2px solid #E5E7EB;margin-bottom:0;}' +
+        'table{width:100%;border-collapse:collapse;}th{text-align:left;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.06em;color:#9CA3AF;padding:6px 10px;background:#F9FAFB;border:1px solid #E5E7EB;}' +
+        'td{padding:8px 10px;border:1px solid #E5E7EB;}tr:nth-child(even) td{background:#FAFAFA;}' +
+        '.ftr{margin-top:24px;text-align:center;font-size:0.72rem;color:#9CA3AF;border-top:1px solid #E5E7EB;padding-top:12px;}' +
+        '.print-btn{display:block;margin:16px auto 0;background:#22C55E;color:white;border:none;padding:10px 28px;border-radius:6px;font-size:0.9rem;font-weight:700;cursor:pointer;}' +
+        '@media print{.print-btn{display:none!important;}}' +
+        '</style></head><body>' +
+        '<div class="hdr"><div class="brand">SplitsWorkout</div><h2>' + planName + '</h2><div class="sub">Generated: ' + new Date().toLocaleDateString() + ' · splitsworkout.com</div></div>' +
+        rows +
+        '<div class="ftr">SplitsWorkout.com — Free Workout Planning · Train Smarter</div>' +
+        '<button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>' +
+        '</body></html>';
+
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const pw = window.open(url, '_blank', 'width=900,height=700');
+      if (pw) pw.onload = function() { setTimeout(function() { pw.print(); }, 400); };
+      toast('📄 PDF ready — print dialog will open');
+    });
+  }
+}
+
+// ── INIT — wait for DOM ──
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+function init() {
+  buildChips();
+  renderPicker();
+  renderDays();
+  renderCoverage();
+  initButtons();
+}
+</script>
+
+</Layout>

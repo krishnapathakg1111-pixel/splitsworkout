@@ -1,0 +1,165 @@
+---
+interface Props {
+  exercise: string;
+  size?: number;
+  class?: string;
+}
+const { exercise, size = 80, class: cls = '' } = Astro.props;
+
+// Map exercise slugs to illustration config
+const illustrations: Record<string, { bg: string; label: string; icon: string }> = {
+  'barbell-bench-press': { bg: '#FECACA', label: 'Bench Press', icon: 'bench' },
+  'squat': { bg: '#BBF7D0', label: 'Squat', icon: 'squat' },
+  'deadlift': { bg: '#D9F99D', label: 'Deadlift', icon: 'deadlift' },
+  'overhead-press': { bg: '#BAE6FD', label: 'OHP', icon: 'ohp' },
+  'pull-up': { bg: '#DDD6FE', label: 'Pull Up', icon: 'pullup' },
+  'lat-pulldown': { bg: '#FED7AA', label: 'Lat PD', icon: 'latpd' },
+  'barbell-row': { bg: '#FECDD3', label: 'Row', icon: 'row' },
+  'barbell-curl': { bg: '#E9D5FF', label: 'Curl', icon: 'curl' },
+  'tricep-pushdown': { bg: '#CFFAFE', label: 'Pushdown', icon: 'pushdown' },
+  'romanian-deadlift': { bg: '#FEF3C7', label: 'RDL', icon: 'rdl' },
+  'hip-thrust': { bg: '#FCE7F3', label: 'Hip Thrust', icon: 'hipthrust' },
+  'bulgarian-split-squat': { bg: '#DCFCE7', label: 'BSS', icon: 'bss' },
+  'lateral-raise': { bg: '#DBEAFE', label: 'Lateral Raise', icon: 'lateralraise' },
+  'face-pull': { bg: '#F3E8FF', label: 'Face Pull', icon: 'facepull' },
+  'leg-press': { bg: '#FEF9C3', label: 'Leg Press', icon: 'legpress' },
+  'plank': { bg: '#ECFDF5', label: 'Plank', icon: 'plank' },
+  'default': { bg: '#F0FDF4', label: 'Exercise', icon: 'default' },
+};
+
+const config = illustrations[exercise] || illustrations['default'];
+const r = Math.round(size / 2);
+---
+
+<div
+  class={`ex-illus ${cls}`}
+  style={`width:${size}px;height:${size}px;border-radius:50%;background:${config.bg};display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;`}
+  aria-label={config.label + ' illustration'}
+  role="img"
+>
+  <svg width={size * 0.85} height={size * 0.85} viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+    {exercise === 'barbell-bench-press' && (
+      <!-- Person lying on bench pressing -->
+      <>
+        <!-- Bench -->
+        <rect x="8" y="42" width="52" height="8" rx="3" fill="#9CA3AF" opacity="0.6"/>
+        <rect x="14" y="50" width="5" height="14" rx="2" fill="#6B7280" opacity="0.5"/>
+        <rect x="49" y="50" width="5" height="14" rx="2" fill="#6B7280" opacity="0.5"/>
+        <!-- Person body lying down -->
+        <ellipse cx="34" cy="36" rx="16" ry="6" fill="#D97706" opacity="0.8"/>
+        <!-- Head -->
+        <circle cx="16" cy="36" r="7" fill="#F59E0B"/>
+        <!-- Arms up -->
+        <line x1="26" y1="34" x2="26" y2="20" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+        <line x1="42" y1="34" x2="42" y2="20" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+        <!-- Barbell -->
+        <rect x="10" y="16" width="48" height="5" rx="2.5" fill="#374151"/>
+        <!-- Plates -->
+        <rect x="8" y="12" width="6" height="13" rx="2" fill="#1F2937"/>
+        <rect x="54" y="12" width="6" height="13" rx="2" fill="#1F2937"/>
+      </>
+    )}
+    {exercise === 'squat' && (
+      <!-- Person squatting with barbell -->
+      <>
+        <!-- Barbell on back -->
+        <rect x="8" y="22" width="52" height="5" rx="2.5" fill="#374151"/>
+        <rect x="6" y="18" width="6" height="13" rx="2" fill="#1F2937"/>
+        <rect x="56" y="18" width="6" height="13" rx="2" fill="#1F2937"/>
+        <!-- Person in squat position -->
+        <!-- Head -->
+        <circle cx="34" cy="16" r="7" fill="#F59E0B"/>
+        <!-- Torso (angled forward) -->
+        <path d="M30 24 L25 40 L43 40 L38 24Z" fill="#D97706" opacity="0.9"/>
+        <!-- Thighs -->
+        <path d="M25 40 L18 54 L28 56 L30 42Z" fill="#B45309" opacity="0.9"/>
+        <path d="M43 40 L50 54 L40 56 L38 42Z" fill="#B45309" opacity="0.9"/>
+        <!-- Calves -->
+        <path d="M18 54 L16 64 L24 64 L26 56Z" fill="#92400E" opacity="0.9"/>
+        <path d="M50 54 L52 64 L44 64 L42 56Z" fill="#92400E" opacity="0.9"/>
+        <!-- Feet -->
+        <ellipse cx="20" cy="64" rx="7" ry="3" fill="#22C55E" opacity="0.8"/>
+        <ellipse cx="48" cy="64" rx="7" ry="3" fill="#22C55E" opacity="0.8"/>
+      </>
+    )}
+    {exercise === 'deadlift' && (
+      <!-- Person deadlifting -->
+      <>
+        <!-- Barbell on floor -->
+        <rect x="10" y="52" width="48" height="5" rx="2.5" fill="#374151"/>
+        <circle cx="12" cy="53" r="10" fill="#1F2937" opacity="0.7"/>
+        <circle cx="56" cy="53" r="10" fill="#1F2937" opacity="0.7"/>
+        <circle cx="12" cy="53" r="7" fill="#374151"/>
+        <circle cx="56" cy="53" r="7" fill="#374151"/>
+        <!-- Person hinging -->
+        <path d="M34 48 L30 28 L38 28 Z" fill="#D97706" opacity="0.9"/>
+        <circle cx="34" cy="22" r="7" fill="#F59E0B"/>
+        <!-- Arms reaching down -->
+        <path d="M32 36 L20 52" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+        <path d="M36 36 L48 52" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+        <!-- Legs -->
+        <path d="M30 48 L24 62 L32 62 L34 50Z" fill="#B45309" opacity="0.9"/>
+        <path d="M38 48 L44 62 L36 62 L34 50Z" fill="#B45309" opacity="0.9"/>
+      </>
+    )}
+    {exercise === 'pull-up' && (
+      <!-- Person doing pull-up -->
+      <>
+        <!-- Bar -->
+        <rect x="6" y="8" width="56" height="6" rx="3" fill="#374151"/>
+        <!-- Left hand grip -->
+        <circle cx="20" cy="14" r="4" fill="#F59E0B"/>
+        <!-- Right hand grip -->
+        <circle cx="48" cy="14" r="4" fill="#F59E0B"/>
+        <!-- Arms -->
+        <line x1="20" y1="14" x2="22" y2="24" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+        <line x1="48" y1="14" x2="46" y2="24" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+        <!-- Torso -->
+        <path d="M22 24 L24 42 L44 42 L46 24Z" fill="#D97706" opacity="0.9"/>
+        <!-- Head -->
+        <circle cx="34" cy="20" r="7" fill="#F59E0B"/>
+        <!-- Legs hanging -->
+        <path d="M26 42 L22 56 L30 56 L30 44Z" fill="#B45309" opacity="0.8"/>
+        <path d="M42 42 L46 56 L38 56 L38 44Z" fill="#B45309" opacity="0.8"/>
+      </>
+    )}
+    {exercise === 'overhead-press' && (
+      <!-- Person doing OHP -->
+      <>
+        <!-- Barbell overhead -->
+        <rect x="8" y="10" width="52" height="5" rx="2.5" fill="#374151"/>
+        <rect x="6" y="6" width="6" height="13" rx="2" fill="#1F2937"/>
+        <rect x="56" y="6" width="6" height="13" rx="2" fill="#1F2937"/>
+        <!-- Head -->
+        <circle cx="34" cy="28" r="7" fill="#F59E0B"/>
+        <!-- Torso upright -->
+        <rect x="28" y="35" width="12" height="18" rx="4" fill="#D97706" opacity="0.9"/>
+        <!-- Arms raised -->
+        <path d="M26 15 L28 35" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+        <path d="M42 15 L40 35" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+        <!-- Legs -->
+        <path d="M29 53 L24 64 L32 64 L34 55Z" fill="#B45309" opacity="0.9"/>
+        <path d="M39 53 L44 64 L36 64 L34 55Z" fill="#B45309" opacity="0.9"/>
+        <!-- Feet -->
+        <ellipse cx="28" cy="64" rx="7" ry="3" fill="#22C55E" opacity="0.8"/>
+        <ellipse cx="40" cy="64" rx="7" ry="3" fill="#22C55E" opacity="0.8"/>
+      </>
+    )}
+    {/* Default: dumbbell icon for others */}
+    {!['barbell-bench-press','squat','deadlift','pull-up','overhead-press'].includes(exercise) && (
+      <>
+        <!-- Simple dumbbell -->
+        <rect x="18" y="29" width="32" height="10" rx="4" fill="#374151" opacity="0.8"/>
+        <!-- Left weight -->
+        <rect x="8" y="22" width="12" height="24" rx="5" fill="#1F2937" opacity="0.8"/>
+        <rect x="10" y="26" width="8" height="16" rx="3" fill="#374151" opacity="0.7"/>
+        <!-- Right weight -->
+        <rect x="48" y="22" width="12" height="24" rx="5" fill="#1F2937" opacity="0.8"/>
+        <rect x="50" y="26" width="8" height="16" rx="3" fill="#374151" opacity="0.7"/>
+        <!-- Shine -->
+        <rect x="10" y="28" width="2" height="12" rx="1" fill="white" opacity="0.3"/>
+        <rect x="50" y="28" width="2" height="12" rx="1" fill="white" opacity="0.3"/>
+      </>
+    )}
+  </svg>
+</div>

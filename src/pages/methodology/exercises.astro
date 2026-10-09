@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { articleLd } from '../../lib/seo';
+const desc = "How SplitsWorkout classifies exercises by muscle, equipment, movement pattern and difficulty, how we review them, and how exercise media is sourced.";
+---
+<Layout title="Exercise Methodology: How We Categorise Exercises | SplitsWorkout" description={desc} canonical="/methodology/exercises" currentPage="about" ogType="article" ogImage="/og/default.png"
+  breadcrumbs={[{ name: 'Methodology', url: '/methodology' }, { name: 'Exercises' }]}
+  jsonLd={articleLd({ headline: "Exercise Methodology", description: desc, path: "/methodology/exercises" })}>
+<div class="page-header"><div class="page-header-inner"><h1 class="page-title">Exercise Methodology</h1><p class="page-desc">How every exercise in the library is described, classified and reviewed.</p></div></div>
+<div class="seo-page">
+
+  <h2>What each exercise record contains</h2>
+  <ul>
+    <li><strong>Primary muscle:</strong> the muscle doing most of the work. We are deliberately conservative — stabilisers are not listed as primary.</li>
+    <li><strong>Secondary muscles:</strong> muscles that contribute meaningfully but are not the main target.</li>
+    <li><strong>Equipment:</strong> barbell, dumbbell, cable, machine, Smith machine, bodyweight and so on, so you can find alternatives that fit your gym.</li>
+    <li><strong>Movement pattern:</strong> for example horizontal push, vertical pull, hip hinge or knee extension. This groups exercises that train the same pattern.</li>
+    <li><strong>Type and difficulty:</strong> compound or isolation, and beginner, intermediate or advanced based on technical demand and balance — not simply how heavy it can be.</li>
+    <li><strong>Guidance:</strong> a description, step-by-step instructions, form cues, common mistakes and suggested sets, reps and rest as starting ranges, not prescriptions.</li>
+  </ul>
+  <h2>Where the exercise data comes from</h2>
+  <p>The library combines two sources. A core set of exercises was written for SplitsWorkout, with original descriptions and coaching notes. A larger set was imported from the public-domain Free Exercise DB and mapped onto our own muscle, equipment and difficulty categories.</p>
+  <h2>What is in the library — and what is not</h2>
+  <p>Every exercise shown in the library and the workout planner has been reviewed: exercise-specific form cues, common mistakes, a description written for that movement and at least two alternatives. We deliberately left out stunts and sport-specific drills (for example jumping and throwing drills) and near-duplicates of exercises we already cover in full. Those entries are kept at their own addresses for reference, marked as variations or specialist movements, and are not suggested as swaps. Our exercise count only includes the reviewed library.</p>
+  <h2>Review status — what you should know</h2>
+  <p>Exercises imported from the open dataset started with basic instructions and generic form guidance. Each one that belonged in the library was rewritten and promoted to a normal, indexable page; the rest remain as non-indexed reference pages so search engines do not treat them as finished content. New exercises follow the same rule: they join the library only once they meet our quality bar. You can browse the reviewed set in the <a href="/exercises">exercise library</a> and use it in the <a href="/workout-planner">workout planner</a>.</p>
+  <h2>Exercise illustrations</h2>
+  <p>Every exercise page shows an original SplitsWorkout diagram: a simple athlete figure in its start and finish positions, drawn with that exercise's own equipment (barbell, dumbbell, cable, machine, bench and so on) and with the primary muscle highlighted. The diagrams are generated from a pose library of about 35 movement patterns, so they show the general shape of the movement rather than every grip or stance variation, and they are stylised rather than anatomically exact. We do not copy competitor images or use media whose licence is unclear.</p>
+  <h2>How muscle coverage is calculated</h2>
+  <p>The workout planner adds up weekly sets per muscle group. A primary muscle gets the full set; each secondary muscle gets a quarter of a set (shown as "indirect"). Status compares the total against the weekly range in our <a href="/muscles">muscle guide</a>: below the range is low, within it is on target, and more than 1.4 times the top of the range is flagged high. Push and pull sets, and upper and lower body sets, are compared to flag imbalances. These weightings are simplifications and are configurable in one place; they are guidance, not a prescription.</p>
+  <h2>Alternatives and swaps</h2>
+  <p>Swap suggestions on exercise pages and in the planner are ranked by a transparent score: same primary muscle counts most, then same movement pattern, then same mechanics (compound or isolation), secondary-muscle overlap, similar difficulty, and whether the exercise is a listed alternative. Equipment filters (no barbell, dumbbells only, no cable, bodyweight only) remove options you cannot do. Exercises that are still awaiting review are never suggested as swaps. See the <a href="/exercises">exercise library</a> to browse by muscle and equipment.</p>
+</div>
+</Layout>

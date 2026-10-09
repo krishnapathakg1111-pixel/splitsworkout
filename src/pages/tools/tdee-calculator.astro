@@ -1,0 +1,443 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is TDEE?",
+      "acceptedAnswer": { "@type": "Answer", "text": "TDEE (Total Daily Energy Expenditure) is the total number of calories your body burns in a day, including your basal metabolic rate plus all activity. It is the number of calories you need to eat to maintain your current weight." }
+    },
+    {
+      "@type": "Question",
+      "name": "How many calories should I eat to lose weight?",
+      "acceptedAnswer": { "@type": "Answer", "text": "To lose weight, eat 300–500 calories below your TDEE. This creates a deficit that results in approximately 0.3–0.5 kg of fat loss per week. Larger deficits accelerate weight loss but risk muscle loss." }
+    },
+    {
+      "@type": "Question",
+      "name": "How many calories to build muscle?",
+      "acceptedAnswer": { "@type": "Answer", "text": "To build muscle, eat 200–350 calories above your TDEE. A small surplus (10–15%) minimises fat gain while providing the energy needed for muscle protein synthesis." }
+    },
+    {
+      "@type": "Question",
+      "name": "How accurate is the TDEE calculator?",
+      "acceptedAnswer": { "@type": "Answer", "text": "This calculator uses the Mifflin-St Jeor equation, which is accurate within 10–15% for most people. Individual metabolism varies — track your actual weight changes and adjust calories accordingly." }
+    }
+  ]
+});
+---
+
+<Layout
+  title="Maintenance Calories Calculator — TDEE Calculator | SplitsWorkout"
+  description="Free TDEE / maintenance calories calculator. Find out exactly how many calories to eat to maintain weight, lose fat, or build muscle. Uses the Mifflin-St Jeor equation with activity multipliers."
+  canonical="/tools/tdee-calculator"
+  currentPage="tools"
+  schema={schema}
+>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span class="breadcrumb-sep">›</span>
+      <a href="/">Calculators</a><span class="breadcrumb-sep">›</span>
+      <span>TDEE Calculator</span>
+    </nav>
+    <h1 class="page-title">Maintenance Calories Calculator</h1>
+    <p class="page-desc">Calculate your Total Daily Energy Expenditure (TDEE) — the exact number of calories your body needs to maintain your current weight. Then find your targets for fat loss or muscle gain.</p>
+    <div class="page-meta">
+      <span class="tag tag-green">🔥 Mifflin-St Jeor Formula</span>
+      <span class="tag tag-gray">Free</span>
+      <span class="tag tag-purple">Instant Results</span>
+    </div>
+  </div>
+</div>
+
+<div style="max-width:760px;margin:0 auto;padding:40px 24px 64px;">
+
+  <!-- Calculator Card -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-2xl);padding:32px;margin-bottom:24px;">
+    <h2 style="font-family:'Poppins',sans-serif;font-size:1.125rem;font-weight:700;color:var(--text);margin-bottom:24px;letter-spacing:-0.02em;">Your Details</h2>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+
+      <!-- Age -->
+      <div>
+        <label for="age" style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:6px;">Age (years)</label>
+        <input type="number" id="age" value="25" min="15" max="80" class="search-input" style="height:48px;width:100%;font-size:1rem;" />
+      </div>
+
+      <!-- Sex -->
+      <div>
+        <label for="sex" style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:6px;">Sex</label>
+        <select id="sex" class="search-input" style="height:48px;width:100%;font-size:1rem;">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+
+      <!-- Height with unit toggle -->
+      <div style="grid-column:1/-1;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <label style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);">Height</label>
+          <div style="display:flex;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius);padding:2px;gap:2px;">
+            <button id="unit-cm" class="unit-btn active" onclick="setHeightUnit('cm')">cm</button>
+            <button id="unit-ft" class="unit-btn" onclick="setHeightUnit('ft')">ft/in</button>
+          </div>
+        </div>
+        <!-- cm input -->
+        <div id="height-cm-wrap">
+          <input type="number" id="height-cm" value="175" min="120" max="220" class="search-input" style="height:48px;width:100%;font-size:1rem;" placeholder="Height in cm" />
+        </div>
+        <!-- ft/in inputs -->
+        <div id="height-ft-wrap" style="display:none;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div>
+            <input type="number" id="height-ft" value="5" min="3" max="7" class="search-input" style="height:48px;width:100%;font-size:1rem;" placeholder="Feet" />
+            <div style="font-size:0.7rem;color:var(--text-4);margin-top:3px;text-align:center;">feet</div>
+          </div>
+          <div>
+            <input type="number" id="height-in" value="9" min="0" max="11" class="search-input" style="height:48px;width:100%;font-size:1rem;" placeholder="Inches" />
+            <div style="font-size:0.7rem;color:var(--text-4);margin-top:3px;text-align:center;">inches</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weight with unit toggle -->
+      <div style="grid-column:1/-1;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <label style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);">Weight</label>
+          <div style="display:flex;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius);padding:2px;gap:2px;">
+            <button id="wunit-kg" class="unit-btn active" onclick="setWeightUnit('kg')">kg</button>
+            <button id="wunit-lbs" class="unit-btn" onclick="setWeightUnit('lbs')">lbs</button>
+          </div>
+        </div>
+        <input type="number" id="weight" value="75" min="30" max="350" class="search-input" style="height:48px;width:100%;font-size:1rem;" id="weight-input" />
+        <div id="weight-unit-label" style="font-size:0.7rem;color:var(--text-4);margin-top:3px;">kilograms</div>
+      </div>
+
+    </div>
+
+    <!-- Activity Level -->
+    <div style="margin-bottom:24px;">
+      <label for="activity" style="display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);margin-bottom:6px;">Activity Level</label>
+      <select id="activity" class="search-input" style="height:52px;width:100%;font-size:0.9rem;">
+        <option value="1.2">🪑 Sedentary — desk job, little or no exercise</option>
+        <option value="1.375">🚶 Lightly Active — 1–3 days/week exercise or walking</option>
+        <option value="1.55" selected>🏃 Moderately Active — 3–5 days/week training</option>
+        <option value="1.725">💪 Very Active — hard training 6–7 days/week</option>
+        <option value="1.9">🏋️ Extra Active — physical job + daily intense training</option>
+      </select>
+      <div id="activity-desc" style="font-size:0.78rem;color:var(--text-3);margin-top:6px;padding:8px 12px;background:var(--bg-2);border-radius:var(--radius);"></div>
+    </div>
+
+    <button id="calc-btn" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;font-size:1rem;">
+      Calculate My Maintenance Calories →
+    </button>
+
+  </div>
+
+  <!-- Results -->
+  <div id="result" style="display:none;"></div>
+
+  <!-- SEO / Info sections -->
+  <div style="display:flex;flex-direction:column;gap:16px;margin-top:32px;">
+
+    <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;">
+      <h2 style="font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:14px;">What is TDEE?</h2>
+      <p style="font-size:0.875rem;color:var(--text-2);line-height:1.8;margin-bottom:12px;">TDEE stands for Total Daily Energy Expenditure — the total number of calories your body burns in a 24-hour period. It combines your <strong>BMR</strong> (Basal Metabolic Rate — calories burned at rest) with the calories burned through all physical activity, including exercise, walking, and daily movement.</p>
+      <p style="font-size:0.875rem;color:var(--text-2);line-height:1.8;">Your TDEE is your <strong>maintenance calories</strong> — the number of calories you need to eat to maintain your current body weight. Eating above this causes weight gain; eating below causes weight loss.</p>
+    </div>
+
+    <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;">
+      <h2 style="font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:14px;">How to Use Your TDEE</h2>
+      <div style="display:grid;gap:10px;">
+        {[
+          { goal: '🏖️ Lose Fat', how: 'Eat 300–500 calories below your TDEE', note: 'Aim for 0.5–1% bodyweight lost per week. A 500 cal/day deficit = ~0.5kg/week', color: '#06B6D4' },
+          { goal: '⚖️ Maintain Weight', how: 'Eat at your TDEE', note: 'Your maintenance calories keep your weight stable over time', color: '#22C55E' },
+          { goal: '💪 Build Muscle', how: 'Eat 200–350 calories above your TDEE', note: 'A modest surplus (10–15%) builds muscle with minimal fat gain', color: '#FB923C' },
+        ].map(g => (
+          <div style={`padding:14px 16px;background:var(--surface);border:1px solid ${g.color}30;border-left:3px solid ${g.color};border-radius:var(--radius);`}>
+            <div style={`font-family:'Poppins',sans-serif;font-weight:700;font-size:0.875rem;color:${g.color};margin-bottom:4px;`}>{g.goal}</div>
+            <div style="font-size:0.85rem;color:var(--text);font-weight:600;margin-bottom:2px;">{g.how}</div>
+            <div style="font-size:0.78rem;color:var(--text-3);">{g.note}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;">
+      <h2 style="font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:14px;">The Formula: Mifflin-St Jeor</h2>
+      <p style="font-size:0.875rem;color:var(--text-2);line-height:1.8;margin-bottom:12px;">This calculator uses the <strong>Mifflin-St Jeor equation</strong>, which is the most accurate BMR formula currently available for the general population. Research has shown it to be more accurate than the older Harris-Benedict equation.</p>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-family:monospace;font-size:0.82rem;color:var(--text-2);margin-bottom:12px;">
+        <div style="margin-bottom:4px;font-weight:600;color:var(--text);">For Men:</div>
+        <div>BMR = (10 × weight in kg) + (6.25 × height in cm) − (5 × age) + 5</div>
+        <div style="margin-top:8px;margin-bottom:4px;font-weight:600;color:var(--text);">For Women:</div>
+        <div>BMR = (10 × weight in kg) + (6.25 × height in cm) − (5 × age) − 161</div>
+        <div style="margin-top:8px;font-weight:600;color:var(--text);">Then: TDEE = BMR × Activity Multiplier</div>
+      </div>
+      <p style="font-size:0.8rem;color:var(--text-3);">Note: All calculators are estimates. Individual metabolic rate can vary by 10–15%. Track your actual weight over 2–3 weeks and adjust your calorie intake based on real results.</p>
+    </div>
+
+    <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-xl);padding:24px;">
+      <h2 style="font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:16px;">Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <div class="faq-q"><span>What is TDEE and why does it matter?</span><span class="faq-icon">▾</span></div>
+        <div class="faq-a">TDEE (Total Daily Energy Expenditure) is the total calories your body burns per day. It matters because eating at, above, or below this number determines whether you maintain, gain, or lose weight. Knowing your TDEE gives you a scientific starting point for any nutrition goal — whether you want to lose fat, build muscle, or maintain your current physique.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>How many calories should I eat to lose weight?</span><span class="faq-icon">▾</span></div>
+        <div class="faq-a">Eat 300–500 calories below your TDEE (your maintenance calories). A 500 calorie per day deficit creates approximately 0.5kg (1lb) of fat loss per week. Do not cut calories too aggressively — deficits larger than 750–1000 calories/day increase the risk of muscle loss and are harder to sustain.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>How many calories to build muscle?</span><span class="faq-icon">▾</span></div>
+        <div class="faq-a">Eat 200–350 calories above your TDEE. A modest "lean bulk" surplus of 10–15% above maintenance provides the energy needed for muscle protein synthesis while minimising fat gain. Natural muscle building is a slow process — patience and consistency with your calorie target and training matters more than the exact surplus.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>How accurate is this maintenance calories calculator?</span><span class="faq-icon">▾</span></div>
+        <div class="faq-a">The Mifflin-St Jeor formula is accurate within 10–15% for most people. This means your actual TDEE could be slightly higher or lower than the calculated result. Use the result as a starting point, then track your weight over 2–3 weeks at that calorie level. If you are gaining weight at maintenance, reduce by 100–150 calories. If losing, increase slightly.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Does TDEE change over time?</span><span class="faq-icon">▾</span></div>
+        <div class="faq-a">Yes. Your TDEE changes as your body weight changes, as you age, and as your activity level changes. Recalculate your TDEE every 4–8 weeks or whenever your weight changes by more than 3–5kg. Metabolic adaptation during prolonged dieting can also temporarily reduce TDEE below the calculated estimate — this is normal and is managed through diet breaks and refeeds.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>What activity level should I choose?</span><span class="faq-icon">▾</span></div>
+        <div class="faq-a">Choose the level that matches your total daily activity, not just your gym sessions. Sedentary means a desk job with minimal movement. Light means a desk job but you exercise 1–3 times per week. Moderate means you train 3–5 times per week consistently. Very active means daily intense training or a physically demanding job. Extra active means both. Most people overestimate their activity level — when in doubt, choose one level lower than you think.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Should I use TDEE or BMR as my calorie target?</span><span class="faq-icon">▾</span></div>
+        <div class="faq-a">Always use TDEE, not BMR. BMR is the calories your body needs at complete rest — eating at BMR while exercising would put you in a severe calorie deficit. TDEE accounts for your activity and is the correct baseline for setting your calorie target regardless of your goal.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>How do I convert between kg and lbs?</span><span class="faq-icon">▾</span></div>
+        <div class="faq-a">1 kilogram = 2.2046 pounds. Multiply kg by 2.205 to get lbs. Divide lbs by 2.205 to get kg. The calculator handles this conversion automatically when you switch between kg and lbs using the toggle button.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Why does my TDEE differ between calculators?</span><span class="faq-icon">▾</span></div>
+        <div class="faq-a">Different calculators use different formulas (Mifflin-St Jeor, Harris-Benedict, Katch-McArdle) and different activity multipliers. The Mifflin-St Jeor equation used here is the most validated for the general population. Differences of 100–200 calories between calculators are normal and within the margin of biological variability.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="/tools/macro-calculator" class="btn btn-secondary">Macro Calculator →</a>
+      <a href="/tools/bmi-calculator" class="btn btn-secondary">BMI Calculator →</a>
+      <a href="/workout-splits" class="btn btn-secondary">Find My Split →</a>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .unit-btn {
+    background: transparent;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-3);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .unit-btn.active {
+    background: var(--accent);
+    color: white;
+  }
+  .unit-btn:hover:not(.active) {
+    color: var(--text);
+    background: var(--bg-3);
+  }
+  #height-ft-wrap {
+    display: none;
+  }
+  #height-ft-wrap.show {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  #height-cm-wrap.hide {
+    display: none;
+  }
+</style>
+
+<script>
+let heightUnit = 'cm';
+let weightUnit = 'kg';
+
+const activityDescriptions = {
+  '1.2': 'You have a sedentary job and do little or no planned exercise. You mostly sit throughout the day.',
+  '1.375': 'You exercise lightly 1–3 days per week or do a moderate amount of walking. You have a desk job.',
+  '1.55': 'You train 3–5 days per week consistently with moderate-intensity workouts.',
+  '1.725': 'You train hard 6–7 days per week or have a physically demanding job with regular exercise.',
+  '1.9': 'You have both a physical job AND train intensely daily. This is relatively rare.',
+};
+
+window.setHeightUnit = function(unit) {
+  heightUnit = unit;
+  const cmBtn = document.getElementById('unit-cm');
+  const ftBtn = document.getElementById('unit-ft');
+  const cmWrap = document.getElementById('height-cm-wrap');
+  const ftWrap = document.getElementById('height-ft-wrap');
+  
+  if (unit === 'cm') {
+    cmBtn.classList.add('active'); ftBtn.classList.remove('active');
+    cmWrap.classList.remove('hide');
+    ftWrap.classList.remove('show');
+    ftWrap.style.display = 'none';
+  } else {
+    ftBtn.classList.add('active'); cmBtn.classList.remove('active');
+    cmWrap.classList.add('hide');
+    ftWrap.style.display = '';
+    ftWrap.classList.add('show');
+    // Convert current cm to ft/in
+    const cm = parseFloat((document.getElementById('height-cm') as HTMLInputElement).value) || 175;
+    const totalIn = Math.round(cm / 2.54);
+    const ft = Math.floor(totalIn / 12);
+    const inch = totalIn % 12;
+    (document.getElementById('height-ft') as HTMLInputElement).value = ft.toString();
+    (document.getElementById('height-in') as HTMLInputElement).value = inch.toString();
+  }
+};
+
+window.setWeightUnit = function(unit) {
+  weightUnit = unit;
+  const kgBtn = document.getElementById('wunit-kg');
+  const lbBtn = document.getElementById('wunit-lbs');
+  const weightInput = document.getElementById('weight') as HTMLInputElement;
+  const label = document.getElementById('weight-unit-label');
+  
+  const currentVal = parseFloat(weightInput.value) || 75;
+  
+  if (unit === 'kg') {
+    kgBtn.classList.add('active'); lbBtn.classList.remove('active');
+    weightInput.value = Math.round(currentVal / 2.205).toString();
+    weightInput.placeholder = 'Weight in kg';
+    if (label) label.textContent = 'kilograms';
+  } else {
+    lbBtn.classList.add('active'); kgBtn.classList.remove('active');
+    weightInput.value = Math.round(currentVal * 2.205).toString();
+    weightInput.placeholder = 'Weight in lbs';
+    if (label) label.textContent = 'pounds';
+  }
+};
+
+// Update activity description
+const actSelect = document.getElementById('activity') as HTMLSelectElement;
+const actDesc = document.getElementById('activity-desc');
+function updateActivityDesc() {
+  if (actDesc && actSelect) {
+    actDesc.textContent = activityDescriptions[actSelect.value] || '';
+  }
+}
+actSelect?.addEventListener('change', updateActivityDesc);
+updateActivityDesc();
+
+// Calculate
+document.getElementById('calc-btn')?.addEventListener('click', () => {
+  const age = parseFloat((document.getElementById('age') as HTMLInputElement).value);
+  const sex = (document.getElementById('sex') as HTMLSelectElement).value;
+  const activity = parseFloat((document.getElementById('activity') as HTMLSelectElement).value);
+  const weightRaw = parseFloat((document.getElementById('weight') as HTMLInputElement).value);
+
+  let heightCm: number;
+  let weightKg: number;
+
+  // Get height in cm
+  if (heightUnit === 'cm') {
+    heightCm = parseFloat((document.getElementById('height-cm') as HTMLInputElement).value);
+  } else {
+    const ft = parseFloat((document.getElementById('height-ft') as HTMLInputElement).value) || 0;
+    const inch = parseFloat((document.getElementById('height-in') as HTMLInputElement).value) || 0;
+    heightCm = (ft * 12 + inch) * 2.54;
+  }
+
+  // Convert weight to kg
+  weightKg = weightUnit === 'kg' ? weightRaw : weightRaw / 2.205;
+
+  if (!age || !heightCm || !weightKg || age < 15 || age > 80) {
+    alert('Please fill in all fields with valid values.');
+    return;
+  }
+
+  // Mifflin-St Jeor
+  const bmr = sex === 'male'
+    ? (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5
+    : (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161;
+
+  const tdee = Math.round(bmr * activity);
+  const tdeeRounded = Math.round(tdee / 50) * 50; // Round to nearest 50
+
+  const cut = Math.round(tdee - 400);
+  const mildCut = Math.round(tdee - 200);
+  const maintain = tdee;
+  const mildBulk = Math.round(tdee + 250);
+  const bulk = Math.round(tdee + 400);
+
+  const activityLabels = {
+    '1.2': 'Sedentary',
+    '1.375': 'Lightly Active',
+    '1.55': 'Moderately Active',
+    '1.725': 'Very Active',
+    '1.9': 'Extra Active',
+  };
+  const actLabel = activityLabels[activity.toString()] || 'Moderate';
+
+  const resultEl = document.getElementById('result');
+  if (!resultEl) return;
+  resultEl.style.display = 'block';
+
+  resultEl.innerHTML = `
+    <!-- Main TDEE result -->
+    <div style="background:linear-gradient(135deg,var(--accent-bg),var(--bg));border:2px solid var(--accent-border);border-radius:var(--radius-2xl);padding:28px;margin-bottom:16px;text-align:center;">
+      <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-hover);margin-bottom:6px;">Your Maintenance Calories</div>
+      <div style="font-family:'Poppins',sans-serif;font-size:3.5rem;font-weight:900;color:var(--accent);letter-spacing:-0.04em;line-height:1;">${tdee.toLocaleString()}</div>
+      <div style="font-size:1rem;color:var(--text-2);margin-top:4px;">calories per day</div>
+      <div style="font-size:0.8rem;color:var(--text-3);margin-top:8px;">Activity: ${actLabel} · ${sex === 'male' ? 'Male' : 'Female'} · ${Math.round(weightKg)}kg · ${Math.round(heightCm)}cm</div>
+      <div style="font-size:0.78rem;color:var(--text-3);margin-top:4px;">BMR: ${Math.round(bmr).toLocaleString()} cal/day (at complete rest)</div>
+    </div>
+
+    <!-- Goal-based targets -->
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid #06B6D4;border-radius:var(--radius-lg);padding:16px;">
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#06B6D4;margin-bottom:6px;">🏖️ Aggressive Cut</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:1.5rem;font-weight:800;color:#06B6D4;">${cut.toLocaleString()}</div>
+        <div style="font-size:0.72rem;color:var(--text-3);">cal/day · −${(tdee-cut)} deficit</div>
+        <div style="font-size:0.72rem;color:var(--text-3);margin-top:3px;">~0.5kg/week fat loss</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid #93C5FD;border-radius:var(--radius-lg);padding:16px;">
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#60A5FA;margin-bottom:6px;">✂️ Mild Cut</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:1.5rem;font-weight:800;color:#60A5FA;">${mildCut.toLocaleString()}</div>
+        <div style="font-size:0.72rem;color:var(--text-3);">cal/day · −${tdee-mildCut} deficit</div>
+        <div style="font-size:0.72rem;color:var(--text-3);margin-top:3px;">~0.25kg/week fat loss</div>
+      </div>
+      <div style="background:var(--accent-bg);border:2px solid var(--accent-border);border-radius:var(--radius-lg);padding:16px;grid-column:1/-1;">
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent-hover);margin-bottom:6px;">⚖️ Maintenance</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:1.75rem;font-weight:900;color:var(--accent);">${maintain.toLocaleString()} cal/day</div>
+        <div style="font-size:0.78rem;color:var(--text-2);margin-top:4px;">Eat at this level to maintain your current weight</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid #FB923C;border-radius:var(--radius-lg);padding:16px;">
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#FB923C;margin-bottom:6px;">💪 Lean Bulk</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:1.5rem;font-weight:800;color:#FB923C;">${mildBulk.toLocaleString()}</div>
+        <div style="font-size:0.72rem;color:var(--text-3);">cal/day · +${mildBulk-tdee} surplus</div>
+        <div style="font-size:0.72rem;color:var(--text-3);margin-top:3px;">Muscle gain, minimal fat</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid #F59E0B;border-radius:var(--radius-lg);padding:16px;">
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#F59E0B;margin-bottom:6px;">🏋️ Aggressive Bulk</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:1.5rem;font-weight:800;color:#F59E0B;">${bulk.toLocaleString()}</div>
+        <div style="font-size:0.72rem;color:var(--text-3);">cal/day · +${bulk-tdee} surplus</div>
+        <div style="font-size:0.72rem;color:var(--text-3);margin-top:3px;">Faster muscle, more fat</div>
+      </div>
+    </div>
+
+    <div style="padding:14px 16px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-lg);font-size:0.78rem;color:var(--text-3);">
+      ⚠️ These are estimates. Track your actual weight over 2–3 weeks at maintenance and adjust by 100–150 cal if needed. Individual metabolism varies by 10–15%.
+    </div>
+  `;
+
+  // Smooth scroll to result
+  resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+</script>
+
+</Layout>

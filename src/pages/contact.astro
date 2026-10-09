@@ -1,0 +1,78 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout
+  title="Contact SplitsWorkout — Feedback, Bug Reports & Questions"
+  description="Contact SplitsWorkout — report errors, suggest exercises, ask questions, or send feedback. We read every message."
+  canonical="/contact"
+  currentPage="about"
+  breadcrumbs={[{ name: 'Contact' }]}
+>
+<div class="page-header" style="margin-top:32px;">
+  <h1 class="page-title">Contact Us</h1>
+  <p class="page-desc">Bug report, content correction, or feature suggestion — we read everything.</p>
+</div>
+<div class="content-layout">
+  <article class="content-main">
+    <div class="prose">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:32px;">
+        <form id="cf" style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Name</label>
+            <input type="text" required placeholder="Your name" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:0.88rem;outline:none;font-family:inherit;" />
+          </div>
+          <div>
+            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Email</label>
+            <input type="email" required placeholder="your@email.com" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:0.88rem;outline:none;font-family:inherit;" />
+          </div>
+          <div>
+            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Topic</label>
+            <select style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:0.88rem;outline:none;font-family:inherit;">
+              <option>Content correction</option>
+              <option>Bug report</option>
+              <option>Exercise suggestion</option>
+              <option>General question</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:0.78rem;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Message</label>
+            <textarea rows="5" required placeholder="Your message..." style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:0.88rem;outline:none;resize:vertical;font-family:inherit;"></textarea>
+          </div>
+          <button type="submit" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:0.88rem;font-weight:600;cursor:pointer;align-self:flex-start;">Send Message</button>
+          <div id="ok" style="display:none;font-size:0.85rem;color:#22c55e;font-weight:500;">Message sent — we will get back to you soon.</div>
+        </form>
+      </div>
+
+      <h2>What Can We Help With?</h2>
+      <h3>Content Corrections</h3>
+      <p>If you spot an error in an exercise description, incorrect sets and reps, or inaccurate anatomical information, please let us know with the specific page URL and what needs correcting. We prioritise factual corrections and typically update within 24 hours.</p>
+      <h3>Exercise Suggestions</h3>
+      <p>We are continuously expanding the exercise database. If a key exercise is missing, tell us the exercise name, primary muscle, and equipment needed and we will add it to the queue.</p>
+      <h3>Technical Issues</h3>
+      <p>If a calculator gives wrong results, the workout builder is not saving, or any page is broken, please include your device type and browser in your message so we can reproduce the issue.</p>
+      <h3>General Questions</h3>
+      <p>We are happy to answer questions about the content. We are not personal trainers and cannot write custom programmes, but we can point you to the right guides on the site.</p>
+    </div>
+  </article>
+</div>
+<div class="seo-page" style="padding-top:0;">
+  <h2>Before you write</h2>
+  <p>Many questions are answered on the site already. Our <a href="/methodology">methodology pages</a> explain how recommendations and calculators work, and the <a href="/workout-splits/best-workout-split">best workout split guide</a> covers the most common question we hear. If your question is still open, we would like to hear it.</p>
+  <h2>What to contact us about</h2>
+  <ul>
+    <li><strong>Corrections:</strong> an error in an exercise, split or calculator. Please include the page URL.</li>
+    <li><strong>Exercise or split requests:</strong> tell us what is missing and why it would help.</li>
+    <li><strong>Bugs:</strong> something not working in the <a href="/workout-planner">workout planner</a> or <a href="/workout-split-finder">Split Finder</a>? Tell us your browser and what you clicked.</li>
+    <li><strong>General feedback</strong> and partnership questions.</li>
+  </ul>
+  <p>We cannot give personal medical advice or individual coaching. For health concerns, please speak to a qualified professional. You can read how our content is made on the <a href="/methodology">methodology page</a>.</p>
+</div>
+</Layout>
+<script>
+document.getElementById("cf")?.addEventListener("submit",(e)=>{
+  e.preventDefault();
+  document.getElementById("ok").style.display="block";
+  e.target.reset();
+});
+</script>

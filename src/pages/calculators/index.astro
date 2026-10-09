@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CTA from '../../components/CTA.astro';
+const desc = 'Free fitness calculators: TDEE and maintenance calories, macros (protein, carbs, fat) and BMI — each with the method explained and units in kg/lbs and cm/ft-in.';
+---
+<Layout title="Fitness Calculators: TDEE, Macros & BMI | SplitsWorkout" description={desc}
+  canonical="/calculators" currentPage="calculators" ogImage="/og/tools.png"
+  breadcrumbs={[{ name: 'Calculators' }]}>
+<div class="page-header"><div class="page-header-inner">
+  <h1 class="page-title">Fitness Calculators</h1>
+  <p class="page-desc">Three free calculators to put numbers behind your training: how many calories you burn, how to split them into macros, and where your BMI sits.</p>
+</div></div>
+<div class="seo-page">
+  <div class="seo-two">
+    <div class="seo-card"><h3><a href="/calculators/tdee">TDEE &amp; Maintenance Calories</a></h3><p>Estimate the calories you burn per day with the Mifflin-St Jeor equation, then see targets for cutting, maintaining or lean bulking.</p><a class="btn btn-secondary btn-sm" href="/calculators/tdee">Open the TDEE calculator →</a></div>
+    <div class="seo-card"><h3><a href="/calculators/macros">Macros Calculator</a></h3><p>Turn your calorie target into daily grams of protein, carbohydrate and fat for muscle gain, fat loss or maintenance.</p><a class="btn btn-secondary btn-sm" href="/calculators/macros">Open the macros calculator →</a></div>
+    <div class="seo-card"><h3><a href="/calculators/bmi">BMI Calculator</a></h3><p>Calculate Body Mass Index in metric or imperial units, with the adult categories and honest notes on where BMI falls short.</p><a class="btn btn-secondary btn-sm" href="/calculators/bmi">Open the BMI calculator →</a></div>
+  </div>
+  <h2>Which calculator should you use first?</h2>
+  <p>Start with TDEE: it gives you a maintenance baseline, which is the number every other calorie target is built from. Then use the macros calculator to divide those calories into protein, fat and carbohydrates for your goal. BMI is a quick screening number and the least useful of the three if you lift weights, because it cannot tell muscle from fat.</p>
+  <h2>How accurate are they?</h2>
+  <p>All three are estimates. Energy needs differ between individuals by 10–15% or more, so treat the output as a starting point: follow it for two or three weeks, watch your bodyweight, and adjust. The exact formulas and assumptions are documented in our <a href="/methodology/calculators">calculator methodology</a>.</p>
+  <h2>Tips for better results</h2>
+  <ul>
+    <li>Choose your activity level based on your whole week, not just gym sessions — and if in doubt, pick the lower option.</li>
+    <li>Weigh yourself under similar conditions (morning, after the bathroom) and use a weekly average rather than daily readings.</li>
+    <li>Re-run the calculators after a few kilos of weight change, because your needs shift as your body changes.</li>
+  </ul>
+  <h2>From numbers to a training plan</h2>
+  <p>Calories and macros only work alongside a sensible program. Use the <a href="/workout-split-finder">Split Finder</a> to choose a split for your goal, then build it in the <a href="/workout-planner">workout planner</a>.</p>
+  <CTA variant="calculator" />
+</div>
+</Layout>

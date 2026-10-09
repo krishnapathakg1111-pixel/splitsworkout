@@ -1,0 +1,75 @@
+---
+import WeekGrid from './WeekGrid.astro';
+import CTA from './CTA.astro';
+import { dayPlans } from '../data/dayPlans';
+import { getExercise } from '../data/exercises';
+import type { DayPlan } from '../data/dayPlans';
+interface Props { plan: DayPlan }
+const { plan } = Astro.props;
+const others = dayPlans.filter((p) => p.slug !== plan.slug);
+---
+<div class="page-header"><div class="page-header-inner">
+  <p class="page-kicker" style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin:0 0 8px;">{plan.kicker}</p>
+  <h1 class="page-title">{plan.h1}</h1>
+</div></div>
+
+<div class="seo-page">
+  <div class="seo-answer"><p><strong>Short answer:</strong> {plan.quickAnswer}</p></div>
+
+  <h2>How a {plan.days}-day workout split works</h2>
+  {plan.intro.map((t) => <p>{t}</p>)}
+
+  <h2>Best {plan.days}-day split structures</h2>
+  {plan.structures.map((s) => (
+    <div class="seo-structure">
+      <h3 style="margin-top:0;">{s.splitSlug ? <a href={`/workout-splits/${s.splitSlug}`}>{s.name}</a> : s.name}</h3>
+      <WeekGrid week={s.week} />
+      <p><strong>Best for:</strong> {s.best}</p>
+      <p style="margin:0;"><strong>Trade-off:</strong> {s.tradeoff}</p>
+      {s.splitSlug && <p style="margin:10px 0 0;"><a class="btn btn-secondary btn-sm" href={`/workout-planner?split=${s.splitSlug}&days=${plan.days}`}>Load this in the planner →</a></p>}
+    </div>
+  ))}
+
+  <h2>Is a {plan.days}-day split right for you?</h2>
+  <div class="seo-scroll"><table class="seo-table"><tbody>
+    {plan.ratings.map(([k, v]) => <tr><td>{k}</td><td>{v}</td></tr>)}
+  </tbody></table></div>
+  <div class="seo-two">
+    <div class="seo-card"><h3>Pros</h3><ul>{plan.pros.map((p) => <li>{p}</li>)}</ul></div>
+    <div class="seo-card"><h3>Cons</h3><ul>{plan.cons.map((p) => <li>{p}</li>)}</ul></div>
+  </div>
+  <div class="seo-two" style="margin-top:16px;">
+    <div class="seo-card"><h3>Best for</h3><ul>{plan.whoFor.map((p) => <li>{p}</li>)}</ul></div>
+    <div class="seo-card"><h3>Think twice if…</h3><ul>{plan.whoAvoid.map((p) => <li>{p}</li>)}</ul></div>
+  </div>
+
+  <h2>{plan.recoveryTitle}</h2>
+  {plan.recovery.map((t) => <p>{t}</p>)}
+
+  <h2>Example exercises for a {plan.days}-day split</h2>
+  {plan.exercises.map((g) => (
+    <>
+      <h3>{g.heading}</h3>
+      <p>{g.note}</p>
+      <div class="seo-chips">
+        {g.slugs.map((s) => { const e = getExercise(s); return e ? <a class="seo-chip" href={`/exercises/${s}`}>{e.name}</a> : null; })}
+      </div>
+    </>
+  ))}
+  <p class="seo-note">Not sure how heavy to go, or what to swap if you lack equipment? Each exercise page lists alternatives for your setup.</p>
+
+  <CTA variant="comparison" heading={`Have ${plan.days} days? Check your fit`} text="Answer a few questions about your goal and experience — the finder is pre-set to your number of days." />
+  <p style="margin-top:-18px;"><a class="btn btn-primary" href={`/workout-split-finder?${plan.finder}`}>Open the Split Finder with {plan.days} days →</a></p>
+
+  <h2>{plan.days}-day workout split FAQ</h2>
+  <div class="seo-faq">
+    {plan.faqs.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+  </div>
+
+  <h2>Compare other training schedules</h2>
+  <div class="seo-chips">
+    {others.map((o) => <a class="seo-chip" href={`/workout-splits/${o.slug}`}>{o.days}-day split</a>)}
+    <a class="seo-chip" href="/workout-splits/best-workout-split">Which split is best?</a>
+  </div>
+  <p>Looking for a specific structure instead? Read the guides for <a href="/workout-splits/push-pull-legs">push pull legs</a>, <a href="/workout-splits/upper-lower">upper lower</a>, <a href="/workout-splits/full-body">full body</a>, the <a href="/workout-splits/bro-split">bro split</a> or the <a href="/workout-splits/arnold-split">Arnold split</a>, or return to the <a href="/workout-splits">workout splits hub</a>.</p>
+</div>

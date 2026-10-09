@@ -1,0 +1,97 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CTA from '../components/CTA.astro';
+import { exercises as allEx } from '../data/exercises';
+import { visibleOnly } from '../lib/seo';
+const exercises = visibleOnly(allEx);
+const catOf: Record<string,string> = { chest:'Chest', back:'Back', shoulders:'Shoulders', biceps:'Biceps', triceps:'Triceps', quads:'Quads', hamstrings:'Hamstrings', glutes:'Glutes', abs:'Core', calves:'Calves' };
+const subPrimary: Record<string,string> = { lats:'Lats', 'upper-back':'Upper Back', 'side-delts':'Side Delts', 'rear-delts':'Rear Delts', forearms:'Forearms', obliques:'Obliques' };
+const countFor = (slug: string) => subPrimary[slug] ? exercises.filter(e => e.primaryMuscle === subPrimary[slug]).length : exercises.filter(e => e.category === catOf[slug]).length;
+import MuscleSVG from '../components/MuscleSVG.astro';
+
+const muscleGroups = [
+  { slug: 'chest', name: 'Chest', fullName: 'Pectoralis Major', color: '#EF4444', desc: 'Horizontal pressing and shoulder flexion. Trained with bench press, flies, and push variations.', exercises: 8, icon: '💪' },
+  { slug: 'back', name: 'Back', fullName: 'Latissimus Dorsi & Upper Back', color: '#3B82F6', desc: 'Pulling arms toward body and spinal extension. Rows, pull-ups, and lat pulldowns.', exercises: 10, icon: '🏋️' },
+  { slug: 'shoulders', name: 'Shoulders', fullName: 'Deltoids', color: '#F59E0B', desc: 'Front, side, and rear deltoids. Overhead presses, lateral raises, and face pulls.', exercises: 7, icon: '🦾' },
+  { slug: 'biceps', name: 'Biceps', fullName: 'Biceps Brachii', color: '#8B5CF6', desc: 'Elbow flexion and supination. Curl variations — barbell, dumbbell, hammer, cable.', exercises: 6, icon: '💪' },
+  { slug: 'triceps', name: 'Triceps', fullName: 'Triceps Brachii', color: '#A78BFA', desc: 'Elbow extension. Pushdowns, overhead extensions, skull crushers, and close-grip press.', exercises: 6, icon: '💪' },
+  { slug: 'quads', name: 'Quads', fullName: 'Quadriceps', color: '#10B981', desc: 'Knee extension and hip flexion. Squats, leg press, hack squat, and leg extensions.', exercises: 7, icon: '🦵' },
+  { slug: 'hamstrings', name: 'Hamstrings', fullName: 'Biceps Femoris', color: '#06B6D4', desc: 'Knee flexion and hip extension. Romanian deadlifts, leg curls, and nordic curls.', exercises: 5, icon: '🦵' },
+  { slug: 'glutes', name: 'Glutes', fullName: 'Gluteus Maximus', color: '#EC4899', desc: 'Hip extension and abduction. Hip thrusts, glute bridges, and split squats.', exercises: 6, icon: '🍑' },
+  { slug: 'abs', name: 'Abs', fullName: 'Rectus Abdominis & Core', color: '#6B7280', desc: 'Spinal flexion and core stability. Planks, crunches, leg raises, and cable crunches.', exercises: 6, icon: '🔥' },
+  { slug: 'calves', name: 'Calves', fullName: 'Gastrocnemius & Soleus', color: '#84CC16', desc: 'Plantar flexion. Standing and seated calf raises in full range of motion.', exercises: 3, icon: '🦵' },
+  { slug: 'lats', name: 'Lats', fullName: 'Latissimus Dorsi', color: '#3B82F6', desc: 'Back width and vertical pulling. Pull-ups, pulldowns and straight-arm work.', exercises: 0, icon: '🦅' },
+  { slug: 'upper-back', name: 'Upper Back', fullName: 'Rhomboids & Trapezius', color: '#60A5FA', desc: 'Back thickness, posture and shoulder-blade control. Rows, face pulls and shrugs.', exercises: 0, icon: '🧗' },
+  { slug: 'side-delts', name: 'Side Delts', fullName: 'Lateral Deltoid', color: '#FBBF24', desc: 'Shoulder width. Lateral raises on dumbbells, cables and machines.', exercises: 0, icon: '🙆' },
+  { slug: 'rear-delts', name: 'Rear Delts', fullName: 'Posterior Deltoid', color: '#D97706', desc: 'The back of the shoulder. Rear delt flyes, reverse pec deck and face pulls.', exercises: 0, icon: '↔️' },
+  { slug: 'forearms', name: 'Forearms', fullName: 'Wrist Flexors & Extensors', color: '#8B5CF6', desc: 'Grip and forearm size. Wrist curls, carries and plate pinches.', exercises: 0, icon: '✊' },
+  { slug: 'obliques', name: 'Obliques', fullName: 'Internal & External Obliques', color: '#9CA3AF', desc: 'Trunk rotation and anti-rotation. Pallof presses and woodchops.', exercises: 0, icon: '🌀' },
+];
+---
+
+<Layout
+  title="Muscle Guide — Anatomy, Exercises & Training Tips | SplitsWorkout"
+  description="Complete muscle guide — chest, back, shoulders, arms, legs. Anatomy explanations, best exercises, weekly volume, and training tips for every major muscle group."
+  canonical="/muscles"
+  currentPage="muscles"
+  ogImage="/og/muscles.png"
+  breadcrumbs={[{ name: 'Muscle Guide' }]}
+>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <h1 class="page-title">Muscle Guide</h1>
+    <p class="page-desc">Understand the anatomy, function, and best exercises for every major muscle group. Click a muscle to explore exercises, volume guidelines, and training tips.</p>
+  </div>
+</div>
+
+<div style="max-width:1280px;margin:0 auto;padding:40px 24px 64px;">
+
+  <!-- Interactive body + muscle list -->
+  <div style="display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:center;margin-bottom:56px;max-width:900px;">
+    <div style="text-align:center;">
+      <MuscleSVG interactive={true} size="lg" view="both" />
+      <p style="font-size:0.72rem;color:var(--text-4);margin-top:8px;">Click any muscle to explore</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+      {muscleGroups.map(m => (
+        <a href={`/muscles/${m.slug}`} class="muscle-card" style={`border-left:3px solid ${m.color};`}>
+          <div class="muscle-dot" style={`background:${m.color};`}></div>
+          <div class="muscle-card-info">
+            <div class="muscle-card-name">{m.name}</div>
+            <div class="muscle-card-count">{m.exercises}+ exercises</div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-4);" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <!-- Muscle cards grid -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">
+    {muscleGroups.map(m => (
+      <a href={`/muscles/${m.slug}`} class="card" style="text-decoration:none;padding:24px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+          <div style={`width:44px;height:44px;border-radius:10px;background:${m.color}15;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;`}>{m.icon}</div>
+          <div>
+            <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:var(--text);">{m.name}</div>
+            <div style="font-size:0.72rem;color:var(--text-3);">{m.fullName}</div>
+          </div>
+          <div style={`margin-left:auto;width:3px;height:40px;border-radius:2px;background:${m.color};flex-shrink:0;`}></div>
+        </div>
+        <p style="font-size:0.85rem;color:var(--text-3);line-height:1.6;margin-bottom:14px;">{m.desc}</p>
+        <div style="font-size:0.8rem;color:var(--accent);font-weight:600;">{countFor(m.slug)} exercises →</div>
+      </a>
+    ))}
+  </div>
+</div>
+
+<div class="seo-page" style="padding-top:8px;">
+  <h2>How to use the muscle guide</h2>
+  <p>Each muscle page explains what the muscle does, lists the best exercises by equipment, gives a sensible weekly volume range, and shows which workout splits train it and how often. Start with the muscle you want to improve, pick two or three exercises you can perform well, then add them to a training day in the <a href="/workout-planner">workout planner</a>.</p>
+  <p>The same muscle groups power the rest of SplitsWorkout: every exercise in the <a href="/exercises">exercise library</a> lists its primary and secondary muscles, and the planner's coverage chart adds those up across your week so you can spot muscles you are under- or over-training.</p>
+  <p>Not sure how to spread muscles across the week? Compare the <a href="/workout-splits">workout splits</a> or let the <a href="/workout-split-finder">Split Finder</a> suggest one.</p>
+  <CTA variant="generic" />
+</div>
+
+</Layout>

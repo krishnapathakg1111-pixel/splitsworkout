@@ -1,0 +1,77 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SplitFinder from '../../components/SplitFinder.astro';
+import CTA from '../../components/CTA.astro';
+import { articleLd } from '../../lib/seo';
+const desc = 'Not sure what workout split to do? Answer a few questions about your schedule, goal and experience to find the best gym split — then build it in the planner.';
+---
+<Layout
+  title="Best Workout Split for You: Find the Right Gym Split | SplitsWorkout"
+  description={desc}
+  canonical="/workout-splits/best-workout-split"
+  currentPage="splits"
+  ogType="article"
+  ogImage="/og/splits.png"
+  breadcrumbs={[{ name: 'Workout Splits', url: '/workout-splits' }, { name: 'Best Workout Split' }]}
+  jsonLd={articleLd({ headline: 'What Workout Split Should You Do?', description: desc, path: '/workout-splits/best-workout-split', image: '/og/splits.png' })}
+>
+<div class="page-header"><div class="page-header-inner">
+  <h1 class="page-title">What Workout Split Should You Do? Find Your Best Split</h1>
+  <p class="page-desc">The best workout split is the one that fits the days you can really train, your goal and your recovery. Answer seven quick questions below to get a ranked recommendation.</p>
+</div></div>
+
+<div class="seo-page">
+  <SplitFinder />
+
+  <h2>The short answer: pick by days per week</h2>
+  <div class="seo-scroll"><table class="seo-table">
+    <thead><tr><th>Days</th><th>Usually best</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><a href="/workout-splits/2-day">2 days</a></td><td>Full body</td><td>Trains every muscle twice a week in only two sessions.</td></tr>
+      <tr><td><a href="/workout-splits/3-day">3 days</a></td><td>Full body (or upper/lower/full body)</td><td>High frequency with a rest day between sessions.</td></tr>
+      <tr><td><a href="/workout-splits/4-day">4 days</a></td><td>Upper/lower</td><td>Each muscle twice a week with balanced recovery.</td></tr>
+      <tr><td><a href="/workout-splits/5-day">5 days</a></td><td><a href="/workout-splits/pplul">PPLUL hybrid</a>, or body-part</td><td>More volume; choose frequency (hybrid) or focus (body-part).</td></tr>
+      <tr><td><a href="/workout-splits/6-day">6 days</a></td><td>Push pull legs, or Arnold</td><td>Twice-weekly frequency and high volume for experienced lifters.</td></tr>
+      <tr><td><a href="/workout-splits/7-day">7 days</a></td><td>Six lifting days + a rest day</td><td>Hard daily training rarely helps; build in genuine recovery.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>How to choose a gym split in five steps</h2>
+  <ol>
+    <li><strong>Be honest about your schedule.</strong> A plan you can follow for six months beats a perfect plan you follow for three weeks.</li>
+    <li><strong>Pick a frequency per muscle.</strong> Around twice a week is a practical default; the structure you choose follows from that.</li>
+    <li><strong>Match your experience.</strong> Newer lifters progress quickly on simple plans, so extra volume is usually unnecessary.</li>
+    <li><strong>Check session length.</strong> If you only have 45 minutes, favour splits that train fewer muscles per day.</li>
+    <li><strong>Run it for 8–12 weeks.</strong> Judge a split by your progress and recovery, not by how it feels in the first fortnight.</li>
+  </ol>
+
+  <h2>Best workout split by goal</h2>
+  <p>Want the full detail for your goal? See the dedicated guides for <a href="/workout-splits/for-beginners">beginners</a>, <a href="/workout-splits/for-muscle-gain">muscle gain</a>, <a href="/workout-splits/for-strength">strength</a>, <a href="/workout-splits/for-fat-loss">fat loss</a> and <a href="/workout-splits/for-busy-schedules">busy schedules</a>. Comparing two options? Start with <a href="/workout-splits/ppl-vs-upper-lower">PPL vs upper/lower</a> or <a href="/workout-splits/full-body-vs-upper-lower">full body vs upper/lower</a>.</p>
+  <h3>For building muscle</h3>
+  <p>Muscle growth responds to total weekly sets, effort and consistency. Upper/lower on four days and push/pull/legs on six give strong frequency and volume; full body is excellent when you have three days or fewer.</p>
+  <h3>For strength</h3>
+  <p>Strength comes from practising the main lifts often. Full body and upper/lower let you squat, press and pull two to three times a week, which is why they are the usual strength choices.</p>
+  <h3>For fat loss</h3>
+  <p>No split burns fat on its own — a calorie deficit does that. Choose the split you can train consistently; training hard enough to hold on to muscle matters more than the structure. Our <a href="/calculators/tdee">TDEE calculator</a> shows a maintenance baseline to set a deficit from.</p>
+  <h3>For beginners</h3>
+  <p>Start with full body on two or three days, or upper/lower on four. Avoid high-volume plans like the Arnold split until you have built a training base.</p>
+
+  <h2>Common mistakes when choosing a split</h2>
+  <ul>
+    <li><strong>Copying an advanced lifter's routine.</strong> Their volume reflects years of training; yours does not need to.</li>
+    <li><strong>Choosing more days than you can sustain.</strong> Consistency beats frequency.</li>
+    <li><strong>Hopping between splits every few weeks.</strong> You never give any one plan time to work.</li>
+    <li><strong>Ignoring recovery.</strong> Poor sleep or low food intake can make any split feel like it has stopped working.</li>
+  </ul>
+
+  <CTA variant="split" slug="upper-lower" heading="Already have a split in mind?" text="Load a complete weekly schedule into the planner and edit it to suit your equipment." />
+
+  <h2>FAQ</h2>
+  <div class="seo-faq">
+    <details><summary>Is push pull legs better than upper/lower?</summary><p>Neither is better in general. PPL is great at five or six days; upper/lower is typically better at four. See the <a href="/workout-splits/push-pull-legs">PPL guide</a> and <a href="/workout-splits/upper-lower">upper/lower guide</a>.</p></details>
+    <details><summary>What is the best split for a beginner?</summary><p>Full body two or three days a week, or a four-day upper/lower. Both train each muscle regularly without overwhelming recovery.</p></details>
+    <details><summary>Do I need to change my split over time?</summary><p>Not necessarily. Change it when your schedule changes, progress stalls despite good effort and recovery, or you want more volume than the current plan allows.</p></details>
+  </div>
+  <p class="seo-note">Recommendations are general starting points, not personal coaching or medical advice.</p>
+</div>
+</Layout>

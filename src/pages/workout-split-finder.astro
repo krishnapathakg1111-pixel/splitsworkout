@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SplitFinder from '../components/SplitFinder.astro';
+import { webAppLd } from '../lib/seo';
+const desc = 'Free workout split finder: enter your training days, goal, experience, equipment and preferences to get a ranked split recommendation and a weekly schedule.';
+---
+<Layout
+  title="Workout Split Finder: Find Your Best Gym Split | SplitsWorkout"
+  description={desc}
+  canonical="/workout-split-finder"
+  currentPage="splits"
+  ogImage="/og/tools.png"
+  breadcrumbs={[{ name: 'Workout Split Finder' }]}
+  jsonLd={webAppLd({ name: 'SplitsWorkout Workout Split Finder', description: desc, path: '/workout-split-finder', category: 'HealthApplication' })}
+>
+<div class="page-header"><div class="page-header-inner">
+  <h1 class="page-title">Find the Workout Split That Fits You</h1>
+  <p class="page-desc">Choose your training days, goal, experience, session length, equipment, preferences and recovery. You get a ranked recommendation, a sample week and a one-click way to build it.</p>
+</div></div>
+
+<div class="seo-page">
+  <SplitFinder />
+
+  <h2>How the split finder works</h2>
+  <p>The finder scores five proven training splits — full body, upper/lower, push/pull/legs, the bro split and the Arnold split — against your answers. Your number of training days has the biggest effect, followed by experience and goal; session length, equipment, preference and recovery then adjust the ranking.</p>
+  <p>Every recommendation comes with the reasons behind it and any cautions, so you can see why a split ranks where it does. The rules are published on our <a href="/methodology/workout-splits">workout split methodology page</a>.</p>
+
+  <h2>What you get</h2>
+  <ul>
+    <li>A <strong>best-fit split</strong> and two alternatives, with reasons.</li>
+    <li>A <strong>sample week</strong> showing which days to train and which to rest.</li>
+    <li>A <strong>one-click link</strong> that loads the split into the <a href="/workout-planner">workout planner</a> so you can edit exercises, sets and reps.</li>
+  </ul>
+
+  <h2>Prefer to read first?</h2>
+  <p>Our guide to the <a href="/workout-splits/best-workout-split">best workout split</a> explains how to choose, and the <a href="/workout-splits">workout splits hub</a> compares every option side by side. If you already know your schedule, jump to the <a href="/workout-splits/3-day">3-day</a>, <a href="/workout-splits/4-day">4-day</a> or <a href="/workout-splits/5-day">5-day</a> split pages.</p>
+  <p class="seo-note">The finder gives general starting points, not personal coaching or medical advice.</p>
+</div>
+</Layout>
