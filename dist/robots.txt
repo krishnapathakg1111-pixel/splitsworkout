@@ -1,0 +1,7 @@
+# SplitsWorkout robots.txt
+# Everything public is crawlable (HTML, CSS, JS, images). Pages that should not be indexed use
+# <meta name="robots" content="noindex"> instead of robots.txt blocking, so crawlers can still see the tag.
+User-agent: *
+Allow: /
+
+Sitemap: https://splitsworkout.com/sitemap.xml
